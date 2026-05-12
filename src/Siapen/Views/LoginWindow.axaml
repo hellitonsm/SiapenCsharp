@@ -3,135 +3,78 @@
         xmlns:vm="using:Siapen.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="660" d:DesignHeight="260"
+        mc:Ignorable="d" d:DesignWidth="450" d:DesignHeight="600"
         x:Class="Siapen.Views.LoginWindow"
         x:DataType="vm:LoginViewModel"
-        Title="SIAPEN - Sistema Integrado de Administração Penitenciária"
+        Title="SIAPEN - Login"
         WindowStartupLocation="CenterScreen"
         CanResize="False"
-        Width="660" Height="260"
-        Background="#FFF0F0F0">
+        Width="450" Height="600"
+        Background="#F4F6F8">
 
   <Design.DataContext>
     <vm:LoginViewModel/>
   </Design.DataContext>
 
-  <Grid Margin="8">
-    <Grid.RowDefinitions>
-      <RowDefinition Height="Auto"/>
-      <RowDefinition Height="*"/>
-    </Grid.RowDefinitions>
-
-    <!-- GroupBox AGEPEN (topo) -->
-    <Border Grid.Row="0" Background="White" BorderBrush="Navy" BorderThickness="1"
-            Padding="0" Margin="0,0,0,4" Height="58">
-      <Grid>
-        <!-- Título do GroupBox -->
-        <TextBlock Text="AGEPEN" FontWeight="Bold" Foreground="Navy"
-                   FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Top"
-                   Margin="8,2,0,0"/>
-
-        <!-- Conteúdo: ícone + label -->
-        <Grid Margin="4,18,4,4">
-          <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="35"/>
-            <ColumnDefinition Width="*"/>
-          </Grid.ColumnDefinitions>
-
-          <!-- Placeholder para imagem do brasão (Image3 no DFM) -->
-          <Border Grid.Column="0" Width="32" Height="30"
-                  Background="#FFE8E8E8" BorderBrush="#FFAAAAAA" BorderThickness="0.5"
-                  HorizontalAlignment="Center" VerticalAlignment="Center">
-            <TextBlock Text="🛡" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+  <Grid>
+    <!-- Card centralizado -->
+    <Border Classes="card" HorizontalAlignment="Center" VerticalAlignment="Center" Width="360" Margin="16">
+      <StackPanel Spacing="16">
+        
+        <!-- Cabeçalho -->
+        <StackPanel HorizontalAlignment="Center" Spacing="8" Margin="0,0,0,16">
+          <Border Width="64" Height="64" CornerRadius="32" Background="#E9ECEF" HorizontalAlignment="Center" Margin="0,0,0,8">
+            <TextBlock Text="🛡" FontSize="32" HorizontalAlignment="Center" VerticalAlignment="Center"/>
           </Border>
-
-          <!-- Label AGÊNCIA (LabelNome no DFM) -->
-          <TextBlock Grid.Column="1"
-                     Text="AGÊNCIA ESTADUAL DE ADMINISTRAÇÃO DO SISTEMA PENITENCIÁRIO"
-                     FontSize="13" FontWeight="Bold" Foreground="Black"
-                     VerticalAlignment="Center" HorizontalAlignment="Center"
-                     TextWrapping="Wrap" TextAlignment="Center"/>
-        </Grid>
-      </Grid>
-    </Border>
-
-    <!-- Conteúdo principal: Identificação + Estabelecimento Penal -->
-    <Grid Grid.Row="1">
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="165"/>
-        <ColumnDefinition Width="*"/>
-      </Grid.ColumnDefinitions>
-
-      <!-- GroupBox Identificação (esquerda) -->
-      <Border Grid.Column="0" BorderBrush="Navy" BorderThickness="1"
-              Padding="6" Margin="0,0,4,0">
-        <StackPanel Spacing="2">
-          <TextBlock Text="Identificação" FontWeight="Bold" Foreground="Navy" FontSize="11"
-                     HorizontalAlignment="Left" Margin="0,0,0,2"/>
-
-          <TextBlock Text="Login" FontWeight="Bold" Foreground="Navy" FontSize="11"/>
-          <TextBox x:Name="TxtLogin" Text="{Binding Login}" PlaceholderText="Usuário" Height="22" FontSize="11"/>
-
-          <TextBlock Text="Senha" FontWeight="Bold" Foreground="Navy" FontSize="11" Margin="0,6,0,0"/>
-          <TextBox Text="{Binding Senha}" PlaceholderText="Senha" PasswordChar="*" Height="22" FontSize="11"/>
+          <TextBlock Text="SIAPEN" FontSize="26" FontWeight="Bold" HorizontalAlignment="Center" Foreground="#212529"/>
+          <TextBlock Text="Agência Estadual de Administração do Sistema Penitenciário" 
+                     FontSize="12" Foreground="#6C757D" TextWrapping="Wrap" TextAlignment="Center"/>
         </StackPanel>
-      </Border>
 
-      <!-- GroupBox Estabelecimento Penal (direita) -->
-      <Border Grid.Column="1" BorderBrush="Navy" BorderThickness="1" Padding="6">
-        <Grid>
-          <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-          </Grid.RowDefinitions>
-
-          <TextBlock Grid.Row="0" Text="Estabelecimento Penal"
-                     FontWeight="Bold" Foreground="Navy" FontSize="11"
-                     HorizontalAlignment="Left" Margin="0,0,0,2"/>
-
-          <!-- ComboBox Unidade Penal -->
-          <ComboBox Grid.Row="0" x:Name="ComboUp"
-                    PlaceholderText="Selecione a Unidade Penal..."
-                    ItemsSource="{Binding UnidadesPenal}"
-                    SelectedItem="{Binding SelectedUp}"
-                    HorizontalAlignment="Stretch" Height="22" FontSize="11"
-                    Margin="0,16,0,0" VerticalAlignment="Top">
-            <ComboBox.ItemTemplate>
-              <DataTemplate>
-                <TextBlock Text="{Binding NomeUp}"/>
-              </DataTemplate>
-            </ComboBox.ItemTemplate>
-          </ComboBox>
-
-          <!-- Botões Entrar / Sair (centralizados) -->
-          <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center"
-                      VerticalAlignment="Center" Spacing="30" Margin="0,8,0,0">
-            <Button Content="Entrar" Command="{Binding EntrarCommand}"
-                    Width="110" Height="60"
-                    IsEnabled="{Binding PodeEntrar}"
-                    HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                    FontSize="12"/>
-            <Button Content="Sair" Command="{Binding SairCommand}"
-                    Width="100" Height="60"
-                    HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                    FontSize="12"/>
+        <!-- Formulário -->
+        <StackPanel Spacing="14">
+          <StackPanel Spacing="4">
+            <TextBlock Text="Usuário" FontWeight="SemiBold" FontSize="13" Foreground="#495057"/>
+            <TextBox x:Name="TxtLogin" Text="{Binding Login}" PlaceholderText="Digite seu usuário" Height="40" FontSize="14"/>
+          </StackPanel>
+          
+          <StackPanel Spacing="4">
+            <TextBlock Text="Senha" FontWeight="SemiBold" FontSize="13" Foreground="#495057"/>
+            <TextBox Text="{Binding Senha}" PlaceholderText="Digite sua senha" PasswordChar="•" Height="40" FontSize="14"/>
           </StackPanel>
 
-          <!-- Status / Loading / Erro -->
-          <StackPanel Grid.Row="2" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,4,0,0">
-            <ProgressBar IsIndeterminate="True" IsVisible="{Binding IsLoading}" Height="4" Width="200"/>
-            <TextBlock Text="Conectando ao banco..."
-                       FontSize="10" Foreground="Gray" FontStyle="Italic"
-                       HorizontalAlignment="Center"
-                       IsVisible="{Binding IsConnecting}"/>
-            <TextBlock Text="{Binding ErrorMessage}"
-                       Foreground="Red" FontSize="10" TextWrapping="Wrap"
-                       HorizontalAlignment="Center" MaxWidth="420"
-                       IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+          <StackPanel Spacing="4">
+            <TextBlock Text="Unidade Penal" FontWeight="SemiBold" FontSize="13" Foreground="#495057"/>
+            <ComboBox x:Name="ComboUp" PlaceholderText="Selecione a Unidade..." 
+                      ItemsSource="{Binding UnidadesPenal}" SelectedItem="{Binding SelectedUp}"
+                      HorizontalAlignment="Stretch" Height="40" FontSize="14">
+              <ComboBox.ItemTemplate>
+                <DataTemplate>
+                  <TextBlock Text="{Binding NomeUp}"/>
+                </DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
           </StackPanel>
-        </Grid>
-      </Border>
-    </Grid>
+        </StackPanel>
+
+        <!-- Ações -->
+        <StackPanel Spacing="8" Margin="0,24,0,0">
+          <Button Classes="primary" Content="Entrar" Command="{Binding EntrarCommand}" 
+                  IsEnabled="{Binding PodeEntrar}" HorizontalAlignment="Stretch" Height="44" FontSize="14"/>
+          <Button Content="Sair" Command="{Binding SairCommand}" 
+                  HorizontalAlignment="Stretch" Height="40" Background="Transparent" BorderThickness="0" Foreground="#6C757D" FontSize="14"/>
+        </StackPanel>
+
+        <!-- Status -->
+        <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,8,0,0">
+          <ProgressBar IsIndeterminate="True" IsVisible="{Binding IsLoading}" Height="4" Width="200" Margin="0,0,0,8" Foreground="#0d6efd"/>
+          <TextBlock Text="Conectando ao banco..." FontSize="12" Foreground="#6C757D" FontStyle="Italic" 
+                     HorizontalAlignment="Center" IsVisible="{Binding IsConnecting}"/>
+          <TextBlock Text="{Binding ErrorMessage}" Foreground="#DC3545" FontSize="12" TextWrapping="Wrap" 
+                     HorizontalAlignment="Center" TextAlignment="Center"
+                     IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+        </StackPanel>
+      </StackPanel>
+    </Border>
   </Grid>
 </Window>

@@ -2,8 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="Siapen.App"
              xmlns:local="using:Siapen"
-             RequestedThemeVariant="Default">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+             RequestedThemeVariant="Light">
 
     <Application.DataTemplates>
         <local:ViewLocator/>
@@ -11,5 +10,67 @@
   
     <Application.Styles>
         <FluentTheme />
+        
+        <!-- Fonte Global e Estilos Comuns -->
+        <Style Selector="Window">
+            <Setter Property="FontFamily" Value="Inter, Roboto, Segoe UI, sans-serif" />
+            <Setter Property="TextElement.Foreground" Value="#333333" />
+        </Style>
+
+        <!-- Botões Gerais -->
+        <Style Selector="Button">
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="16,8"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+
+        <!-- Botões Estilo Menu Principal (Grandes) -->
+        <Style Selector="Button.menuItem">
+            <Setter Property="Background" Value="#F8F9FA"/>
+            <Setter Property="BorderBrush" Value="#E9ECEF"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="#212529"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+        <Style Selector="Button.menuItem:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#E2E6EA"/>
+            <Setter Property="BorderBrush" Value="#DAE0E5"/>
+        </Style>
+
+        <!-- Botão Primário -->
+        <Style Selector="Button.primary">
+            <Setter Property="Background" Value="#0d6efd"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+        <Style Selector="Button.primary:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#0b5ed7"/>
+        </Style>
+        
+        <!-- Caixas de Texto -->
+        <Style Selector="TextBox">
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="8,6"/>
+            <Setter Property="BorderBrush" Value="#CED4DA"/>
+        </Style>
+
+        <!-- ComboBox -->
+        <Style Selector="ComboBox">
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="BorderBrush" Value="#CED4DA"/>
+        </Style>
+
+        <!-- Card Reutilizável -->
+        <Style Selector="Border.card">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#EAEDF1"/>
+            <Setter Property="BoxShadow" Value="0 4 12 0 #15000000"/>
+            <Setter Property="Padding" Value="24"/>
+        </Style>
+
     </Application.Styles>
 </Application>

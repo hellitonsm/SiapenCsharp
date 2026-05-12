@@ -8,7 +8,7 @@
         x:DataType="vm:MainWindowViewModel"
         Title="SIAPEN - Sistema Integrado de Administração Penitenciária"
         WindowState="Maximized"
-        Background="White">
+        Background="#F4F6F8">
 
   <Design.DataContext>
     <vm:MainWindowViewModel/>
@@ -210,11 +210,10 @@
     </Menu>
 
     <!-- Cabeçalho (PanelCabecalho no DFM: 1163×147 com Image2 de fundo) -->
-    <Border DockPanel.Dock="Top" Background="#FFD8D8D8" Height="50">
+    <Border DockPanel.Dock="Top" Background="#FFFFFF" Height="56" BorderBrush="#E9ECEF" BorderThickness="0,0,0,1">
       <TextBlock Text="{Binding StatusMessage}"
-                 FontSize="22" FontWeight="Bold" Foreground="Navy"
-                 VerticalAlignment="Center" HorizontalAlignment="Center"
-                 FontFamily="Times New Roman"/>
+                 FontSize="22" FontWeight="Bold" Foreground="#2B3A4A"
+                 VerticalAlignment="Center" HorizontalAlignment="Center"/>
     </Border>
 
     <!-- Conteúdo Principal com TabControl -->
@@ -241,48 +240,34 @@
 
               <!-- Coluna esquerda -->
               <StackPanel Grid.Column="0" Spacing="8" Margin="4">
-                <Button Content="Confere" Height="65"
-                        Command="{Binding BtnConfereCommand}"
-                        Foreground="Navy" FontSize="14"
-                        FontFamily="Times New Roman"
+                <Button Content="Confere" Height="70" Classes="menuItem" HorizontalAlignment="Stretch"
+                        Command="{Binding BtnConfereCommand}" Foreground="#2B3A4A" FontSize="14"
                         HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-                <Button Content="Agenda de Atendimento" Height="65"
-                        Command="{Binding BtnAgendaAtendimentoCommand}"
-                        Foreground="Navy" FontSize="14"
-                        FontFamily="Times New Roman"
+                <Button Content="Agenda de Atendimento" Height="70" Classes="menuItem" HorizontalAlignment="Stretch"
+                        Command="{Binding BtnAgendaAtendimentoCommand}" Foreground="#2B3A4A" FontSize="14"
                         HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-                <Button Content="Requerimentos" Height="65"
-                        Command="{Binding BtnRequerimentosCommand}"
-                        Foreground="Navy" FontSize="14"
-                        FontFamily="Times New Roman"
+                <Button Content="Requerimentos" Height="70" Classes="menuItem" HorizontalAlignment="Stretch"
+                        Command="{Binding BtnRequerimentosCommand}" Foreground="#2B3A4A" FontSize="14"
                         HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
               </StackPanel>
 
               <!-- Coluna central -->
               <StackPanel Grid.Column="1" Spacing="8" Margin="4">
-                <Button Content="Ocorrências Administrativas" Height="65"
-                        Command="{Binding BtnOcorrenciaCommand}"
-                        Foreground="Navy" FontSize="14"
-                        FontFamily="Times New Roman"
+                <Button Content="Ocorrências Administrativas" Height="70" Classes="menuItem" HorizontalAlignment="Stretch"
+                        Command="{Binding BtnOcorrenciaCommand}" Foreground="#2B3A4A" FontSize="14"
                         HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
               </StackPanel>
 
               <!-- Coluna direita -->
               <StackPanel Grid.Column="2" Spacing="8" Margin="4">
-                <Button Content="Relatórios" Height="65"
-                        Command="{Binding BtnRelatorioCommand}"
-                        Foreground="Navy" FontSize="14"
-                        FontFamily="Times New Roman"
+                <Button Content="Relatórios" Height="70" Classes="menuItem" HorizontalAlignment="Stretch"
+                        Command="{Binding BtnRelatorioCommand}" Foreground="#2B3A4A" FontSize="14"
                         HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-                <Button Content="Consulta" Height="65"
-                        Command="{Binding BtnConsultaGeralCommand}"
-                        Foreground="Navy" FontSize="14"
-                        FontFamily="Times New Roman"
+                <Button Content="Consulta" Height="70" Classes="menuItem" HorizontalAlignment="Stretch"
+                        Command="{Binding BtnConsultaGeralCommand}" Foreground="#2B3A4A" FontSize="14"
                         HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-                <Button Content="Histórico / Ficha Disciplinar" Height="65"
-                        Command="{Binding BtnHistoricoFichaDisciplinarCommand}"
-                        Foreground="Navy" FontSize="14"
-                        FontFamily="Times New Roman"
+                <Button Content="Histórico / Ficha Disciplinar" Height="70" Classes="menuItem" HorizontalAlignment="Stretch"
+                        Command="{Binding BtnHistoricoFichaDisciplinarCommand}" Foreground="#2B3A4A" FontSize="14"
                         HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
               </StackPanel>
             </Grid>
@@ -290,8 +275,8 @@
             <!-- Linha 2: ComboBox Unidade Penal -->
             <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center"
                         Margin="0,12,0,8" Spacing="8">
-              <TextBlock Text="Unidade Penal:" VerticalAlignment="Center" Foreground="Navy"
-                         FontSize="11" FontFamily="MS Sans Serif"/>
+              <TextBlock Text="Unidade Penal:" VerticalAlignment="Center" Foreground="#2B3A4A"
+                         FontSize="11"/>
               <ComboBox Width="300" SelectedItem="{Binding SelectedUp}"
                         PlaceholderText="Selecione..." Height="22" FontSize="11"/>
             </StackPanel>
@@ -304,7 +289,7 @@
               </Grid.ColumnDefinitions>
 
               <!-- Painel preview esquerdo (pnl1 no DFM) -->
-              <Border Grid.Column="0" Background="White" BorderBrush="Gray" BorderThickness="1"
+              <Border Grid.Column="0" Background="#F4F6F8" BorderBrush="Gray" BorderThickness="1"
                       Margin="2" Padding="1">
                 <Grid>
                   <TextBlock Text="[Preview de Relatório]"
@@ -318,7 +303,7 @@
               </Border>
 
               <!-- Painel preview direito (Panel1 no DFM) -->
-              <Border Grid.Column="1" Background="White" BorderBrush="Gray" BorderThickness="1"
+              <Border Grid.Column="1" Background="#F4F6F8" BorderBrush="Gray" BorderThickness="1"
                       Margin="2" Padding="1">
                 <Grid>
                   <TextBlock Text="[Preview de Relatório]"
@@ -340,27 +325,27 @@
               </Grid.ColumnDefinitions>
 
               <!-- Data/Hora (LabelDATA_HORA no DFM) -->
-              <Border Grid.Column="0" Background="Black" Padding="6" Margin="2"
+              <Border Grid.Column="0" Background="#212529" Padding="6" Margin="2"
                       Height="36">
-                <TextBlock Text="{Binding DataHora}" Foreground="Lime"
+                <TextBlock Text="{Binding DataHora}" Foreground="#20C997"
                            HorizontalAlignment="Center" VerticalAlignment="Center"
-                           FontSize="16" FontFamily="Times New Roman"/>
+                           FontSize="16"/>
               </Border>
 
               <!-- Database info (LabelDatabase no DFM) -->
-              <Border Grid.Column="1" Background="Black" Padding="6" Margin="2"
+              <Border Grid.Column="1" Background="#212529" Padding="6" Margin="2"
                       Height="36">
-                <TextBlock Text="{Binding DatabaseInfo}" Foreground="Lime"
+                <TextBlock Text="{Binding DatabaseInfo}" Foreground="#20C997"
                            HorizontalAlignment="Center" VerticalAlignment="Center"
-                           FontSize="12" FontFamily="Times New Roman"/>
+                           FontSize="12"/>
               </Border>
 
               <!-- Login info (LabelLOGIN no DFM) -->
-              <Border Grid.Column="2" Background="Black" Padding="6" Margin="2"
+              <Border Grid.Column="2" Background="#212529" Padding="6" Margin="2"
                       Height="36">
-                <TextBlock Text="{Binding LoginInfo}" Foreground="Lime"
+                <TextBlock Text="{Binding LoginInfo}" Foreground="#20C997"
                            HorizontalAlignment="Center" VerticalAlignment="Center"
-                           FontSize="12" FontFamily="Times New Roman"/>
+                           FontSize="12"/>
               </Border>
             </Grid>
           </Grid>
@@ -383,69 +368,54 @@
             </Grid.RowDefinitions>
 
             <!-- Coluna 1: Saúde + Outros -->
-            <Button Grid.Column="0" Grid.Row="0" Content="Clínica Médica" Height="55"
-                    Margin="4" Command="{Binding ClinicaMedicaCommand}"
-                    Foreground="Navy" FontSize="13" FontFamily="Times New Roman"
+            <Button Grid.Column="0" Grid.Row="0" Content="Clínica Médica" Height="60" Classes="menuItem" HorizontalAlignment="Stretch"
+                    Margin="4" Command="{Binding ClinicaMedicaCommand}" Foreground="#2B3A4A" FontSize="13"
                     HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-            <Button Grid.Column="0" Grid.Row="1" Content="Disciplina" Height="55"
-                    Margin="4" Command="{Binding DisciplinaCommand}"
-                    Foreground="Navy" FontSize="13" FontFamily="Times New Roman"
+            <Button Grid.Column="0" Grid.Row="1" Content="Disciplina" Height="60" Classes="menuItem" HorizontalAlignment="Stretch"
+                    Margin="4" Command="{Binding DisciplinaCommand}" Foreground="#2B3A4A" FontSize="13"
                     HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-            <Button Grid.Column="0" Grid.Row="2" Content="Educação" Height="55"
-                    Margin="4" Command="{Binding EducacaoCommand}"
-                    Foreground="Navy" FontSize="13" FontFamily="Times New Roman"
+            <Button Grid.Column="0" Grid.Row="2" Content="Educação" Height="60" Classes="menuItem" HorizontalAlignment="Stretch"
+                    Margin="4" Command="{Binding EducacaoCommand}" Foreground="#2B3A4A" FontSize="13"
                     HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-            <Button Grid.Column="0" Grid.Row="3" Content="Enfermagem" Height="55"
-                    Margin="4" Command="{Binding EnfermagemCommand}"
-                    Foreground="Navy" FontSize="13" FontFamily="Times New Roman"
+            <Button Grid.Column="0" Grid.Row="3" Content="Enfermagem" Height="60" Classes="menuItem" HorizontalAlignment="Stretch"
+                    Margin="4" Command="{Binding EnfermagemCommand}" Foreground="#2B3A4A" FontSize="13"
                     HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-            <Button Grid.Column="0" Grid.Row="4" Content="Farmácia" Height="55"
-                    Margin="4" Command="{Binding FarmaciaCommand}"
-                    Foreground="Navy" FontSize="13" FontFamily="Times New Roman"
+            <Button Grid.Column="0" Grid.Row="4" Content="Farmácia" Height="60" Classes="menuItem" HorizontalAlignment="Stretch"
+                    Margin="4" Command="{Binding FarmaciaCommand}" Foreground="#2B3A4A" FontSize="13"
                     HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
 
             <!-- Coluna 2: Jurídico + Reabilitação -->
-            <Button Grid.Column="1" Grid.Row="0" Content="Jurídico" Height="55"
-                    Margin="4" Command="{Binding JuridicoCommand}"
-                    Foreground="Navy" FontSize="13" FontFamily="Times New Roman"
+            <Button Grid.Column="1" Grid.Row="0" Content="Jurídico" Height="60" Classes="menuItem" HorizontalAlignment="Stretch"
+                    Margin="4" Command="{Binding JuridicoCommand}" Foreground="#2B3A4A" FontSize="13"
                     HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-            <Button Grid.Column="1" Grid.Row="1" Content="Odontologia" Height="55"
-                    Margin="4" Command="{Binding OdontologiaCommand}"
-                    Foreground="Navy" FontSize="13" FontFamily="Times New Roman"
+            <Button Grid.Column="1" Grid.Row="1" Content="Odontologia" Height="60" Classes="menuItem" HorizontalAlignment="Stretch"
+                    Margin="4" Command="{Binding OdontologiaCommand}" Foreground="#2B3A4A" FontSize="13"
                     HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-            <Button Grid.Column="1" Grid.Row="2" Content="Pedagogia" Height="55"
-                    Margin="4" Command="{Binding PedagogiaCommand}"
-                    Foreground="Navy" FontSize="13" FontFamily="Times New Roman"
+            <Button Grid.Column="1" Grid.Row="2" Content="Pedagogia" Height="60" Classes="menuItem" HorizontalAlignment="Stretch"
+                    Margin="4" Command="{Binding PedagogiaCommand}" Foreground="#2B3A4A" FontSize="13"
                     HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-            <Button Grid.Column="1" Grid.Row="3" Content="Psicologia" Height="55"
-                    Margin="4" Command="{Binding PsicologiaCommand}"
-                    Foreground="Navy" FontSize="13" FontFamily="Times New Roman"
+            <Button Grid.Column="1" Grid.Row="3" Content="Psicologia" Height="60" Classes="menuItem" HorizontalAlignment="Stretch"
+                    Margin="4" Command="{Binding PsicologiaCommand}" Foreground="#2B3A4A" FontSize="13"
                     HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-            <Button Grid.Column="1" Grid.Row="4" Content="Psicossocial" Height="55"
-                    Margin="4" Command="{Binding PsicossocialCommand}"
-                    Foreground="Navy" FontSize="13" FontFamily="Times New Roman"
+            <Button Grid.Column="1" Grid.Row="4" Content="Psicossocial" Height="60" Classes="menuItem" HorizontalAlignment="Stretch"
+                    Margin="4" Command="{Binding PsicossocialCommand}" Foreground="#2B3A4A" FontSize="13"
                     HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
 
             <!-- Coluna 3: Psiquiatria + Trabalho -->
-            <Button Grid.Column="2" Grid.Row="0" Content="Psiquiatria" Height="55"
-                    Margin="4" Command="{Binding PsiquiatriaCommand}"
-                    Foreground="Navy" FontSize="13" FontFamily="Times New Roman"
+            <Button Grid.Column="2" Grid.Row="0" Content="Psiquiatria" Height="60" Classes="menuItem" HorizontalAlignment="Stretch"
+                    Margin="4" Command="{Binding PsiquiatriaCommand}" Foreground="#2B3A4A" FontSize="13"
                     HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-            <Button Grid.Column="2" Grid.Row="1" Content="Saúde" Height="55"
-                    Margin="4" Command="{Binding SaudeCommand}"
-                    Foreground="Navy" FontSize="13" FontFamily="Times New Roman"
+            <Button Grid.Column="2" Grid.Row="1" Content="Saúde" Height="60" Classes="menuItem" HorizontalAlignment="Stretch"
+                    Margin="4" Command="{Binding SaudeCommand}" Foreground="#2B3A4A" FontSize="13"
                     HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-            <Button Grid.Column="2" Grid.Row="2" Content="Serviço Social" Height="55"
-                    Margin="4" Command="{Binding ServicoSocialCommand}"
-                    Foreground="Navy" FontSize="13" FontFamily="Times New Roman"
+            <Button Grid.Column="2" Grid.Row="2" Content="Serviço Social" Height="60" Classes="menuItem" HorizontalAlignment="Stretch"
+                    Margin="4" Command="{Binding ServicoSocialCommand}" Foreground="#2B3A4A" FontSize="13"
                     HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-            <Button Grid.Column="2" Grid.Row="3" Content="Terapia Ocupacional" Height="55"
-                    Margin="4" Command="{Binding TerapiaOcupacionalCommand}"
-                    Foreground="Navy" FontSize="13" FontFamily="Times New Roman"
+            <Button Grid.Column="2" Grid.Row="3" Content="Terapia Ocupacional" Height="60" Classes="menuItem" HorizontalAlignment="Stretch"
+                    Margin="4" Command="{Binding TerapiaOcupacionalCommand}" Foreground="#2B3A4A" FontSize="13"
                     HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-            <Button Grid.Column="2" Grid.Row="4" Content="Trabalho" Height="55"
-                    Margin="4" Command="{Binding TrabalhoCommand}"
-                    Foreground="Navy" FontSize="13" FontFamily="Times New Roman"
+            <Button Grid.Column="2" Grid.Row="4" Content="Trabalho" Height="60" Classes="menuItem" HorizontalAlignment="Stretch"
+                    Margin="4" Command="{Binding TrabalhoCommand}" Foreground="#2B3A4A" FontSize="13"
                     HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
           </Grid>
         </TabItem>
@@ -477,7 +447,7 @@
 
             <!-- Filtros (RadioGroups no DFM) -->
             <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,8">
-              <TextBlock Text="Período:" VerticalAlignment="Center" FontSize="11" Foreground="Navy" Margin="0,0,8,0"/>
+              <TextBlock Text="Período:" VerticalAlignment="Center" FontSize="11" Foreground="#2B3A4A" Margin="0,0,8,0"/>
               <RadioButton Content="Últimos 7 dias" IsChecked="True" FontSize="11" Margin="4,0"/>
               <RadioButton Content="Ontem" FontSize="11" Margin="4,0"/>
               <RadioButton Content="Hoje" FontSize="11" Margin="4,0"/>
@@ -490,7 +460,7 @@
             </StackPanel>
 
             <!-- Área de preview (frxPreview3 no DFM) -->
-            <Border Grid.Row="2" Background="White" BorderBrush="Gray" BorderThickness="1">
+            <Border Grid.Row="2" Background="#F4F6F8" BorderBrush="Gray" BorderThickness="1">
               <TextBlock Text="[Área de visualização de procedimentos]"
                          HorizontalAlignment="Center" VerticalAlignment="Center"
                          Foreground="Gray" FontSize="14" FontStyle="Italic"/>
@@ -525,14 +495,14 @@
             <!-- Navegação + Equipe -->
             <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,6"
                        VerticalAlignment="Center">
-              <TextBlock Text="◀ ▶" VerticalAlignment="Center" FontSize="14" Foreground="Navy"
+              <TextBlock Text="◀ ▶" VerticalAlignment="Center" FontSize="14" Foreground="#2B3A4A"
                          ToolTip.Tip="Navegação de registros" Margin="0,0,12,0"/>
               <TextBlock Text="Equipe:" VerticalAlignment="Center" FontSize="11" Margin="0,0,8,0"/>
               <ComboBox Width="220" PlaceholderText="Selecione a equipe..." Height="22" FontSize="11"/>
             </StackPanel>
 
             <!-- Grid de dados (DBGridEscalaPlantao no DFM) -->
-            <Border Grid.Row="2" Background="White" BorderBrush="Gray" BorderThickness="1">
+            <Border Grid.Row="2" Background="#F4F6F8" BorderBrush="Gray" BorderThickness="1">
               <Grid>
                 <TextBlock Text="[Grid de Escala de Plantão]"
                            HorizontalAlignment="Center" VerticalAlignment="Center"
@@ -600,15 +570,15 @@
               <!-- Campos de identificação -->
               <StackPanel Spacing="4" Margin="0,8,0,0">
                 <StackPanel Orientation="Horizontal">
-                  <TextBlock Text="ID:" Width="70" Foreground="Navy" FontWeight="Bold" FontSize="11"/>
+                  <TextBlock Text="ID:" Width="70" Foreground="#2B3A4A" FontWeight="Bold" FontSize="11"/>
                   <TextBlock Text="---" FontWeight="Bold" FontSize="11"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
-                  <TextBlock Text="Nome:" Width="70" Foreground="Navy" FontWeight="Bold" FontSize="11"/>
+                  <TextBlock Text="Nome:" Width="70" Foreground="#2B3A4A" FontWeight="Bold" FontSize="11"/>
                   <TextBlock Text="---" FontWeight="Bold" FontSize="11"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
-                  <TextBlock Text="Matrícula:" Width="70" Foreground="Navy" FontWeight="Bold" FontSize="11"/>
+                  <TextBlock Text="Matrícula:" Width="70" Foreground="#2B3A4A" FontWeight="Bold" FontSize="11"/>
                   <TextBlock Text="---" FontWeight="Bold" FontSize="11"/>
                 </StackPanel>
               </StackPanel>
@@ -617,7 +587,7 @@
             <!-- Coluna direita: Tabs internas -->
             <TabControl Grid.Column="1" Margin="16,0,0,0">
               <TabItem Header="Logs de Acesso">
-                <Border Background="White" BorderBrush="Gray" BorderThickness="1" Margin="2">
+                <Border Background="#F4F6F8" BorderBrush="Gray" BorderThickness="1" Margin="2">
                   <TextBlock Text="Logs de acesso do funcionário"
                              HorizontalAlignment="Center" VerticalAlignment="Center"
                              Foreground="Gray" FontSize="12" FontStyle="Italic"/>

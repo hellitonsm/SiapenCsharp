@@ -5,6 +5,7 @@ using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Threading;
 using Siapen.Helpers;
+using Siapen.Models;
 using Siapen.Services;
 using Siapen.ViewModels;
 using System;
@@ -44,23 +45,26 @@ public partial class MainWindow : Window
             {
                 comboUp.ItemsSource = unidades;
 
+                // Registrar o handler ANTES de selecionar para evitar null reference
+                comboUp.SelectionChanged += (_, args) =>
+                {
+                    if (comboUp.SelectedItem is UnidadePenal up)
+                    {
+                        GlobalVars.IdUp = up.IdUp;
+                        GlobalVars.NomeUp = up.NomeUp;
+                        if (_viewModel != null)
+                            _viewModel.DatabaseInfo = $"UP: {up.NomeUp}";
+                        LogHelper.Debug($"UP alterada: {up.NomeUp} (ID={up.IdUp})", "MAIN");
+                    }
+                };
+
+                // Selecionar a APÓS registrar o handler
                 if (GlobalVars.IdUp > 0)
                 {
                     var upSelecionada = unidades.FirstOrDefault(u => u.IdUp == GlobalVars.IdUp);
                     if (upSelecionada != null)
                         comboUp.SelectedItem = upSelecionada;
                 }
-
-                comboUp.SelectionChanged += (_, args) =>
-                {
-                    if (comboUp.SelectedItem is Models.UnidadePenal up)
-                    {
-                        GlobalVars.IdUp = up.IdUp;
-                        GlobalVars.NomeUp = up.NomeUp;
-                        _viewModel.DatabaseInfo = $"UP: {up.NomeUp}";
-                        LogHelper.Debug($"UP alterada: {up.NomeUp} (ID={up.IdUp})", "MAIN");
-                    }
-                };
             }
 
             _viewModel.LoginInfo = $"{GlobalVars.NomeFuncionarioLogado} ({GlobalVars.LoginConectado})";

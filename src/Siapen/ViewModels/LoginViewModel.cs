@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -102,6 +103,43 @@ public partial class LoginViewModel : ObservableObject
                 ErrorMessage = $"Erro ao conectar ao banco: {ex.Message}";
                 IsConnecting = false;
             });
+        }
+    }
+
+    /// <summary>
+    /// Detecta a UP do funcionário pelo login e seleciona automaticamente no ComboBox
+    /// </summary>
+    [RelayCommand]
+    private async Task DetectarUpPorLogin()
+    {
+        if (string.IsNullOrWhiteSpace(Login))
+            return;
+
+        try
+        {
+            var login = Login.Trim();
+            int? idUp = await Task.Run(() => DatabaseService.GetIdUpByLogin(login));
+
+            if (idUp.HasValue)
+            {
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    var up = UnidadesPenal.FirstOrDefault(u => u.IdUp == idUp.Value);
+                    if (up != null)
+                    {
+                        SelectedUp = up;
+                        LogHelper.Debug($"UP detectada automaticamente: {up.NomeUp} (ID={up.IdUp}) para login '{login}'", "LOGIN");
+                    }
+                });
+            }
+            else
+            {
+                LogHelper.Debug($"Nenhuma UP encontrada para login '{login}'", "LOGIN");
+            }
+        }
+        catch (Exception ex)
+        {
+            LogHelper.Error("Erro ao detectar UP por login", ex, "LOGIN");
         }
     }
 

@@ -70,7 +70,7 @@
                      HorizontalAlignment="Left" Margin="0,0,0,2"/>
 
           <TextBlock Text="Login" FontWeight="Bold" Foreground="Navy" FontSize="11"/>
-          <TextBox Text="{Binding Login}" PlaceholderText="Usuário" Height="22" FontSize="11"/>
+          <TextBox x:Name="TxtLogin" Text="{Binding Login}" PlaceholderText="Usuário" Height="22" FontSize="11"/>
 
           <TextBlock Text="Senha" FontWeight="Bold" Foreground="Navy" FontSize="11" Margin="0,6,0,0"/>
           <TextBox Text="{Binding Senha}" PlaceholderText="Senha" PasswordChar="*" Height="22" FontSize="11"/>

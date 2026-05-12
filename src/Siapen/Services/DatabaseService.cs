@@ -176,6 +176,20 @@ public static class DatabaseService
     }
 
     /// <summary>
+    /// Retorna o ID_UP de um funcionário pelo login
+    /// </summary>
+    public static int? GetIdUpByLogin(string login)
+    {
+        using var cmd = new FbCommand(
+            "SELECT ID_UP FROM FUNCIONARIO WHERE UPPER(LOGIN) = @LOGIN",
+            Connection);
+        cmd.Parameters.AddWithValue("@LOGIN", login.ToUpper().Trim());
+        var result = cmd.ExecuteScalar();
+        if (result == null || result == DBNull.Value) return null;
+        return Convert.ToInt32(result);
+    }
+
+    /// <summary>
     /// Retorna lista de funcionários por UP
     /// </summary>
     public static DataTable GetFuncionarios(int idUp)

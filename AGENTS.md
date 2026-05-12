@@ -68,12 +68,42 @@ src/Siapen/
 ### Estado Atual
 
 - [x] Estrutura do projeto criada
-- [x] LibHelper convertido
+- [x] LibHelper convertido (Senha(), ValidaCpf(), etc.)
 - [x] GlobalVars convertido
-- [x] DatabaseService criado
+- [x] DatabaseService criado (conexão Firebird OK)
 - [x] MainWindow esqueleto com todos os botões
-- [ ] LoginWindow
+- [x] LoginWindow criada (ComboBox de UPs funcionando)
+- [x] App.axaml.cs atualizado para abrir LoginWindow
+- [x] Sistema de log criado (LogHelper.cs)
+- [x] Charset corrigido (UTF8, ignorando WIN1252 do INI)
+- [x] AuthHelper reescrito para ler senha como bytes brutos via CAST BLOB
+- [x] **Login funcionando!** — Login `226080` / senha correta → `HELLITON SOARES MESQUITA` (ID=8024)
+- [x] MainWindow NullReferenceException corrigida (UpdateDataHora movido para OnOpened)
 - [ ] Telas de cadastro
 - [ ] Telas de setores
 - [ ] Telas de movimentação
 - [ ] Relatórios
+
+### Descobertas Importantes
+
+#### Charset Firebird
+- O driver FirebirdSql.Data.FirebirdClient 10.3.4 **NÃO suporta** WIN1252, ISO8859_1, NONE
+- Apenas UTF8 funciona com o servidor Firebird 2.5
+- O INI original tem `Charset=WIN1252` — o AppConfig sobrescreve para UTF8
+
+#### Comparação de Senhas
+- A cifra é `(255 - c) & 0xFF` — auto-inversora
+- A senha cifrada contém chars >127 (ex: '5' 0x35 → 0xCF)
+- O driver UTF8 converte chars >127 para 2 bytes, quebrando comparação
+- **Solução**: Ler o campo SENHA como bytes brutos via `reader.GetBytes()` e converter com ISO-8859-1
+- Comparar em C# com `StringComparison.Ordinal`
+
+#### Credenciais de Teste
+- Login: `233448`, Senha: `56965656` (confirmada via isql)
+- Login: `ADMIN`, Senha: decifra de `BF CE CC CA C8 C6 CF BB` = `@135790D`
+- Muitos funcionários têm senha = login
+
+#### Build
+- `dotnet build --no-restore` é mais rápido (evita restore que às vezes trava)
+- `dotnet run --no-build` para executar sem recompilar
+- Logs em `bin/Debug/net10.0/Logs/siapen_YYYY-MM-DD.log`

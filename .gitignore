@@ -15,6 +15,9 @@ obj/
 Logs/
 *.log
 
+# Project
+AGENTS.md
+
 # OS
 .DS_Store
 Thumbs.db

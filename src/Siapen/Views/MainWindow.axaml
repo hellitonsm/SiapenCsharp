@@ -1,6 +1,7 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:Siapen.ViewModels"
+        xmlns:models="using:Siapen.Models"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
@@ -206,7 +207,7 @@
         <MenuItem Header="Atribuição por Setores" Command="{Binding AtribuicaoSetoresCommand}"/>
       </MenuItem>
 
-      <MenuItem Header="Sair" Command="{Binding SairCommand}"/>
+      <MenuItem Header="Sair" Click="SairMenuItem_Click"/>
     </Menu>
 
     <!-- Cabeçalho (PanelCabecalho no DFM: 1163×147 com Image2 de fundo) -->
@@ -277,8 +278,14 @@
                         Margin="0,12,0,8" Spacing="8">
               <TextBlock Text="Unidade Penal:" VerticalAlignment="Center" Foreground="#2B3A4A"
                          FontSize="11"/>
-              <ComboBox Width="300" SelectedItem="{Binding SelectedUp}"
-                        PlaceholderText="Selecione..." Height="22" FontSize="11"/>
+              <ComboBox x:Name="ComboUp" Width="300" Height="22" FontSize="11"
+                        PlaceholderText="Selecione...">
+                <ComboBox.ItemTemplate>
+                  <DataTemplate x:DataType="models:UnidadePenal">
+                    <TextBlock Text="{Binding NomeUp}"/>
+                  </DataTemplate>
+                </ComboBox.ItemTemplate>
+              </ComboBox>
             </StackPanel>
 
             <!-- Linha 3: Painéis de preview (frxPreview no DFM) -->

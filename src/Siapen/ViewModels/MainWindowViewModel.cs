@@ -20,9 +20,6 @@ public partial class MainWindowViewModel : ViewModelBase
     private string _dataHora = "----------------------------";
 
     [ObservableProperty]
-    private string _selectedUp = string.Empty;
-
-    [ObservableProperty]
     private int _selectedTabIndex;
 
     // Navegação - cada comando abre uma tela ou mostra "Não implementado"
@@ -414,12 +411,4 @@ public partial class MainWindowViewModel : ViewModelBase
 
     [RelayCommand]
     private void AtribuicaoSetores() => NaoImplementado();
-
-    // === SAIR ===
-
-    [RelayCommand]
-    private void Sair()
-    {
-        Environment.Exit(0);
-    }
 }

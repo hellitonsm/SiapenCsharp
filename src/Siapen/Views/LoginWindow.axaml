@@ -1,0 +1,99 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Siapen.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="660" d:DesignHeight="320"
+        x:Class="Siapen.Views.LoginWindow"
+        x:DataType="vm:LoginViewModel"
+        Title="SIAPEN - Sistema Integrado de Administração Penitenciária"
+        WindowStartupLocation="CenterScreen"
+        CanResize="False"
+        Width="660" Height="320"
+        Background="#FFF0F0F0">
+
+  <Design.DataContext>
+    <vm:LoginViewModel/>
+  </Design.DataContext>
+
+  <Grid Margin="15">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+    </Grid.RowDefinitions>
+
+    <!-- Cabeçalho AGEPEN -->
+    <Border Grid.Row="0" Background="White" BorderBrush="Navy" BorderThickness="1"
+            Padding="10" Margin="0,0,0,15">
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10">
+        <TextBlock Text="🏛" FontSize="24" VerticalAlignment="Center"/>
+        <TextBlock Text="AGÊNCIA ESTADUAL DE ADMINISTRAÇÃO DO SISTEMA PENITENCIÁRIO"
+                   FontSize="14" FontWeight="Bold" Foreground="Navy"
+                   VerticalAlignment="Center" TextWrapping="Wrap"/>
+      </StackPanel>
+    </Border>
+
+    <!-- Conteúdo principal -->
+    <Grid Grid.Row="1">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="200"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+
+      <!-- Painel de Identificação (Login/Senha) -->
+      <Border Grid.Column="0" BorderBrush="Gray" BorderThickness="1" Padding="10" Margin="0,0,10,0">
+        <StackPanel Spacing="8">
+          <TextBlock Text="Identificação" FontWeight="Bold" Foreground="Navy" FontSize="12"/>
+
+          <TextBlock Text="Login:" FontWeight="Bold" Foreground="Navy" FontSize="11"/>
+          <TextBox Text="{Binding Login}" PlaceholderText="Usuário"/>
+
+          <TextBlock Text="Senha:" FontWeight="Bold" Foreground="Navy" FontSize="11"/>
+          <TextBox Text="{Binding Senha}" PlaceholderText="Senha" PasswordChar="●"/>
+
+          <!-- Botões -->
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="15" Margin="0,15,0,0">
+            <Button Content="Entrar" Command="{Binding EntrarCommand}"
+                    Width="70" Height="50"
+                    IsEnabled="{Binding PodeEntrar}"/>
+            <Button Content="Sair" Command="{Binding SairCommand}"
+                    Width="70" Height="50"/>
+          </StackPanel>
+
+          <!-- Status de conexão -->
+          <TextBlock Text="Conectando ao banco..."
+                     FontSize="10" Foreground="Gray" FontStyle="Italic"
+                     HorizontalAlignment="Center" TextWrapping="Wrap"
+                     IsVisible="{Binding IsConnecting}"/>
+        </StackPanel>
+      </Border>
+
+      <!-- Painel Estabelecimento Penal -->
+      <Border Grid.Column="1" BorderBrush="Gray" BorderThickness="1" Padding="10">
+        <StackPanel Spacing="8">
+          <TextBlock Text="Estabelecimento Penal" FontWeight="Bold" Foreground="Navy" FontSize="12"/>
+
+          <ComboBox x:Name="ComboUp"
+                    PlaceholderText="Selecione a Unidade Penal..."
+                    ItemsSource="{Binding UnidadesPenal}"
+                    SelectedItem="{Binding SelectedUp}"
+                    HorizontalAlignment="Stretch">
+            <ComboBox.ItemTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding NomeUp}"/>
+              </DataTemplate>
+            </ComboBox.ItemTemplate>
+          </ComboBox>
+
+          <!-- Mensagem de erro -->
+          <TextBlock Text="{Binding ErrorMessage}"
+                     Foreground="Red" FontSize="11" TextWrapping="Wrap"
+                     IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+
+          <!-- Loading -->
+          <ProgressBar IsIndeterminate="True" IsVisible="{Binding IsLoading}" Height="4"/>
+        </StackPanel>
+      </Border>
+    </Grid>
+  </Grid>
+</Window>

@@ -1,0 +1,468 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Siapen.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
+        x:Class="Siapen.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Title="SIAPEN - Sistema Integrado de Administração Penitenciária"
+        WindowState="Maximized"
+        Background="White">
+
+  <Design.DataContext>
+    <vm:MainWindowViewModel/>
+  </Design.DataContext>
+
+  <DockPanel>
+    <!-- Menu Principal -->
+    <Menu DockPanel.Dock="Top">
+      <MenuItem Header="Cadastro">
+        <MenuItem Header="Pavilhão" Command="{Binding CadastroPavilhaoCommand}"/>
+        <MenuItem Header="Galeria" Command="{Binding CadastroGaleriaCommand}"/>
+        <MenuItem Header="Solário" Command="{Binding CadastroSolarioCommand}"/>
+        <MenuItem Header="Cela" Command="{Binding CadastroCelaCommand}"/>
+        <Separator/>
+        <MenuItem Header="Internos" Command="{Binding CadastroInternosCommand}"/>
+        <MenuItem Header="Condição do Interno" Command="{Binding CadastroCondicaoInternoCommand}"/>
+        <Separator/>
+        <MenuItem Header="Advogado" Command="{Binding CadastroAdvogadoCommand}"/>
+        <MenuItem Header="Facção" Command="{Binding CadastroFaccaoCommand}"/>
+        <MenuItem Header="Cidade" Command="{Binding CadastroCidadeCommand}"/>
+        <MenuItem Header="Raça" Command="{Binding CadastroRacaCommand}"/>
+        <MenuItem Header="Escolaridade" Command="{Binding CadastroEscolaridadeCommand}"/>
+        <MenuItem Header="Nacionalidade" Command="{Binding CadastroNacionalidadeCommand}"/>
+        <MenuItem Header="Procedência" Command="{Binding CadastroProcedenciaCommand}"/>
+        <MenuItem Header="Destino" Command="{Binding CadastroDestinoCommand}"/>
+        <MenuItem Header="Fornecedor" Command="{Binding CadastroFornecedorCommand}"/>
+        <Separator/>
+        <MenuItem Header="Profissão" Command="{Binding CadastroProfissaoCommand}"/>
+        <Separator/>
+        <MenuItem Header="CTC" Command="{Binding CadastroCtcCommand}"/>
+      </MenuItem>
+
+      <MenuItem Header="Movimentação">
+        <MenuItem Header="Transferência de Interno (Movimento Externo)" Command="{Binding TransferenciaInternoCommand}"/>
+        <Separator/>
+        <MenuItem Header="Conferir Transferência Recebida" Command="{Binding ConferirTransferenciaRecebidaCommand}"/>
+        <Separator/>
+        <MenuItem Header="Mudança de Cela (Movimento Interno)" Command="{Binding MudancaCelaCommand}"/>
+        <Separator/>
+        <MenuItem Header="Cadastro da Portaria do Saída" Command="{Binding CadastroPortariaSaidaoCommand}"/>
+        <MenuItem Header="Inclusão dos Internos no Saída" Command="{Binding InclusaoSaidaoCommand}"/>
+        <Separator/>
+        <MenuItem Header="Circulação de Interno" Command="{Binding CirculacaoInternoCommand}"/>
+        <Separator/>
+        <MenuItem Header="Movimento Semi-Aberto / Aberto" Command="{Binding MovimentoSemiAbertoCommand}"/>
+        <Separator/>
+        <MenuItem Header="Consulta Movimentação Geral do Interno" Command="{Binding ConsultaMovimentacaoGeralCommand}"/>
+      </MenuItem>
+
+      <MenuItem Header="Setores">
+        <MenuItem Header="Disciplina">
+          <MenuItem Header="Disciplina" Command="{Binding DisciplinaCommand}"/>
+          <MenuItem Header="Falta Disciplinar" Command="{Binding FaltaDisciplinarCommand}"/>
+        </MenuItem>
+        <MenuItem Header="Educação">
+          <MenuItem Header="Educação" Command="{Binding EducacaoCommand}"/>
+          <MenuItem Header="Série/Fase Atual" Command="{Binding SerieFaseAtualCommand}"/>
+          <MenuItem Header="Livro/Revista" Command="{Binding LivroRevistaCommand}"/>
+          <MenuItem Header="Carga Horária" Command="{Binding CargaHorariaCommand}"/>
+        </MenuItem>
+        <MenuItem Header="Jurídico">
+          <MenuItem Header="Jurídico" Command="{Binding JuridicoCommand}"/>
+          <Separator/>
+          <MenuItem Header="Processos e/ou Condenações do Interno" Command="{Binding ProcessosCondenacoesCommand}"/>
+          <MenuItem Header="Detração / Desconto na pena definitiva aplicada" Command="{Binding DetracaoCommand}"/>
+          <MenuItem Header="Interrupções da Execução Penal" Command="{Binding InterrupcoesPenaCommand}"/>
+          <MenuItem Header="Remições de Pena" Command="{Binding RemicoesPenaCommand}"/>
+          <Separator/>
+          <MenuItem Header="Artigos do Código Penal Brasileiro" Command="{Binding ArtigoPenalCommand}"/>
+          <Separator/>
+          <MenuItem Header="Vara de Execução" Command="{Binding VaraExecucaoCommand}"/>
+        </MenuItem>
+        <MenuItem Header="Psicossocial" Command="{Binding PsicossocialCommand}"/>
+        <MenuItem Header="Reabilitação">
+          <MenuItem Header="Pedagogia" Command="{Binding PedagogiaCommand}"/>
+          <MenuItem Header="Serviço Social" Command="{Binding ServicoSocialCommand}"/>
+          <MenuItem Header="Terapia Ocupacional" Command="{Binding TerapiaOcupacionalCommand}"/>
+        </MenuItem>
+        <MenuItem Header="Saúde">
+          <MenuItem Header="Clínica Médica" Command="{Binding ClinicaMedicaCommand}"/>
+          <MenuItem Header="Enfermagem" Command="{Binding EnfermagemCommand}"/>
+          <MenuItem Header="Farmácia" Command="{Binding FarmaciaCommand}"/>
+          <MenuItem Header="Odontologia" Command="{Binding OdontologiaCommand}"/>
+          <MenuItem Header="Psicologia" Command="{Binding PsicologiaCommand}"/>
+          <MenuItem Header="Psiquiatria" Command="{Binding PsiquiatriaCommand}"/>
+          <Separator/>
+          <MenuItem Header="Remédio" Command="{Binding RemedioCommand}"/>
+          <MenuItem Header="Saúde" Command="{Binding SaudeCommand}"/>
+        </MenuItem>
+        <MenuItem Header="Trabalho">
+          <MenuItem Header="Trabalho" Command="{Binding TrabalhoCommand}"/>
+          <MenuItem Header="Setor Trabalho" Command="{Binding SetorTrabalhoCommand}"/>
+          <MenuItem Header="Função Interno" Command="{Binding FuncaoInternoCommand}"/>
+          <Separator/>
+          <MenuItem Header="Cálculo de Trabalho" Command="{Binding CalculoTrabalhoCommand}"/>
+          <MenuItem Header="Remição Trabalho" Command="{Binding RemicaoTrabalhoCommand}"/>
+        </MenuItem>
+        <MenuItem Header="Plantão">
+          <MenuItem Header="Roupas" Command="{Binding RoupasCommand}"/>
+          <MenuItem Header="Ocorrências" Command="{Binding OcorrenciasCommand}"/>
+        </MenuItem>
+        <MenuItem Header="Conselho Disciplinar" Command="{Binding ConselhoDisciplinarCommand}"/>
+        <MenuItem Header="Correspondência" Command="{Binding CorrespondenciaCommand}"/>
+      </MenuItem>
+
+      <MenuItem Header="Visitantes">
+        <MenuItem Header="Entrada de Visitantes" Command="{Binding EntradaVisitantesCommand}"/>
+        <Separator/>
+        <MenuItem Header="Consulta" Command="{Binding ConsultaVisitanteCommand}"/>
+        <MenuItem Header="Grau Parentesco" Command="{Binding GrauParentescoCommand}"/>
+        <MenuItem Header="Visitante" Command="{Binding VisitanteCommand}"/>
+        <MenuItem Header="Visitantes Tráfico" Command="{Binding VisitantesTraficoCommand}"/>
+      </MenuItem>
+
+      <MenuItem Header="Relatórios">
+        <MenuItem Header="Menu de Relatórios" Command="{Binding MenuRelatoriosCommand}"/>
+        <Separator/>
+        <MenuItem Header="Consulta">
+          <MenuItem Header="Interno" Command="{Binding ConsultaInternoCommand}"/>
+        </MenuItem>
+      </MenuItem>
+
+      <MenuItem Header="Módulos">
+        <MenuItem Header="Patrimônio">
+          <MenuItem Header="Tipo de Patrimônio" Command="{Binding TipoPatrimonioCommand}"/>
+          <Separator/>
+          <MenuItem Header="Cadastro de Patrimônio" Command="{Binding CadastroPatrimonioCommand}"/>
+        </MenuItem>
+        <Separator/>
+        <MenuItem Header="Módulo Gestão de Armas" Command="{Binding ModuloGestaoArmasCommand}"/>
+        <Separator/>
+        <MenuItem Header="Controle de Portaria" Command="{Binding ControlePortariaCommand}"/>
+        <Separator/>
+        <MenuItem Header="Inteligência" Command="{Binding InteligenciaCommand}" IsVisible="False"/>
+        <Separator/>
+        <MenuItem Header="Monitoramento" Command="{Binding MonitoramentoCommand}"/>
+        <Separator/>
+        <MenuItem Header="Planilha Dinâmica" Command="{Binding PlanilhaDinamicaCommand}" IsVisible="False"/>
+        <Separator/>
+        <MenuItem Header="Siapen Messenger" Command="{Binding SiapenMessengerCommand}" IsVisible="False"/>
+        <Separator/>
+        <MenuItem Header="Pessoal" IsVisible="False">
+          <MenuItem Header="Banco de Horas" Command="{Binding BancoHorasCommand}"/>
+        </MenuItem>
+        <Separator/>
+        <MenuItem Header="Módulo Gestão de Pessoas" Command="{Binding ModuloGestaoPessoasCommand}" IsVisible="False"/>
+        <Separator/>
+        <MenuItem Header="Monitoramento Eletrônico" Command="{Binding MonitoramentoEletronicoCommand}"/>
+        <Separator/>
+        <MenuItem Header="Web Browser" Command="{Binding WebBrowserCommand}" IsVisible="False"/>
+      </MenuItem>
+
+      <MenuItem Header="Configuração">
+        <MenuItem Header="Usuário/Funcionário" Command="{Binding FuncionarioCommand}"/>
+        <MenuItem Header="Função Funcionário" Command="{Binding FuncaoFuncionarioCommand}"/>
+        <MenuItem Header="Unidade Penal" Command="{Binding UnidadePenalCommand}"/>
+        <MenuItem Header="Horário do Funcionário" Command="{Binding HorarioFuncionarioCommand}"/>
+        <Separator/>
+        <MenuItem Header="Perfil de Usuário" Command="{Binding PerfilUsuarioCommand}"/>
+        <MenuItem Header="Padrão do Sistema" Command="{Binding PadraoSistemaCommand}"/>
+        <Separator/>
+        <MenuItem Header="Equipe" Command="{Binding EquipeCommand}"/>
+        <MenuItem Header="Posto / Local de Trabalho" Command="{Binding PostoLocalTrabalhoCommand}"/>
+        <MenuItem Header="Agente por Equipe" Command="{Binding AgentePorEquipeCommand}"/>
+        <Separator/>
+        <MenuItem Header="Regra de Visitação" Command="{Binding RegraVisitaçãoCommand}"/>
+      </MenuItem>
+
+      <MenuItem Header="Manutenção">
+        <MenuItem Header="Atualizar Meus Dados" Command="{Binding AtualizarMeusDadosCommand}"/>
+        <MenuItem Header="Trocar Senha" Command="{Binding TrocarSenhaCommand}"/>
+        <Separator/>
+        <MenuItem Header="Mensagem do Banco de Dados" Command="{Binding MensagemBancoDadosCommand}"/>
+        <MenuItem Header="WebCam" Command="{Binding WebCamCommand}" IsVisible="False"/>
+        <Separator/>
+        <MenuItem Header="Copiar um arquivo..." Command="{Binding CopiarArquivoCommand}"/>
+        <Separator/>
+        <MenuItem Header="Consulta PROCED" Command="{Binding ConsultaProcedCommand}"/>
+      </MenuItem>
+
+      <MenuItem Header="Agendamento">
+        <MenuItem Header="Agenda de Atendimento" Command="{Binding AgendaAtendimentoCommand}"/>
+        <Separator/>
+        <MenuItem Header="Assunto" Command="{Binding AssuntoCommand}"/>
+        <MenuItem Header="Situação" Command="{Binding SituacaoCommand}"/>
+        <MenuItem Header="Tipo de Contatos" Command="{Binding TipoContatosCommand}"/>
+      </MenuItem>
+
+      <MenuItem Header="Sobre">
+        <MenuItem Header="Informações" Command="{Binding SobreCommand}"/>
+        <Separator/>
+        <MenuItem Header="Muda Skin" Command="{Binding MudaSkinCommand}"/>
+        <Separator/>
+        <MenuItem Header="Manual" Command="{Binding ManualCommand}"/>
+        <MenuItem Header="Atribuição por Setores" Command="{Binding AtribuicaoSetoresCommand}"/>
+      </MenuItem>
+
+      <MenuItem Header="Sair" Command="{Binding SairCommand}"/>
+    </Menu>
+
+    <!-- Cabeçalho -->
+    <Border DockPanel.Dock="Top" Background="#FFE0E0E0" Padding="10" Height="60">
+      <TextBlock Text="{Binding StatusMessage}"
+                 FontSize="20" FontWeight="Bold" Foreground="Navy"
+                 VerticalAlignment="Center" HorizontalAlignment="Center"/>
+    </Border>
+
+    <!-- Conteúdo Principal com TabControl -->
+    <Grid>
+      <TabControl SelectedIndex="{Binding SelectedTabIndex}" Margin="5">
+
+        <!-- TAB PRINCIPAL -->
+        <TabItem Header="Principal">
+          <Grid>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Coluna 1: Botões esquerda -->
+            <StackPanel Grid.Column="0" Grid.Row="0" Margin="10" Spacing="10">
+              <Button Content="Confere" Height="60" HorizontalContentAlignment="Center"
+                      Command="{Binding BtnConfereCommand}" Foreground="Navy" FontSize="14"/>
+              <Button Content="Agenda de Atendimento" Height="60" HorizontalContentAlignment="Center"
+                      Command="{Binding BtnAgendaAtendimentoCommand}" Foreground="Navy" FontSize="14"/>
+              <Button Content="Requerimentos" Height="60" HorizontalContentAlignment="Center"
+                      Command="{Binding BtnRequerimentosCommand}" Foreground="Navy" FontSize="14"/>
+            </StackPanel>
+
+            <!-- Coluna 2: Botões centro -->
+            <StackPanel Grid.Column="1" Grid.Row="0" Margin="10" Spacing="10">
+              <Button Content="Ocorrências Administrativas" Height="60" HorizontalContentAlignment="Center"
+                      Command="{Binding BtnOcorrenciaCommand}" Foreground="Navy" FontSize="14"/>
+            </StackPanel>
+
+            <!-- Coluna 3: Botões direita -->
+            <StackPanel Grid.Column="2" Grid.Row="0" Margin="10" Spacing="10">
+              <Button Content="Relatórios" Height="60" HorizontalContentAlignment="Center"
+                      Command="{Binding BtnRelatorioCommand}" Foreground="Navy" FontSize="14"/>
+              <Button Content="Consulta" Height="60" HorizontalContentAlignment="Center"
+                      Command="{Binding BtnConsultaGeralCommand}" Foreground="Navy" FontSize="14"/>
+              <Button Content="Histórico / Ficha Disciplinar" Height="60" HorizontalContentAlignment="Center"
+                      Command="{Binding BtnHistoricoFichaDisciplinarCommand}" Foreground="Navy" FontSize="14"/>
+            </StackPanel>
+
+            <!-- ComboBox Unidade Penal -->
+            <StackPanel Grid.Column="1" Grid.Row="1" Margin="10,5" Orientation="Horizontal" HorizontalAlignment="Center">
+              <TextBlock Text="Unidade Penal:" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="Navy"/>
+              <ComboBox Width="280" SelectedItem="{Binding SelectedUp}" PlaceholderText="Selecione..."/>
+            </StackPanel>
+
+            <!-- Info rodapé -->
+            <Grid Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="3" VerticalAlignment="Bottom" Margin="10">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+              </Grid.ColumnDefinitions>
+              <Border Grid.Column="0" Background="Black" Padding="5" Margin="2">
+                <TextBlock Text="{Binding DataHora}" Foreground="Lime" HorizontalAlignment="Center" FontSize="16"/>
+              </Border>
+              <Border Grid.Column="1" Background="Black" Padding="5" Margin="2">
+                <TextBlock Text="{Binding DatabaseInfo}" Foreground="Lime" HorizontalAlignment="Center" FontSize="12"/>
+              </Border>
+              <Border Grid.Column="2" Background="Black" Padding="5" Margin="2">
+                <TextBlock Text="{Binding LoginInfo}" Foreground="Lime" HorizontalAlignment="Center" FontSize="12"/>
+              </Border>
+            </Grid>
+          </Grid>
+        </TabItem>
+
+        <!-- TAB SETORES -->
+        <TabItem Header="Setores">
+          <Grid Margin="15">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Coluna 1 -->
+            <StackPanel Grid.Column="0" Spacing="8" Margin="5">
+              <Button Content="Clínica Médica" Height="50" Command="{Binding ClinicaMedicaCommand}" Foreground="Navy" FontSize="13"/>
+              <Button Content="Disciplina" Height="50" Command="{Binding DisciplinaCommand}" Foreground="Navy" FontSize="13"/>
+              <Button Content="Educação" Height="50" Command="{Binding EducacaoCommand}" Foreground="Navy" FontSize="13"/>
+              <Button Content="Enfermagem" Height="50" Command="{Binding EnfermagemCommand}" Foreground="Navy" FontSize="13"/>
+              <Button Content="Farmácia" Height="50" Command="{Binding FarmaciaCommand}" Foreground="Navy" FontSize="13"/>
+            </StackPanel>
+
+            <!-- Coluna 2 -->
+            <StackPanel Grid.Column="1" Spacing="8" Margin="5">
+              <Button Content="Jurídico" Height="50" Command="{Binding JuridicoCommand}" Foreground="Navy" FontSize="13"/>
+              <Button Content="Odontologia" Height="50" Command="{Binding OdontologiaCommand}" Foreground="Navy" FontSize="13"/>
+              <Button Content="Pedagogia" Height="50" Command="{Binding PedagogiaCommand}" Foreground="Navy" FontSize="13"/>
+              <Button Content="Psicologia" Height="50" Command="{Binding PsicologiaCommand}" Foreground="Navy" FontSize="13"/>
+              <Button Content="Psicossocial" Height="50" Command="{Binding PsicossocialCommand}" Foreground="Navy" FontSize="13"/>
+            </StackPanel>
+
+            <!-- Coluna 3 -->
+            <StackPanel Grid.Column="2" Spacing="8" Margin="5">
+              <Button Content="Psiquiatria" Height="50" Command="{Binding PsiquiatriaCommand}" Foreground="Navy" FontSize="13"/>
+              <Button Content="Saúde" Height="50" Command="{Binding SaudeCommand}" Foreground="Navy" FontSize="13"/>
+              <Button Content="Serviço Social" Height="50" Command="{Binding ServicoSocialCommand}" Foreground="Navy" FontSize="13"/>
+              <Button Content="Terapia Ocupacional" Height="50" Command="{Binding TerapiaOcupacionalCommand}" Foreground="Navy" FontSize="13"/>
+              <Button Content="Trabalho" Height="50" Command="{Binding TrabalhoCommand}" Foreground="Navy" FontSize="13"/>
+            </StackPanel>
+          </Grid>
+        </TabItem>
+
+        <!-- TAB PROCEDIMENTOS -->
+        <TabItem Header="Procedimentos">
+          <Grid Margin="10">
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Toolbar -->
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="5" Margin="0,0,0,10">
+              <Button Content="Agendar Procedimentos" Command="{Binding AgendarProcedimentosCommand}" Padding="10,5"/>
+              <Separator Width="20"/>
+              <Button Content="Configurar Procedimentos" Command="{Binding ConfigurarProcedimentosCommand}" Padding="10,5"/>
+              <Button Content="Configurar Ocorrências" Command="{Binding ConfigurarOcorrenciasCommand}" Padding="10,5"/>
+              <Separator Width="20"/>
+              <Button Content="Atualizar" Command="{Binding AtualizarProcedimentosCommand}" Padding="10,5"/>
+              <Button Content="Posto de Trabalho" Command="{Binding PostoTrabalhoCommand}" Padding="10,5"/>
+            </StackPanel>
+
+            <!-- Filtros -->
+            <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="15" Margin="0,0,0,10">
+              <TextBlock Text="Período:" VerticalAlignment="Center"/>
+              <RadioButton Content="Últimos 7 dias" IsChecked="True" Margin="5,0"/>
+              <RadioButton Content="Ontem" Margin="5,0"/>
+              <RadioButton Content="Hoje" Margin="5,0"/>
+              <RadioButton Content="Amanhã" Margin="5,0"/>
+              <RadioButton Content="Próximos 7 dias" Margin="5,0"/>
+              <RadioButton Content="Todos" Margin="5,0"/>
+              <Separator Width="30"/>
+              <RadioButton Content="Ativo/Aberto" IsChecked="True" Margin="5,0"/>
+              <RadioButton Content="Arquivado/Encerrado" Margin="5,0"/>
+            </StackPanel>
+
+            <!-- Área de preview (placeholder) -->
+            <Border Grid.Row="2" Background="White" BorderBrush="Gray" BorderThickness="1">
+              <TextBlock Text="Área de visualização de procedimentos"
+                         HorizontalAlignment="Center" VerticalAlignment="Center"
+                         Foreground="Gray" FontSize="16"/>
+            </Border>
+          </Grid>
+        </TabItem>
+
+        <!-- TAB ESCALA DE PLANTÃO -->
+        <TabItem Header="Escala de Plantão">
+          <Grid Margin="10">
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Controles superiores -->
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="0,0,0,10">
+              <TextBlock Text="Dia da Escala:" VerticalAlignment="Center"/>
+              <DatePicker/>
+              <Button Content="Atualizar" Command="{Binding AtualizarEscalaDiaCommand}" Padding="10,5"/>
+              <Button Content="Iniciar Nova Escala" Command="{Binding IniciarNovaEscalaCommand}" Padding="10,5"/>
+              <Button Content="Imprimir Escala" Command="{Binding ImprimirEscalaCommand}" Padding="10,5"/>
+              <Button Content="Apagar Escala" Command="{Binding ApagarEscalaCommand}" Padding="10,5"/>
+              <Separator Width="20"/>
+              <TextBlock Text="Equipe:" VerticalAlignment="Center"/>
+              <ComboBox Width="200" PlaceholderText="Selecione a equipe..."/>
+            </StackPanel>
+
+            <!-- Grid de dados (placeholder) -->
+            <Border Grid.Row="1" Background="White" BorderBrush="Gray" BorderThickness="1">
+              <TextBlock Text="Grid de Escala de Plantão"
+                         HorizontalAlignment="Center" VerticalAlignment="Center"
+                         Foreground="Gray" FontSize="16"/>
+            </Border>
+          </Grid>
+        </TabItem>
+
+        <!-- TAB CAIXA DE MENSAGEM -->
+        <TabItem Header="Caixa de Mensagem">
+          <Grid Margin="10">
+            <TextBlock Text="Caixa de Mensagem - Não implementado"
+                       HorizontalAlignment="Center" VerticalAlignment="Center"
+                       Foreground="Gray" FontSize="16"/>
+          </Grid>
+        </TabItem>
+
+        <!-- TAB IDENTIFICAÇÃO -->
+        <TabItem Header="Identificação">
+          <Grid Margin="20">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="Auto"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Foto placeholder -->
+            <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="3"
+                    Width="150" Height="170" BorderBrush="Gray" BorderThickness="1"
+                    Margin="0,0,20,0">
+              <TextBlock Text="Foto" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Gray"/>
+            </Border>
+
+            <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" Margin="0,5">
+              <TextBlock Text="ID:" Width="80" Foreground="Navy" FontWeight="Bold"/>
+              <TextBlock Text="---" FontWeight="Bold"/>
+            </StackPanel>
+            <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" Margin="0,5">
+              <TextBlock Text="Nome:" Width="80" Foreground="Navy" FontWeight="Bold"/>
+              <TextBlock Text="---" FontWeight="Bold"/>
+            </StackPanel>
+            <StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal" Margin="0,5">
+              <TextBlock Text="Matrícula:" Width="80" Foreground="Navy" FontWeight="Bold"/>
+              <TextBlock Text="---" FontWeight="Bold"/>
+            </StackPanel>
+
+            <!-- Tabs internas -->
+            <TabControl Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" Margin="0,20,0,0">
+              <TabItem Header="Logs de Acesso">
+                <Border Background="White" BorderBrush="Gray" BorderThickness="1">
+                  <TextBlock Text="Logs de acesso do funcionário"
+                             HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Gray"/>
+                </Border>
+              </TabItem>
+              <TabItem Header="Inteligência" IsVisible="False">
+                <TextBox AcceptsReturn="True" TextWrapping="Wrap" IsReadOnly="True"/>
+              </TabItem>
+            </TabControl>
+          </Grid>
+        </TabItem>
+
+      </TabControl>
+    </Grid>
+  </DockPanel>
+</Window>

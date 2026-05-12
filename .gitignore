@@ -1,0 +1,25 @@
+# .NET / Avalonia
+bin/
+obj/
+*.user
+*.suo
+.vs/
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+Logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build outputs
+*.dll
+*.exe
+*.pdb

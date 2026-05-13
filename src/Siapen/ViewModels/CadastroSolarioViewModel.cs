@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -31,6 +33,9 @@ public partial class CadastroSolarioViewModel : ModeloCadastroViewModel
     private int _idGaleria;
 
     [ObservableProperty]
+    private int _idUp;
+
+    [ObservableProperty]
     private DataTable _pavilhoes = new();
 
     [ObservableProperty]
@@ -44,10 +49,10 @@ public partial class CadastroSolarioViewModel : ModeloCadastroViewModel
 
     // Recursos sub-grid
     [ObservableProperty]
-    private DataView? _recursosDataSource;
+    private List<ExpandoObject>? _recursosGrid;
 
     [ObservableProperty]
-    private DataRowView? _recursoSelecionado;
+    private ExpandoObject? _recursoSelecionado;
 
     [ObservableProperty]
     private string _recursoDescricao = string.Empty;
@@ -56,30 +61,18 @@ public partial class CadastroSolarioViewModel : ModeloCadastroViewModel
     private string _recursoObservacao = string.Empty;
 
     private bool _isPreenchendo;
-    private bool _isInitialized;
 
     public CadastroSolarioViewModel()
     {
         _orderBy = "solario";
         TituloCadastro = "Cadastro de Solário";
-        PropertyChanged += OnPropertyChangedHandler;
-    }
-
-    private void OnPropertyChangedHandler(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName == nameof(SelectedRow) && SelectedRow != null && Modo == CadastroModo.Navegando && _isInitialized)
-        {
-            _isPreenchendo = true;
-            IdSolario = GetInt(SelectedRow, "id_solario") ?? 0;
-            LoadRecursos();
-            _isPreenchendo = false;
-        }
     }
 
     public void LoadLookups()
     {
-        Pavilhoes = DmPrincipalService.GetPavilhoes(GlobalVars.IdUp);
-        _isInitialized = true;
+        IdUp = GlobalVars.IdUp;
+        LogHelper.Debug($"CadastroSolario: LoadLookups com GlobalVars.IdUp={GlobalVars.IdUp}, IdUp={IdUp}", "UI");
+        Pavilhoes = DmPrincipalService.GetPavilhoes(IdUp > 0 ? IdUp : GlobalVars.IdUp);
     }
 
     partial void OnPavilhaoSelecionadoChanged(DataRowView? value)
@@ -103,14 +96,22 @@ public partial class CadastroSolarioViewModel : ModeloCadastroViewModel
     {
         if (IdSolario <= 0)
         {
-            RecursosDataSource = null;
+            RecursosGrid = null;
             return;
         }
         var dt = DatabaseService.ExecuteQuery(
             "SELECT id_recurso_ala, descricao, data, observacao FROM recursos_ala " +
             "WHERE id_solario = @ID ORDER BY data DESC, id_recurso_ala",
             DatabaseService.CreateParameter("@ID", IdSolario));
-        RecursosDataSource = dt.DefaultView;
+        var list = new List<ExpandoObject>();
+        foreach (DataRow row in dt.Rows)
+        {
+            IDictionary<string, object?> item = new ExpandoObject();
+            foreach (DataColumn col in dt.Columns)
+                item[col.ColumnName] = row[col];
+            list.Add((ExpandoObject)item);
+        }
+        RecursosGrid = list;
     }
 
     [RelayCommand]
@@ -136,11 +137,12 @@ public partial class CadastroSolarioViewModel : ModeloCadastroViewModel
     private void ExcluirRecurso()
     {
         if (RecursoSelecionado == null) return;
-        var id = GetInt(RecursoSelecionado, "id_recurso_ala");
-        if (id == null) return;
+        var dict = (IDictionary<string, object?>)RecursoSelecionado;
+        if (!dict.TryGetValue("id_recurso_ala", out var idVal) || idVal == null) return;
+        var id = Convert.ToInt32(idVal);
         DatabaseService.ExecuteNonQuery(
             "DELETE FROM recursos_ala WHERE id_recurso_ala = @ID",
-            DatabaseService.CreateParameter("@ID", id.Value));
+            DatabaseService.CreateParameter("@ID", id));
         LoadRecursos();
         StatusMessage = "Recurso excluído com sucesso.";
     }
@@ -150,12 +152,16 @@ public partial class CadastroSolarioViewModel : ModeloCadastroViewModel
         "s.dia_visita, s.periodo_visita, " +
         "p.pavilhao AS pavilhao_nome, g.galeria AS galeria_nome " +
         "FROM solario s " +
-        "LEFT JOIN pavilhao p ON p.id_pavilhao = s.idpavilhao " +
+        "INNER JOIN pavilhao p ON p.id_pavilhao = s.idpavilhao AND p.id_up = @ID_UP " +
         "LEFT JOIN galeria g ON g.id_galeria = s.idgaleria " +
-        "WHERE p.id_up = @ID_UP ORDER BY s.solario";
+        "ORDER BY s.solario";
 
-    protected override FbParameter[] GetSqlParametros() =>
-        new[] { DatabaseService.CreateParameter("@ID_UP", GlobalVars.IdUp) };
+    protected override FbParameter[] GetSqlParametros()
+    {
+        var up = IdUp > 0 ? IdUp : GlobalVars.IdUp;
+        LogHelper.Debug($"CadastroSolario: parametro ID_UP={up} (IdUp={IdUp}, GlobalVars.IdUp={GlobalVars.IdUp})", "DB");
+        return new[] { DatabaseService.CreateParameter("@ID_UP", up) };
+    }
 
     protected override string Filtrar(string texto) =>
         $"solario LIKE '%{texto.Replace("'", "''")}%'";
@@ -170,7 +176,7 @@ public partial class CadastroSolarioViewModel : ModeloCadastroViewModel
         PeriodoVisita = "M";
         PavilhaoSelecionado = null;
         GaleriaSelecionada = null;
-        RecursosDataSource = null;
+        RecursosGrid = null;
     }
 
     protected override void PreencherCampos()

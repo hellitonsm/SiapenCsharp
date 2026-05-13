@@ -87,24 +87,28 @@ public partial class MainWindow : Window
 
     private void CadastroPavilhao_Click(object? sender, RoutedEventArgs e)
     {
+        LogHelper.Debug($"Abrindo CadastroPavilhao: GlobalVars.IdUp={GlobalVars.IdUp}", "MAIN");
         var view = new CadastroPavilhaoView();
         view.Show();
     }
 
     private void CadastroGaleria_Click(object? sender, RoutedEventArgs e)
     {
+        LogHelper.Debug($"Abrindo CadastroGaleria: GlobalVars.IdUp={GlobalVars.IdUp}", "MAIN");
         var view = new CadastroGaleriaView();
         view.Show();
     }
 
     private void CadastroSolario_Click(object? sender, RoutedEventArgs e)
     {
+        LogHelper.Debug($"Abrindo CadastroSolario: GlobalVars.IdUp={GlobalVars.IdUp}", "MAIN");
         var view = new CadastroSolarioView();
         view.Show();
     }
 
     private void CadastroCela_Click(object? sender, RoutedEventArgs e)
     {
+        LogHelper.Debug($"Abrindo CadastroCela: GlobalVars.IdUp={GlobalVars.IdUp}", "MAIN");
         var view = new CadastroCelaView();
         view.Show();
     }

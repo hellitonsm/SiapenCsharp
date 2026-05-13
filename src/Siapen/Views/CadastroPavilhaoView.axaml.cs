@@ -20,6 +20,7 @@ public partial class CadastroPavilhaoView : Window
     protected override async void OnOpened(EventArgs e)
     {
         base.OnOpened(e);
+        LogHelper.Debug($"CadastroPavilhaoView.OnOpened: GlobalVars.IdUp={GlobalVars.IdUp}, IdFuncionario={GlobalVars.IdFuncionario}", "UI");
         try
         {
             _viewModel.LoadUnidades();

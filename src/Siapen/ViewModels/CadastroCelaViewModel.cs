@@ -40,6 +40,9 @@ public partial class CadastroCelaViewModel : ModeloCadastroViewModel
     private int _idSolario;
 
     [ObservableProperty]
+    private int _idUp;
+
+    [ObservableProperty]
     private DataTable _pavilhoes = new();
 
     [ObservableProperty]
@@ -67,7 +70,9 @@ public partial class CadastroCelaViewModel : ModeloCadastroViewModel
 
     public void LoadLookups()
     {
-        Pavilhoes = DmPrincipalService.GetPavilhoes(GlobalVars.IdUp);
+        IdUp = GlobalVars.IdUp;
+        LogHelper.Debug($"CadastroCela: LoadLookups com GlobalVars.IdUp={GlobalVars.IdUp}, IdUp={IdUp}", "UI");
+        Pavilhoes = DmPrincipalService.GetPavilhoes(IdUp > 0 ? IdUp : GlobalVars.IdUp);
     }
 
     partial void OnPavilhaoSelecionadoChanged(DataRowView? value)
@@ -111,13 +116,17 @@ public partial class CadastroCelaViewModel : ModeloCadastroViewModel
         "c.isolamento, c.limite_por_cela, c.em_manutencao, c.motivo_manutencao, " +
         "p.pavilhao AS pavilhao_nome, g.galeria AS galeria_nome, s.solario AS solario_nome " +
         "FROM cela c " +
-        "LEFT JOIN pavilhao p ON p.id_pavilhao = c.idpavilhao " +
+        "INNER JOIN pavilhao p ON p.id_pavilhao = c.idpavilhao AND p.id_up = @ID_UP " +
         "LEFT JOIN galeria g ON g.id_galeria = c.idgaleria " +
         "LEFT JOIN solario s ON s.id_solario = c.idsolario " +
-        "WHERE p.id_up = @ID_UP ORDER BY c.id_cela";
+        "ORDER BY c.id_cela";
 
-    protected override FbParameter[] GetSqlParametros() =>
-        new[] { DatabaseService.CreateParameter("@ID_UP", GlobalVars.IdUp) };
+    protected override FbParameter[] GetSqlParametros()
+    {
+        var up = IdUp > 0 ? IdUp : GlobalVars.IdUp;
+        LogHelper.Debug($"CadastroCela: parametro ID_UP={up} (IdUp={IdUp}, GlobalVars.IdUp={GlobalVars.IdUp})", "DB");
+        return new[] { DatabaseService.CreateParameter("@ID_UP", up) };
+    }
 
     protected override string Filtrar(string texto) =>
         $"cela LIKE '%{texto.Replace("'", "''")}%' OR pavilhao_nome LIKE '%{texto.Replace("'", "''")}%'";

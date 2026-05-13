@@ -22,6 +22,9 @@ public partial class CadastroGaleriaViewModel : ModeloCadastroViewModel
     private int _idPavilhao;
 
     [ObservableProperty]
+    private int _idUp;
+
+    [ObservableProperty]
     private DataTable _pavilhoes = new();
 
     [ObservableProperty]
@@ -35,7 +38,9 @@ public partial class CadastroGaleriaViewModel : ModeloCadastroViewModel
 
     public void LoadPavilhoes()
     {
-        Pavilhoes = DmPrincipalService.GetPavilhoes(GlobalVars.IdUp);
+        IdUp = GlobalVars.IdUp;
+        LogHelper.Debug($"CadastroGaleria: LoadPavilhoes com GlobalVars.IdUp={GlobalVars.IdUp}, IdUp={IdUp}", "UI");
+        Pavilhoes = DmPrincipalService.GetPavilhoes(IdUp > 0 ? IdUp : GlobalVars.IdUp);
     }
 
     partial void OnPavilhaoSelecionadoChanged(DataRowView? value)
@@ -47,11 +52,15 @@ public partial class CadastroGaleriaViewModel : ModeloCadastroViewModel
     protected override string GetSqlConsulta() =>
         "SELECT g.id_galeria, g.galeria, g.idpavilhao, p.pavilhao AS pavilhao_nome " +
         "FROM galeria g " +
-        "LEFT JOIN pavilhao p ON p.id_pavilhao = g.idpavilhao " +
-        "WHERE p.id_up = @ID_UP ORDER BY g.galeria";
+        "INNER JOIN pavilhao p ON p.id_pavilhao = g.idpavilhao AND p.id_up = @ID_UP " +
+        "ORDER BY g.galeria";
 
-    protected override FbParameter[] GetSqlParametros() =>
-        new[] { DatabaseService.CreateParameter("@ID_UP", GlobalVars.IdUp) };
+    protected override FbParameter[] GetSqlParametros()
+    {
+        var up = IdUp > 0 ? IdUp : GlobalVars.IdUp;
+        LogHelper.Debug($"CadastroGaleria: parametro ID_UP={up} (IdUp={IdUp}, GlobalVars.IdUp={GlobalVars.IdUp})", "DB");
+        return new[] { DatabaseService.CreateParameter("@ID_UP", up) };
+    }
 
     protected override string Filtrar(string texto) =>
         $"galeria LIKE '%{texto.Replace("'", "''")}%' OR pavilhao_nome LIKE '%{texto.Replace("'", "''")}%'";

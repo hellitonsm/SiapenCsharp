@@ -78,7 +78,7 @@
                    VerticalAlignment="Center" Margin="12,0"/>
       </Border>
 
-      <TabControl Grid.Row="1" SelectedIndex="{Binding TabIndex}" Margin="0" TabStripPlacement="Top">
+      <TabControl Grid.Row="1" SelectedIndex="{Binding TabIndex, Mode=TwoWay}" Margin="0" TabStripPlacement="Top">
         <TabItem Header="{Binding TituloCadastro}">
           <TabControl TabStripPlacement="Top" Margin="0">
             <TabItem Header="Cadastro">
@@ -183,19 +183,14 @@
                   </StackPanel>
 
                   <Border BorderBrush="#DEE2E6" BorderThickness="1">
-                    <DataGrid ItemsSource="{Binding RecursosDataSource}"
+                    <DataGrid ItemsSource="{Binding RecursosGrid}"
                               SelectedItem="{Binding RecursoSelecionado}"
-                              AutoGenerateColumns="False"
+                              AutoGenerateColumns="True"
                               IsReadOnly="True"
                               GridLinesVisibility="Horizontal"
                               BorderThickness="0" Background="White"
                               RowHeight="26" FontSize="11"
                               x:CompileBindings="False">
-                      <DataGrid.Columns>
-                        <DataGridTextColumn Header="Descrição" Binding="{Binding descricao}" Width="*"/>
-                        <DataGridTextColumn Header="Data" Binding="{Binding data}" Width="120"/>
-                        <DataGridTextColumn Header="Observação" Binding="{Binding observacao}" Width="*"/>
-                      </DataGrid.Columns>
                     </DataGrid>
                   </Border>
                 </DockPanel>
@@ -217,20 +212,14 @@
             </Border>
 
             <Border Background="White" BorderBrush="#DEE2E6" BorderThickness="1" Margin="0">
-              <DataGrid ItemsSource="{Binding DataSource}"
+              <DataGrid ItemsSource="{Binding DataViewSource}"
                         SelectedItem="{Binding SelectedRow}"
-                        AutoGenerateColumns="False"
+                        AutoGenerateColumns="True"
                         IsReadOnly="True"
                         GridLinesVisibility="Horizontal"
                         BorderThickness="0" Background="White"
                         RowHeight="28" FontSize="12"
                         x:CompileBindings="False">
-                <DataGrid.Columns>
-                  <DataGridTextColumn Header="Código" Binding="{Binding id_solario}" Width="100"/>
-                  <DataGridTextColumn Header="Descrição" Binding="{Binding solario}" Width="*"/>
-                  <DataGridTextColumn Header="Pavilhão" Binding="{Binding pavilhao_nome}" Width="150"/>
-                  <DataGridTextColumn Header="Galeria" Binding="{Binding galeria_nome}" Width="150"/>
-                </DataGrid.Columns>
               </DataGrid>
             </Border>
           </DockPanel>

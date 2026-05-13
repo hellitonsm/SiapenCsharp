@@ -20,6 +20,7 @@ public partial class CadastroCelaView : Window
     protected override async void OnOpened(EventArgs e)
     {
         base.OnOpened(e);
+        LogHelper.Debug($"CadastroCelaView.OnOpened: GlobalVars.IdUp={GlobalVars.IdUp}, IdFuncionario={GlobalVars.IdFuncionario}", "UI");
         try
         {
             _viewModel.LoadLookups();

@@ -45,6 +45,8 @@ public abstract partial class ModeloCadastroViewModel : ViewModelBase
     [ObservableProperty]
     private int _tabIndex;
 
+    public DataView? DataViewSource => DataSource;
+
     protected DataTable? _dataTable;
     protected string _orderBy = string.Empty;
 
@@ -53,6 +55,33 @@ public abstract partial class ModeloCadastroViewModel : ViewModelBase
 
     protected ModeloCadastroViewModel()
     {
+    }
+
+    partial void OnSelectedRowChanged(DataRowView? value)
+    {
+        if (value != null && Modo == CadastroModo.Navegando)
+            PreencherCampos();
+    }
+
+    partial void OnTabIndexChanged(int value)
+    {
+        if (value == 1 && DataSource != null)
+            OnPropertyChanged(nameof(DataViewSource));
+    }
+
+    partial void OnSearchTextChanged(string value)
+    {
+        if (DataSource == null) return;
+        if (string.IsNullOrWhiteSpace(value))
+            DataSource.RowFilter = string.Empty;
+        else
+            DataSource.RowFilter = Filtrar(value);
+        StatusMessage = $"Registros: {DataSource.Count}";
+    }
+
+    protected virtual string Filtrar(string texto)
+    {
+        return string.Empty;
     }
 
     public virtual async Task LoadAsync()
@@ -66,7 +95,8 @@ public abstract partial class ModeloCadastroViewModel : ViewModelBase
             DataSource = _dataTable.DefaultView;
             if (!string.IsNullOrEmpty(_orderBy))
                 DataSource.Sort = _orderBy;
-            StatusMessage = $"Registros: {_dataTable.Rows.Count}";
+            OnPropertyChanged(nameof(DataViewSource));
+            StatusMessage = $"Registros: {DataSource.Count}";
         }
         catch (Exception ex)
         {
@@ -77,20 +107,6 @@ public abstract partial class ModeloCadastroViewModel : ViewModelBase
         {
             IsLoading = false;
         }
-    }
-
-    partial void OnSearchTextChanged(string value)
-    {
-        if (DataSource == null) return;
-        if (string.IsNullOrWhiteSpace(value))
-            DataSource.RowFilter = string.Empty;
-        else
-            DataSource.RowFilter = Filtrar(value);
-    }
-
-    protected virtual string Filtrar(string texto)
-    {
-        return string.Empty;
     }
 
     partial void OnModoChanged(CadastroModo value)

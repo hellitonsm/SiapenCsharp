@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using FirebirdSql.Data.FirebirdClient;
 using Siapen.Helpers;
 using Siapen.Models;
@@ -55,6 +56,30 @@ public static class DmPrincipalService
         return DatabaseService.ExecuteQuery(
             "SELECT id_cela, cela FROM cela WHERE idsolario = @IDS ORDER BY cela",
             DatabaseService.CreateParameter("@IDS", idSolario));
+    }
+
+    public static List<LookupItem> GetPavilhoesLookup(int idUp)
+    {
+        var dt = GetPavilhoes(idUp);
+        return dt.Rows.Cast<DataRow>()
+            .Select(r => new LookupItem(ConvertToInt(r["id_pavilhao"]), ConvertToString(r["pavilhao"])))
+            .ToList();
+    }
+
+    public static List<LookupItem> GetGaleriasLookup(int idPavilhao)
+    {
+        var dt = GetGalerias(idPavilhao);
+        return dt.Rows.Cast<DataRow>()
+            .Select(r => new LookupItem(ConvertToInt(r["id_galeria"]), ConvertToString(r["galeria"])))
+            .ToList();
+    }
+
+    public static List<LookupItem> GetSolariosLookup(int idGaleria)
+    {
+        var dt = GetSolarios(idGaleria);
+        return dt.Rows.Cast<DataRow>()
+            .Select(r => new LookupItem(ConvertToInt(r["id_solario"]), ConvertToString(r["solario"])))
+            .ToList();
     }
 
     public static DataTable GetCidades()

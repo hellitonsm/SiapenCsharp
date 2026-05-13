@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -95,6 +96,16 @@ public partial class CadastroPavilhaoViewModel : ModeloCadastroViewModel
             return false;
         }
         return true;
+    }
+
+    protected override object CreateGridItem(DataRow row)
+    {
+        return new PavilhaoGridItem
+        {
+            IdPavilhao = System.Convert.ToInt32(row["id_pavilhao"]),
+            Pavilhao = row["pavilhao"]?.ToString()?.Trim() ?? "",
+            IdUp = System.Convert.ToInt32(row["id_up"])
+        };
     }
 
     protected override async Task InserirAsync()

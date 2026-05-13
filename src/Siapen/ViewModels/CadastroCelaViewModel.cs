@@ -1,10 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using FirebirdSql.Data.FirebirdClient;
 using Siapen.Helpers;
+using Siapen.Models;
 using Siapen.Services;
 
 namespace Siapen.ViewModels;
@@ -43,22 +45,22 @@ public partial class CadastroCelaViewModel : ModeloCadastroViewModel
     private int _idUp;
 
     [ObservableProperty]
-    private DataTable _pavilhoes = new();
+    private List<LookupItem> _pavilhoes = new();
 
     [ObservableProperty]
-    private DataRowView? _pavilhaoSelecionado;
+    private LookupItem? _pavilhaoSelecionado;
 
     [ObservableProperty]
-    private DataTable _galerias = new();
+    private List<LookupItem> _galerias = new();
 
     [ObservableProperty]
-    private DataRowView? _galeriaSelecionada;
+    private LookupItem? _galeriaSelecionada;
 
     [ObservableProperty]
-    private DataTable _solarios = new();
+    private List<LookupItem> _solarios = new();
 
     [ObservableProperty]
-    private DataRowView? _solarioSelecionado;
+    private LookupItem? _solarioSelecionado;
 
     private bool _isPreenchendo;
 
@@ -68,17 +70,36 @@ public partial class CadastroCelaViewModel : ModeloCadastroViewModel
         TituloCadastro = "Cadastro de Cela";
     }
 
+    protected override object CreateGridItem(DataRow row)
+    {
+        return new CelaGridItem
+        {
+            IdCela = Convert.ToInt32(row["id_cela"]),
+            Cela = row["cela"]?.ToString()?.Trim() ?? "",
+            IdPavilhao = row["idpavilhao"] == DBNull.Value ? 0 : Convert.ToInt32(row["idpavilhao"]),
+            IdGaleria = row["idgaleria"] == DBNull.Value ? 0 : Convert.ToInt32(row["idgaleria"]),
+            IdSolario = row["idsolario"] == DBNull.Value ? 0 : Convert.ToInt32(row["idsolario"]),
+            Isolamento = row["isolamento"]?.ToString()?.Trim() ?? "N",
+            LimitePorCela = row["limite_por_cela"] == DBNull.Value ? 0 : Convert.ToInt32(row["limite_por_cela"]),
+            EmManutencao = row["em_manutencao"]?.ToString()?.Trim() ?? "N",
+            MotivoManutencao = row["motivo_manutencao"]?.ToString()?.Trim() ?? "",
+            PavilhaoNome = row["pavilhao_nome"]?.ToString()?.Trim() ?? "",
+            GaleriaNome = row["galeria_nome"]?.ToString()?.Trim() ?? "",
+            SolarioNome = row["solario_nome"]?.ToString()?.Trim() ?? ""
+        };
+    }
+
     public void LoadLookups()
     {
         IdUp = GlobalVars.IdUp;
         LogHelper.Debug($"CadastroCela: LoadLookups com GlobalVars.IdUp={GlobalVars.IdUp}, IdUp={IdUp}", "UI");
-        Pavilhoes = DmPrincipalService.GetPavilhoes(IdUp > 0 ? IdUp : GlobalVars.IdUp);
+        Pavilhoes = DmPrincipalService.GetPavilhoesLookup(IdUp > 0 ? IdUp : GlobalVars.IdUp);
     }
 
-    partial void OnPavilhaoSelecionadoChanged(DataRowView? value)
+    partial void OnPavilhaoSelecionadoChanged(LookupItem? value)
     {
         if (value == null) return;
-        IdPavilhao = GetInt(value, "id_pavilhao") ?? 0;
+        IdPavilhao = value.Id;
         if (!_isPreenchendo && IdPavilhao > 0)
         {
             LoadGalerias(IdPavilhao);
@@ -88,10 +109,10 @@ public partial class CadastroCelaViewModel : ModeloCadastroViewModel
         }
     }
 
-    partial void OnGaleriaSelecionadaChanged(DataRowView? value)
+    partial void OnGaleriaSelecionadaChanged(LookupItem? value)
     {
         if (value == null) return;
-        IdGaleria = GetInt(value, "id_galeria") ?? 0;
+        IdGaleria = value.Id;
         if (!_isPreenchendo && IdGaleria > 0)
         {
             LoadSolarios(IdGaleria);
@@ -101,14 +122,12 @@ public partial class CadastroCelaViewModel : ModeloCadastroViewModel
 
     private void LoadGalerias(int idPavilhao)
     {
-        var dt = DmPrincipalService.GetGalerias(idPavilhao);
-        Galerias = dt;
+        Galerias = DmPrincipalService.GetGaleriasLookup(idPavilhao);
     }
 
     private void LoadSolarios(int idGaleria)
     {
-        var dt = DmPrincipalService.GetSolarios(idGaleria);
-        Solarios = dt;
+        Solarios = DmPrincipalService.GetSolariosLookup(idGaleria);
     }
 
     protected override string GetSqlConsulta() =>
@@ -166,41 +185,22 @@ public partial class CadastroCelaViewModel : ModeloCadastroViewModel
         if (pavId > 0)
         {
             LoadGalerias(pavId);
-            if (Pavilhoes.DefaultView != null)
-            {
-                foreach (DataRowView row in Pavilhoes.DefaultView)
-                {
-                    if (GetInt(row, "id_pavilhao") == pavId)
-                    { PavilhaoSelecionado = row; break; }
-                }
-            }
+            PavilhaoSelecionado = Pavilhoes.FirstOrDefault(p => p.Id == pavId);
         }
 
         var galId = GetInt(SelectedRow, "idgaleria") ?? 0;
         IdGaleria = galId;
-        if (galId > 0 && Galerias.DefaultView != null)
+        if (galId > 0 && Galerias.Count > 0)
         {
-            foreach (DataRowView row in Galerias.DefaultView)
-            {
-                if (GetInt(row, "id_galeria") == galId)
-                { GaleriaSelecionada = row; break; }
-            }
-        }
-
-        if (galId > 0)
-        {
+            GaleriaSelecionada = Galerias.FirstOrDefault(g => g.Id == galId);
             LoadSolarios(galId);
         }
 
         var solId = GetInt(SelectedRow, "idsolario") ?? 0;
         IdSolario = solId;
-        if (solId > 0 && Solarios.DefaultView != null)
+        if (solId > 0 && Solarios.Count > 0)
         {
-            foreach (DataRowView row in Solarios.DefaultView)
-            {
-                if (GetInt(row, "id_solario") == solId)
-                { SolarioSelecionado = row; break; }
-            }
+            SolarioSelecionado = Solarios.FirstOrDefault(s => s.Id == solId);
         }
 
         _isPreenchendo = false;

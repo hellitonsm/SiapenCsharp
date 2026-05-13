@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
@@ -25,10 +26,10 @@ public partial class CadastroGaleriaViewModel : ModeloCadastroViewModel
     private int _idUp;
 
     [ObservableProperty]
-    private DataTable _pavilhoes = new();
+    private List<LookupItem> _pavilhoes = new();
 
     [ObservableProperty]
-    private DataRowView? _pavilhaoSelecionado;
+    private LookupItem? _pavilhaoSelecionado;
 
     public CadastroGaleriaViewModel()
     {
@@ -36,17 +37,28 @@ public partial class CadastroGaleriaViewModel : ModeloCadastroViewModel
         TituloCadastro = "Cadastro de Galeria";
     }
 
+    protected override object CreateGridItem(DataRow row)
+    {
+        return new GaleriaGridItem
+        {
+            IdGaleria = Convert.ToInt32(row["id_galeria"]),
+            Galeria = row["galeria"]?.ToString()?.Trim() ?? "",
+            IdPavilhao = row["idpavilhao"] == DBNull.Value ? 0 : Convert.ToInt32(row["idpavilhao"]),
+            PavilhaoNome = row["pavilhao_nome"]?.ToString()?.Trim() ?? ""
+        };
+    }
+
     public void LoadPavilhoes()
     {
         IdUp = GlobalVars.IdUp;
         LogHelper.Debug($"CadastroGaleria: LoadPavilhoes com GlobalVars.IdUp={GlobalVars.IdUp}, IdUp={IdUp}", "UI");
-        Pavilhoes = DmPrincipalService.GetPavilhoes(IdUp > 0 ? IdUp : GlobalVars.IdUp);
+        Pavilhoes = DmPrincipalService.GetPavilhoesLookup(IdUp > 0 ? IdUp : GlobalVars.IdUp);
     }
 
-    partial void OnPavilhaoSelecionadoChanged(DataRowView? value)
+    partial void OnPavilhaoSelecionadoChanged(LookupItem? value)
     {
         if (value != null)
-            IdPavilhao = GetInt(value, "id_pavilhao") ?? 0;
+            IdPavilhao = value.Id;
     }
 
     protected override string GetSqlConsulta() =>
@@ -80,16 +92,9 @@ public partial class CadastroGaleriaViewModel : ModeloCadastroViewModel
         NomeGaleria = GetString(SelectedRow, "galeria");
         var pavId = GetInt(SelectedRow, "idpavilhao") ?? 0;
         IdPavilhao = pavId;
-        if (pavId > 0 && Pavilhoes.DefaultView != null)
+        if (pavId > 0)
         {
-            foreach (DataRowView row in Pavilhoes.DefaultView)
-            {
-                if (GetInt(row, "id_pavilhao") == pavId)
-                {
-                    PavilhaoSelecionado = row;
-                    break;
-                }
-            }
+            PavilhaoSelecionado = Pavilhoes.FirstOrDefault(p => p.Id == pavId);
         }
     }
 

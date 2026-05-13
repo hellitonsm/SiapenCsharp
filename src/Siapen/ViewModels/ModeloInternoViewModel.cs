@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using FirebirdSql.Data.FirebirdClient;
 using Siapen.Helpers;
+using Siapen.Models;
 using Siapen.Services;
 
 namespace Siapen.ViewModels;
@@ -199,6 +200,19 @@ public partial class ModeloInternoViewModel : ModeloCadastroViewModel
             return false;
         }
         return true;
+    }
+
+    protected override object CreateGridItem(DataRow row)
+    {
+        return new InternoGridItem
+        {
+            IdInterno = System.Convert.ToInt32(row["id_interno"]),
+            NomeInterno = row["nome_interno"]?.ToString()?.Trim() ?? "",
+            Rgi = row["rgi"]?.ToString()?.Trim() ?? "",
+            Vulgo = string.Empty,
+            Status = row["st"]?.ToString()?.Trim() ?? "A",
+            Sigla = string.Empty
+        };
     }
 
     protected override async Task InserirAsync()

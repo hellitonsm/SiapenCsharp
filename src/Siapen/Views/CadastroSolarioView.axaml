@@ -91,35 +91,33 @@
                   <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding IdSolario}"
                            IsReadOnly="True" Height="24" FontSize="12" Margin="4" Width="134"/>
 
-                  <TextBlock Grid.Row="1" Grid.Column="0" Text="Nivel - 01" FontSize="12"
-                             VerticalAlignment="Center" Margin="4,4"/>
-                  <ComboBox Grid.Row="1" Grid.Column="1"
-                            ItemsSource="{Binding Pavilhoes.DefaultView}"
-                            SelectedItem="{Binding PavilhaoSelecionado}"
-                            Height="24" FontSize="12" Margin="4" Width="300"
-                            IsEnabled="{Binding CamposHabilitados}"
-                            x:CompileBindings="False">
-                    <ComboBox.ItemTemplate>
-                      <DataTemplate>
-                        <TextBlock Text="{Binding pavilhao}"/>
-                      </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                  </ComboBox>
+<TextBlock Grid.Row="1" Grid.Column="0" Text="Nivel - 01" FontSize="12"
+                              VerticalAlignment="Center" Margin="4,4"/>
+               <ComboBox Grid.Row="1" Grid.Column="1"
+                         ItemsSource="{Binding Pavilhoes}"
+                         SelectedItem="{Binding PavilhaoSelecionado, Mode=TwoWay}"
+                         Height="24" FontSize="12" Margin="4" Width="300"
+                         IsEnabled="{Binding CamposHabilitados}">
+                 <ComboBox.ItemTemplate>
+                   <DataTemplate>
+                     <TextBlock Text="{Binding DisplayName}"/>
+                   </DataTemplate>
+                 </ComboBox.ItemTemplate>
+               </ComboBox>
 
-                  <TextBlock Grid.Row="2" Grid.Column="0" Text="Nivel - 02" FontSize="12"
-                             VerticalAlignment="Center" Margin="4,4"/>
-                  <ComboBox Grid.Row="2" Grid.Column="1"
-                            ItemsSource="{Binding Galerias.DefaultView}"
-                            SelectedItem="{Binding GaleriaSelecionada}"
-                            Height="24" FontSize="12" Margin="4" Width="300"
-                            IsEnabled="{Binding CamposHabilitados}"
-                            x:CompileBindings="False">
-                    <ComboBox.ItemTemplate>
-                      <DataTemplate>
-                        <TextBlock Text="{Binding galeria}"/>
-                      </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                  </ComboBox>
+               <TextBlock Grid.Row="2" Grid.Column="0" Text="Nivel - 02" FontSize="12"
+                              VerticalAlignment="Center" Margin="4,4"/>
+               <ComboBox Grid.Row="2" Grid.Column="1"
+                         ItemsSource="{Binding Galerias}"
+                         SelectedItem="{Binding GaleriaSelecionada, Mode=TwoWay}"
+                         Height="24" FontSize="12" Margin="4" Width="300"
+                         IsEnabled="{Binding CamposHabilitados}">
+                 <ComboBox.ItemTemplate>
+                   <DataTemplate>
+                     <TextBlock Text="{Binding DisplayName}"/>
+                   </DataTemplate>
+                 </ComboBox.ItemTemplate>
+               </ComboBox>
 
                   <TextBlock Grid.Row="3" Grid.Column="0" Text="SOLÁRIO" FontSize="12"
                              VerticalAlignment="Center" Margin="4,4"/>
@@ -212,14 +210,22 @@
             </Border>
 
             <Border Background="White" BorderBrush="#DEE2E6" BorderThickness="1" Margin="0">
-              <DataGrid ItemsSource="{Binding DataViewSource}"
-                        SelectedItem="{Binding SelectedRow}"
-                        AutoGenerateColumns="True"
+              <DataGrid ItemsSource="{Binding GridItems}"
+                        SelectedItem="{Binding SelectedGridItem}"
+                        AutoGenerateColumns="False"
                         IsReadOnly="True"
                         GridLinesVisibility="Horizontal"
                         BorderThickness="0" Background="White"
                         RowHeight="28" FontSize="12"
                         x:CompileBindings="False">
+                <DataGrid.Columns>
+                  <DataGridTextColumn Header="Código" Binding="{Binding IdSolario}" Width="80"/>
+                  <DataGridTextColumn Header="Solário" Binding="{Binding Solario}" Width="*"/>
+                  <DataGridTextColumn Header="Pavilhão" Binding="{Binding PavilhaoNome}" Width="120"/>
+                  <DataGridTextColumn Header="Galeria" Binding="{Binding GaleriaNome}" Width="120"/>
+                  <DataGridTextColumn Header="Dia Visita" Binding="{Binding DiaVisita}" Width="90"/>
+                  <DataGridTextColumn Header="Período" Binding="{Binding PeriodoVisita}" Width="70"/>
+                </DataGrid.Columns>
               </DataGrid>
             </Border>
           </DockPanel>

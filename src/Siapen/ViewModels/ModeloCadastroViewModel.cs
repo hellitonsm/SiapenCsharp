@@ -250,6 +250,7 @@ public abstract partial class ModeloCadastroViewModel : ViewModelBase
     protected abstract void LimparCampos();
     protected abstract void PreencherCampos();
     protected abstract bool ValidarCampos();
+    protected abstract object CreateGridItem(DataRow row);
     protected abstract Task InserirAsync();
     protected abstract Task AtualizarAsync();
     protected abstract Task ExcluirAsync();

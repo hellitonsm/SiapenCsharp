@@ -12,7 +12,8 @@
 1. **Telas (DFM → Avalonia)**
    - **Codificação dos DFMs**: Arquivos `.dfm` em `origin/dfm/` são ASCII puro, mas usam a notação Delphi `#<ord>` para caracteres acentuados (ex: `#227'o` = `ão`, `#243'digo` = `ódigo`, `#231#227'o` = `ção`)
    - Os números após `#` são code points **Latin-1 (ISO-8859-1)**. Ex: `#227` = `ã` (U+00E3), `#243` = `ó` (U+00F3), `#231` = `ç` (U+00E7)
-   - Ao converter para C#, substituir por literais Unicode (`\u00e3`, `\u00f3`, `\u00e7`) ou diretamente o caractere UTF-8
+   - Ao converter para C#, usar **sempre caracteres UTF-8 diretos** (ex: `Código`, `Pavilhão`, `Não`). **NUNCA** usar escapes `\u00XX` — eles tornam o código ilegível e quebram buscas textuais.
+   - **Checker pós-conversão**: executar `grep -rn '\\u00' src/Siapen/ --include='*.cs' --include='*.axaml'` — se retornar algo, substituir por UTF-8 direto.
    - Só implementar telas que tiverem DFM fornecido em `origin/dfm/`
    - Cada tela DFM corresponde a um par `Views/<Nome>View.axaml` + `Views/<Nome>View.axaml.cs`
    - ViewModels em `ViewModels/<Nome>ViewModel.cs`
@@ -66,7 +67,8 @@ src/Siapen/
 3. Criar ViewModel se necessário
 4. Conectar botão correspondente no MainWindow
 5. Se precisar de tabela do banco, usar extractor.py
-6. Testar build: `cd src/Siapen && dotnet build`
+6. **Verificar encoding**: `grep -rn '\\u00' src/Siapen/ --include='*.cs' --include='*.axaml'` — não deve retornar nada
+7. Testar build: `cd src/Siapen && dotnet build`
 
 ### Estado Atual
 

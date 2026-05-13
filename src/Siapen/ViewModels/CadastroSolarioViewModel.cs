@@ -61,7 +61,7 @@ public partial class CadastroSolarioViewModel : ModeloCadastroViewModel
     public CadastroSolarioViewModel()
     {
         _orderBy = "solario";
-        TituloCadastro = "Cadastro de Sol\u00e1rio";
+        TituloCadastro = "Cadastro de Solário";
         PropertyChanged += OnPropertyChangedHandler;
     }
 
@@ -142,7 +142,7 @@ public partial class CadastroSolarioViewModel : ModeloCadastroViewModel
             "DELETE FROM recursos_ala WHERE id_recurso_ala = @ID",
             DatabaseService.CreateParameter("@ID", id.Value));
         LoadRecursos();
-        StatusMessage = "Recurso exclu\u00eddo com sucesso.";
+        StatusMessage = "Recurso excluído com sucesso.";
     }
 
     protected override string GetSqlConsulta() =>
@@ -219,7 +219,7 @@ public partial class CadastroSolarioViewModel : ModeloCadastroViewModel
     {
         if (string.IsNullOrWhiteSpace(NomeSolario))
         {
-            StatusMessage = "O campo Sol\u00e1rio \u00e9 obrigat\u00f3rio.";
+            StatusMessage = "O campo Solário é obrigatório.";
             return false;
         }
         return true;

@@ -94,7 +94,7 @@
               <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Spacing="16" Margin="4,2">
                 <RadioButton Content="Sim" IsChecked="{Binding Isolamento, Converter={x:Static vm:RadioValueConverters.EqS}}"
                              IsEnabled="{Binding CamposHabilitados}" FontSize="11"/>
-                <RadioButton Content="N\u00e3o" IsChecked="{Binding Isolamento, Converter={x:Static vm:RadioValueConverters.EqN}}"
+                <RadioButton Content="Não" IsChecked="{Binding Isolamento, Converter={x:Static vm:RadioValueConverters.EqN}}"
                              IsEnabled="{Binding CamposHabilitados}" FontSize="11"/>
               </StackPanel>
 
@@ -155,14 +155,14 @@
                        Height="24" FontSize="12" Margin="4" Width="400"
                        IsEnabled="{Binding CamposHabilitados}"/>
 
-              <TextBlock Grid.Row="7" Grid.Column="0" Text="Em manuten\u00e7\u00e3o:" FontSize="12"
+              <TextBlock Grid.Row="7" Grid.Column="0" Text="Em manutenção:" FontSize="12"
                          VerticalAlignment="Center" Margin="4,4"/>
               <StackPanel Grid.Row="7" Grid.Column="1" Orientation="Horizontal" Spacing="16" Margin="4,2">
                 <RadioButton Content="Sim" IsChecked="{Binding EmManutencao, Converter={x:Static vm:RadioValueConverters.EqS}}"
                              IsEnabled="{Binding CamposHabilitados}" FontSize="11"/>
-                <RadioButton Content="N\u00e3o" IsChecked="{Binding EmManutencao, Converter={x:Static vm:RadioValueConverters.EqN}}"
+                <RadioButton Content="Não" IsChecked="{Binding EmManutencao, Converter={x:Static vm:RadioValueConverters.EqN}}"
                              IsEnabled="{Binding CamposHabilitados}" FontSize="11"/>
-                <TextBlock Text="Motivo da manuten\u00e7\u00e3o:" VerticalAlignment="Center" FontSize="11" Margin="16,0,4,0"/>
+                <TextBlock Text="Motivo da manutenção:" VerticalAlignment="Center" FontSize="11" Margin="16,0,4,0"/>
                 <TextBox Text="{Binding MotivoManutencao}" Width="250" Height="22" FontSize="11"
                          IsEnabled="{Binding CamposHabilitados}"/>
               </StackPanel>
@@ -192,9 +192,9 @@
                         RowHeight="28" FontSize="12"
                         x:CompileBindings="False">
                 <DataGrid.Columns>
-                  <DataGridTextColumn Header="Pavilh\u00e3o" Binding="{Binding pavilhao_nome}" Width="120"/>
+                  <DataGridTextColumn Header="Pavilhão" Binding="{Binding pavilhao_nome}" Width="120"/>
                   <DataGridTextColumn Header="Galeria" Binding="{Binding galeria_nome}" Width="120"/>
-                  <DataGridTextColumn Header="Sol\u00e1rio" Binding="{Binding solario_nome}" Width="120"/>
+                  <DataGridTextColumn Header="Solário" Binding="{Binding solario_nome}" Width="120"/>
                   <DataGridTextColumn Header="Cela" Binding="{Binding cela}" Width="*"/>
                 </DataGrid.Columns>
               </DataGrid>

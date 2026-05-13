@@ -84,7 +84,7 @@
             <Grid RowDefinitions="Auto,Auto,Auto"
                   ColumnDefinitions="Auto,*"
                   Margin="4">
-              <TextBlock Grid.Row="0" Grid.Column="0" Text="C\u00f3digo" FontSize="12"
+              <TextBlock Grid.Row="0" Grid.Column="0" Text="Código" FontSize="12"
                          VerticalAlignment="Center" Margin="4,8,4,4" Width="100"/>
               <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding IdGaleria}"
                        IsReadOnly="True" Height="24" FontSize="12" Margin="4" Width="134"/>
@@ -95,7 +95,7 @@
                        Height="24" FontSize="12" Margin="4" Width="400"
                        IsEnabled="{Binding CamposHabilitados}"/>
 
-              <TextBlock Grid.Row="2" Grid.Column="0" Text="Pavilh\u00e3o" FontSize="12"
+              <TextBlock Grid.Row="2" Grid.Column="0" Text="Pavilhão" FontSize="12"
                          VerticalAlignment="Center" Margin="4,4"/>
               <ComboBox Grid.Row="2" Grid.Column="1"
                         ItemsSource="{Binding Pavilhoes.DefaultView}"
@@ -135,9 +135,9 @@
                         RowHeight="28" FontSize="12"
                         x:CompileBindings="False">
                 <DataGrid.Columns>
-                  <DataGridTextColumn Header="C\u00f3digo" Binding="{Binding id_galeria}" Width="100"/>
-                  <DataGridTextColumn Header="Descri\u00e7\u00e3o" Binding="{Binding galeria}" Width="*"/>
-                  <DataGridTextColumn Header="Pavilh\u00e3o" Binding="{Binding pavilhao_nome}" Width="150"/>
+                  <DataGridTextColumn Header="Código" Binding="{Binding id_galeria}" Width="100"/>
+                  <DataGridTextColumn Header="Descrição" Binding="{Binding galeria}" Width="*"/>
+                  <DataGridTextColumn Header="Pavilhão" Binding="{Binding pavilhao_nome}" Width="150"/>
                 </DataGrid.Columns>
               </DataGrid>
             </Border>

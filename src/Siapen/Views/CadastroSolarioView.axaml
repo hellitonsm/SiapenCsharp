@@ -6,7 +6,7 @@
         mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="500"
         x:Class="Siapen.Views.CadastroSolarioView"
         x:DataType="vm:CadastroSolarioViewModel"
-        Title="SIAPEN - Cadastro de Sol\u00e1rio"
+        Title="SIAPEN - Cadastro de Solário"
         WindowStartupLocation="CenterScreen"
         Width="900" Height="500"
         Background="#F4F6F8">
@@ -86,7 +86,7 @@
                 <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto"
                       ColumnDefinitions="Auto,*"
                       Margin="4">
-                  <TextBlock Grid.Row="0" Grid.Column="0" Text="C\u00f3digo" FontSize="12"
+                  <TextBlock Grid.Row="0" Grid.Column="0" Text="Código" FontSize="12"
                              VerticalAlignment="Center" Margin="4,8,4,4" Width="100"/>
                   <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding IdSolario}"
                            IsReadOnly="True" Height="24" FontSize="12" Margin="4" Width="134"/>
@@ -121,7 +121,7 @@
                     </ComboBox.ItemTemplate>
                   </ComboBox>
 
-                  <TextBlock Grid.Row="3" Grid.Column="0" Text="SOL\u00c1RIO" FontSize="12"
+                  <TextBlock Grid.Row="3" Grid.Column="0" Text="SOLÁRIO" FontSize="12"
                              VerticalAlignment="Center" Margin="4,4"/>
                   <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding NomeSolario}"
                            Height="24" FontSize="12" Margin="4" Width="400"
@@ -134,7 +134,7 @@
                                  IsEnabled="{Binding CamposHabilitados}" FontSize="11"/>
                     <RadioButton Content="Segunda" IsChecked="{Binding DiaVisita, Converter={x:Static vm:RadioValueConverters.Eq2}}"
                                  IsEnabled="{Binding CamposHabilitados}" FontSize="11"/>
-                    <RadioButton Content="Ter\u00e7a" IsChecked="{Binding DiaVisita, Converter={x:Static vm:RadioValueConverters.Eq3}}"
+                    <RadioButton Content="Terça" IsChecked="{Binding DiaVisita, Converter={x:Static vm:RadioValueConverters.Eq3}}"
                                  IsEnabled="{Binding CamposHabilitados}" FontSize="11"/>
                     <RadioButton Content="Quarta" IsChecked="{Binding DiaVisita, Converter={x:Static vm:RadioValueConverters.Eq4}}"
                                  IsEnabled="{Binding CamposHabilitados}" FontSize="11"/>
@@ -142,16 +142,16 @@
                                  IsEnabled="{Binding CamposHabilitados}" FontSize="11"/>
                     <RadioButton Content="Sexta" IsChecked="{Binding DiaVisita, Converter={x:Static vm:RadioValueConverters.Eq6}}"
                                  IsEnabled="{Binding CamposHabilitados}" FontSize="11"/>
-                    <RadioButton Content="S\u00e1bado" IsChecked="{Binding DiaVisita, Converter={x:Static vm:RadioValueConverters.Eq7}}"
+                    <RadioButton Content="Sábado" IsChecked="{Binding DiaVisita, Converter={x:Static vm:RadioValueConverters.Eq7}}"
                                  IsEnabled="{Binding CamposHabilitados}" FontSize="11"/>
-                    <RadioButton Content="N\u00e3o Tem" IsChecked="{Binding DiaVisita, Converter={x:Static vm:RadioValueConverters.Eq8}}"
+                    <RadioButton Content="Não Tem" IsChecked="{Binding DiaVisita, Converter={x:Static vm:RadioValueConverters.Eq8}}"
                                  IsEnabled="{Binding CamposHabilitados}" FontSize="11"/>
                   </StackPanel>
 
-                  <TextBlock Grid.Row="5" Grid.Column="0" Text="Per\u00edodo da Visita" FontSize="12"
+                  <TextBlock Grid.Row="5" Grid.Column="0" Text="Período da Visita" FontSize="12"
                              VerticalAlignment="Center" Margin="4,4"/>
                   <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal" Spacing="16" Margin="4,2">
-                    <RadioButton Content="Manh\u00e3" IsChecked="{Binding PeriodoVisita, Converter={x:Static vm:RadioValueConverters.EqM}}"
+                    <RadioButton Content="Manhã" IsChecked="{Binding PeriodoVisita, Converter={x:Static vm:RadioValueConverters.EqM}}"
                                  IsEnabled="{Binding CamposHabilitados}" FontSize="11"/>
                     <RadioButton Content="Tarde" IsChecked="{Binding PeriodoVisita, Converter={x:Static vm:RadioValueConverters.EqT}}"
                                  IsEnabled="{Binding CamposHabilitados}" FontSize="11"/>
@@ -165,12 +165,12 @@
                 <DockPanel>
                   <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="8" Margin="0,0,0,8">
                     <StackPanel Spacing="2">
-                      <TextBlock Text="Descri\u00e7\u00e3o" FontSize="11"/>
+                      <TextBlock Text="Descrição" FontSize="11"/>
                       <TextBox Text="{Binding RecursoDescricao}" Width="180" Height="22" FontSize="11"
                                IsEnabled="{Binding CamposHabilitados}"/>
                     </StackPanel>
                     <StackPanel Spacing="2">
-                      <TextBlock Text="Observa\u00e7\u00e3o" FontSize="11"/>
+                      <TextBlock Text="Observação" FontSize="11"/>
                       <TextBox Text="{Binding RecursoObservacao}" Width="280" Height="22" FontSize="11"
                                IsEnabled="{Binding CamposHabilitados}"/>
                     </StackPanel>
@@ -192,9 +192,9 @@
                               RowHeight="26" FontSize="11"
                               x:CompileBindings="False">
                       <DataGrid.Columns>
-                        <DataGridTextColumn Header="Descri\u00e7\u00e3o" Binding="{Binding descricao}" Width="*"/>
+                        <DataGridTextColumn Header="Descrição" Binding="{Binding descricao}" Width="*"/>
                         <DataGridTextColumn Header="Data" Binding="{Binding data}" Width="120"/>
-                        <DataGridTextColumn Header="Observa\u00e7\u00e3o" Binding="{Binding observacao}" Width="*"/>
+                        <DataGridTextColumn Header="Observação" Binding="{Binding observacao}" Width="*"/>
                       </DataGrid.Columns>
                     </DataGrid>
                   </Border>
@@ -226,9 +226,9 @@
                         RowHeight="28" FontSize="12"
                         x:CompileBindings="False">
                 <DataGrid.Columns>
-                  <DataGridTextColumn Header="C\u00f3digo" Binding="{Binding id_solario}" Width="100"/>
-                  <DataGridTextColumn Header="Descri\u00e7\u00e3o" Binding="{Binding solario}" Width="*"/>
-                  <DataGridTextColumn Header="Pavilh\u00e3o" Binding="{Binding pavilhao_nome}" Width="150"/>
+                  <DataGridTextColumn Header="Código" Binding="{Binding id_solario}" Width="100"/>
+                  <DataGridTextColumn Header="Descrição" Binding="{Binding solario}" Width="*"/>
+                  <DataGridTextColumn Header="Pavilhão" Binding="{Binding pavilhao_nome}" Width="150"/>
                   <DataGridTextColumn Header="Galeria" Binding="{Binding galeria_nome}" Width="150"/>
                 </DataGrid.Columns>
               </DataGrid>

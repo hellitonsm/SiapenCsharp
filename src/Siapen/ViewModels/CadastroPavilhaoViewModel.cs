@@ -32,7 +32,7 @@ public partial class CadastroPavilhaoViewModel : ModeloCadastroViewModel
     public CadastroPavilhaoViewModel()
     {
         _orderBy = "pavilhao";
-        TituloCadastro = "Cadastro de Pavilh\u00e3o";
+        TituloCadastro = "Cadastro de Pavilhão";
     }
 
     public void LoadUnidades()
@@ -91,7 +91,7 @@ public partial class CadastroPavilhaoViewModel : ModeloCadastroViewModel
     {
         if (string.IsNullOrWhiteSpace(NomePavilhao))
         {
-            StatusMessage = "O campo Pavilh\u00e3o \u00e9 obrigat\u00f3rio.";
+            StatusMessage = "O campo Pavilhão é obrigatório.";
             return false;
         }
         return true;

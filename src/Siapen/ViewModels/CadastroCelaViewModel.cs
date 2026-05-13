@@ -201,7 +201,7 @@ public partial class CadastroCelaViewModel : ModeloCadastroViewModel
     {
         if (string.IsNullOrWhiteSpace(NomeCela))
         {
-            StatusMessage = "O campo Cela \u00e9 obrigat\u00f3rio.";
+            StatusMessage = "O campo Cela é obrigatório.";
             return false;
         }
         return true;

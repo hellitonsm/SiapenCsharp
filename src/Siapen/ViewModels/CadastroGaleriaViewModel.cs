@@ -88,7 +88,7 @@ public partial class CadastroGaleriaViewModel : ModeloCadastroViewModel
     {
         if (string.IsNullOrWhiteSpace(NomeGaleria))
         {
-            StatusMessage = "O campo Galeria \u00e9 obrigat\u00f3rio.";
+            StatusMessage = "O campo Galeria é obrigatório.";
             return false;
         }
         return true;

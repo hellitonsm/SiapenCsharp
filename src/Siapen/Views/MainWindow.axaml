@@ -19,7 +19,7 @@
     <!-- Menu Principal -->
     <Menu DockPanel.Dock="Top">
       <MenuItem Header="Cadastro">
-        <MenuItem Header="Pavilhão" Command="{Binding CadastroPavilhaoCommand}"/>
+        <MenuItem Header="Pavilhão" Click="CadastroPavilhao_Click"/>
         <MenuItem Header="Galeria" Command="{Binding CadastroGaleriaCommand}"/>
         <MenuItem Header="Solário" Command="{Binding CadastroSolarioCommand}"/>
         <MenuItem Header="Cela" Command="{Binding CadastroCelaCommand}"/>

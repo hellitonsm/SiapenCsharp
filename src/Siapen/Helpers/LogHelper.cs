@@ -165,9 +165,9 @@ public static class LogHelper
                 File.AppendAllText(logFile, line + Environment.NewLine, Encoding.UTF8);
             }
         }
-        catch
+        catch (Exception ex)
         {
-            // Não deixa o log quebrar a aplicação
+            System.Diagnostics.Debug.WriteLine($"LogHelper: falha ao escrever log: {ex.Message}");
         }
     }
 }

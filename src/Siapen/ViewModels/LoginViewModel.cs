@@ -147,7 +147,7 @@ public partial class LoginViewModel : ObservableObject
     /// Tenta fazer login
     /// </summary>
     [RelayCommand]
-    private async void Entrar()
+    private async Task Entrar()
     {
         if (string.IsNullOrWhiteSpace(Login))
         {

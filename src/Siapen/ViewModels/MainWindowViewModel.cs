@@ -102,8 +102,13 @@ public partial class MainWindowViewModel : ViewModelBase
 
     // === MENU CADASTRO ===
 
-    [RelayCommand]
-    private void CadastroPavilhao() => NaoImplementado();
+    private IRelayCommand? _cadastroPavilhaoCommand;
+    public IRelayCommand CadastroPavilhaoCommand =>
+        _cadastroPavilhaoCommand ??= new RelayCommand(() =>
+        {
+            var view = new CadastroPavilhaoView();
+            view.Show();
+        });
 
     [RelayCommand]
     private void CadastroGaleria() => NaoImplementado();

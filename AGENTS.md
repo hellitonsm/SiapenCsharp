@@ -10,6 +10,9 @@
 ### Diretrizes de Conversão
 
 1. **Telas (DFM → Avalonia)**
+   - **Codificação dos DFMs**: Arquivos `.dfm` em `origin/dfm/` são ASCII puro, mas usam a notação Delphi `#<ord>` para caracteres acentuados (ex: `#227'o` = `ão`, `#243'digo` = `ódigo`, `#231#227'o` = `ção`)
+   - Os números após `#` são code points **Latin-1 (ISO-8859-1)**. Ex: `#227` = `ã` (U+00E3), `#243` = `ó` (U+00F3), `#231` = `ç` (U+00E7)
+   - Ao converter para C#, substituir por literais Unicode (`\u00e3`, `\u00f3`, `\u00e7`) ou diretamente o caractere UTF-8
    - Só implementar telas que tiverem DFM fornecido em `origin/dfm/`
    - Cada tela DFM corresponde a um par `Views/<Nome>View.axaml` + `Views/<Nome>View.axaml.cs`
    - ViewModels em `ViewModels/<Nome>ViewModel.cs`
@@ -102,6 +105,21 @@ src/Siapen/
 - Login: `233448`, Senha: `56965656` (confirmada via isql)
 - Login: `ADMIN`, Senha: decifra de `BF CE CC CA C8 C6 CF BB` = `@135790D`
 - Muitos funcionários têm senha = login
+
+#### Ativação de Recursos no Menu
+- `Command` binding (`Command="{Binding FooCommand}"`) **NÃO funciona** em sub-MenuItems no Avalonia (fica desabilitado)
+- **Solução**: Usar `Click="Foo_Click"` no XAML e criar o handler no code-behind de `MainWindow.axaml.cs`
+- Exemplo:
+  ```xml
+  <MenuItem Header="Pavilhão" Click="CadastroPavilhao_Click"/>
+  ```
+  ```csharp
+  private void CadastroPavilhao_Click(object? sender, RoutedEventArgs e)
+  {
+      var view = new CadastroPavilhaoView();
+      view.Show();
+  }
+  ```
 
 #### Build
 - `dotnet build --no-restore` é mais rápido (evita restore que às vezes trava)

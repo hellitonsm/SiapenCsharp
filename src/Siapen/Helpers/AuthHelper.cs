@@ -225,8 +225,9 @@ public static class AuthHelper
             int ordinal = reader.GetOrdinal(fieldName);
             return reader.IsDBNull(ordinal) ? string.Empty : reader.GetString(ordinal).Trim();
         }
-        catch
+        catch (Exception ex)
         {
+            LogHelper.Debug($"GetStringSafe: erro ao ler campo '{fieldName}': {ex.Message}", "AUTH");
             return string.Empty;
         }
     }

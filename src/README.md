@@ -6,7 +6,7 @@ Conversão do sistema legado Delphi para C# com Avalonia UI (.NET).
 
 - [.NET SDK 10.0+](https://dotnet.microsoft.com/download)
 - Banco de dados **Firebird** (acesso via rede)
-- Acesso ao servidor `172.18.15.251` (banco `siapentest`)
+- Acesso ao servidor `ip ou namehost` (banco `siapentest`)
 
 ## Estrutura do Projeto
 

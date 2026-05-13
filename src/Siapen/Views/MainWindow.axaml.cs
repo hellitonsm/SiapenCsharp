@@ -19,8 +19,9 @@ public partial class MainWindow : Window
 
     public MainWindow()
     {
+        _viewModel = new MainWindowViewModel();
+        DataContext = _viewModel;
         InitializeComponent();
-        _viewModel = (MainWindowViewModel)DataContext!;
     }
 
     protected override void OnOpened(EventArgs e)
@@ -82,6 +83,12 @@ public partial class MainWindow : Window
     {
         if (_viewModel != null)
             _viewModel.DataHora = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+    }
+
+    private void CadastroPavilhao_Click(object? sender, RoutedEventArgs e)
+    {
+        var view = new CadastroPavilhaoView();
+        view.Show();
     }
 
     private void SairMenuItem_Click(object? sender, RoutedEventArgs e)

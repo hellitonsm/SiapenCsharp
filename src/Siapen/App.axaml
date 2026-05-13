@@ -10,7 +10,8 @@
   
     <Application.Styles>
         <FluentTheme />
-        
+        <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
+
         <!-- Fonte Global e Estilos Comuns -->
         <Style Selector="Window">
             <Setter Property="FontFamily" Value="Inter, Roboto, Segoe UI, sans-serif" />

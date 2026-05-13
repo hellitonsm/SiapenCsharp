@@ -90,21 +90,183 @@ Charset=WIN1252
 
 ## Estado Atual
 
+### ✅ Implementado
+
 - [x] Estrutura do projeto Avalonia
-- [x] Tela de Login (esqueleto)
-- [x] Módulo Principal com todos os menus e botões (esqueleto)
+- [x] Tela de Login (autenticação com senha cifrada)
+- [x] Módulo Principal com todos os menus e botões
 - [x] Conexão Firebird
 - [x] Leitura de configuração do dbxconnections.ini
 - [x] Funções utilitárias (Lib.pas → LibHelper.cs)
 - [x] Variáveis globais (GlobalVars.cs)
 - [x] Autenticação (AuthHelper.cs)
-- [ ] Telas de cadastro (aguardando DFM)
-- [ ] Telas de setores (aguardando DFM)
-- [ ] Telas de movimentação (aguardando DFM)
-- [ ] Relatórios (aguardando DFM)
+- [x] Sistema de log (LogHelper)
+- [x] Barra de status com data/hora, UP e login
+- [x] Troca de Unidade Penal via ComboBox
 
-> **Todos os botões atualmente mostram "Não implementado".**
-> As telas serão implementadas conforme os DFMs forem fornecidos.
+#### Cadastro
+
+- [x] **Pavilhão** — CRUD completo com lookup de UP
+- [x] **Galeria** — CRUD completo com lookup de Pavilhão
+- [x] **Solário** — CRUD completo com cascata Pavilhão→Galeria + Recursos sub-grid
+- [x] **Cela** — CRUD completo com cascata Pavilhão→Galeria→Solário + manutenção/isolamento
+
+### 📋 Pendente
+
+> Os menus abaixo mostram "Não implementado" até que os DFMs sejam convertidos.
+
+#### Cadastro
+
+- [ ] Internos
+- [ ] Condição do Interno
+- [ ] Advogado
+- [ ] Facção
+- [ ] Cidade
+- [ ] Raça
+- [ ] Escolaridade
+- [ ] Nacionalidade
+- [ ] Procedência
+- [ ] Destino
+- [ ] Fornecedor
+- [ ] Profissão
+- [ ] CTC
+
+#### Movimentação
+
+- [ ] Transferência de Interno
+- [ ] Conferir Transferência Recebida
+- [ ] Mudança de Cela
+- [ ] Cadastro da Portaria do Saída
+- [ ] Inclusão dos Internos no Saída
+- [ ] Circulação de Interno
+- [ ] Movimento Semi-Aberto / Aberto
+- [ ] Consulta Movimentação Geral do Interno
+
+#### Setores
+
+- [ ] Clínica Médica
+- [ ] Disciplina
+- [ ] Jurídico
+- [ ] Psiquiatria
+- [ ] Saúde
+- [ ] Odontologia
+- [ ] Educação
+- [ ] Pedagogia
+- [ ] Enfermagem
+- [ ] Psicologia
+- [ ] Trabalho
+- [ ] Serviço Social
+- [ ] Farmácia
+- [ ] Psicossocial
+- [ ] Terapia Ocupacional
+- [ ] Falta Disciplinar
+- [ ] Série/Fase Atual
+- [ ] Livro/Revista
+- [ ] Carga Horária
+- [ ] Processos e/ou Condenações do Interno
+- [ ] Detração / Desconto na pena
+- [ ] Interrupções da Execução Penal
+- [ ] Remições de Pena
+- [ ] Artigos do Código Penal Brasileiro
+- [ ] Vara de Execução
+- [ ] Remédio
+- [ ] Setor Trabalho
+- [ ] Função Interno
+- [ ] Cálculo de Trabalho
+- [ ] Remição Trabalho
+- [ ] Roupas
+- [ ] Ocorrências
+- [ ] Conselho Disciplinar
+- [ ] Correspondência
+
+#### Visitantes
+
+- [ ] Entrada de Visitantes
+- [ ] Consulta Visitante
+- [ ] Grau Parentesco
+- [ ] Visitante
+- [ ] Visitantes Tráfico
+
+#### Relatórios
+
+- [ ] Menu de Relatórios
+- [ ] Consulta Interno
+
+#### Módulos
+
+- [ ] Tipo de Patrimônio
+- [ ] Cadastro de Patrimônio
+- [ ] Módulo Gestão de Armas
+- [ ] Controle de Portaria
+- [ ] Inteligência
+- [ ] Monitoramento
+- [ ] Planilha Dinâmica
+- [ ] Siapen Messenger
+- [ ] Banco de Horas
+- [ ] Módulo Gestão de Pessoas
+- [ ] Monitoramento Eletrônico
+- [ ] Web Browser
+
+#### Configuração
+
+- [ ] Usuário/Funcionário
+- [ ] Função Funcionário
+- [ ] Unidade Penal
+- [ ] Horário do Funcionário
+- [ ] Perfil de Usuário
+- [ ] Padrão do Sistema
+- [ ] Equipe
+- [ ] Posto / Local de Trabalho
+- [ ] Agente por Equipe
+- [ ] Regra de Visitação
+
+#### Manutenção
+
+- [ ] Atualizar Meus Dados
+- [ ] Trocar Senha
+- [ ] Mensagem do Banco de Dados
+- [ ] WebCam
+- [ ] Copiar um arquivo
+- [ ] Consulta PROCED
+
+#### Agendamento
+
+- [ ] Agenda de Atendimento
+- [ ] Assunto
+- [ ] Situação
+- [ ] Tipo de Contatos
+
+#### Procedimentos
+
+- [ ] Agendar Procedimentos
+- [ ] Configurar Procedimentos
+- [ ] Configurar Ocorrências
+- [ ] Atualizar Procedimentos
+- [ ] Posto de Trabalho
+
+#### Escala de Plantão
+
+- [ ] Iniciar Nova Escala
+- [ ] Atualizar Escala do Dia
+- [ ] Imprimir Escala
+- [ ] Apagar Escala
+
+#### Sobre
+
+- [ ] Informações
+- [ ] Muda Skin
+- [ ] Manual
+- [ ] Atribuição por Setores
+
+#### Botões da Tab Principal
+
+- [ ] Confere
+- [ ] Relatórios
+- [ ] Agenda de Atendimento
+- [ ] Consulta Geral
+- [ ] Requerimentos
+- [ ] Histórico / Ficha Disciplinar
+- [ ] Ocorrências Administrativas
 
 ## Extrair Tabelas do Banco
 

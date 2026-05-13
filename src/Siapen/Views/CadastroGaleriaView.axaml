@@ -1,0 +1,153 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Siapen.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="500"
+        x:Class="Siapen.Views.CadastroGaleriaView"
+        x:DataType="vm:CadastroGaleriaViewModel"
+        Title="SIAPEN - Cadastro de Galeria"
+        WindowStartupLocation="CenterScreen"
+        Width="800" Height="500"
+        Background="#F4F6F8">
+
+  <Design.DataContext>
+    <vm:CadastroGaleriaViewModel/>
+  </Design.DataContext>
+
+  <DockPanel>
+    <Border DockPanel.Dock="Left" Width="110" Background="#2B3A4A">
+      <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Spacing="2" Margin="2">
+          <Button Content="NOVO" Command="{Binding NovoCommand}"
+                  Height="34" FontSize="11" FontWeight="Bold"
+                  Foreground="White" Background="#198754"
+                  IsEnabled="{Binding Modo, Converter={x:Static vm:CadastroModoConverters.IsNavegando}}"/>
+          <Button Content="EDITAR" Command="{Binding EditarCommand}"
+                  Height="34" FontSize="11" FontWeight="Bold"
+                  Foreground="White" Background="#0D6EFD"
+                  IsEnabled="{Binding Modo, Converter={x:Static vm:CadastroModoConverters.IsNavegando}}"/>
+          <Button Content="CANCELAR" Command="{Binding CancelarCommand}"
+                  Height="34" FontSize="11" FontWeight="Bold"
+                  Foreground="White" Background="#6C757D"
+                  IsEnabled="{Binding CamposHabilitados}"/>
+          <Button Content="SALVAR" Command="{Binding SalvarCommand}"
+                  Height="34" FontSize="11" FontWeight="Bold"
+                  Foreground="White" Background="#0D6EFD"
+                  IsEnabled="{Binding CamposHabilitados}"/>
+          <Button Content="EXCLUIR" Command="{Binding ExcluirCommand}"
+                  Height="34" FontSize="11" FontWeight="Bold"
+                  Foreground="White" Background="#DC3545"
+                  IsEnabled="{Binding Modo, Converter={x:Static vm:CadastroModoConverters.IsNavegando}}"/>
+          <Button Content="FECHAR" Click="Fechar_Click"
+                  Height="34" FontSize="11" FontWeight="Bold"
+                  Foreground="White" Background="#DC3545"/>
+        </StackPanel>
+
+        <StackPanel DockPanel.Dock="Bottom" Spacing="1" Margin="2,0,2,4">
+          <Border Background="#1A2332" CornerRadius="4" Padding="4">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="4">
+              <Button Content="◀◀" Command="{Binding NavegarPrimeiroCommand}" Width="22" Height="22"
+                      FontSize="10" Padding="0"
+                      IsEnabled="{Binding Modo, Converter={x:Static vm:CadastroModoConverters.IsNavegando}}"/>
+              <Button Content="◀" Command="{Binding NavegarAnteriorCommand}" Width="22" Height="22"
+                      FontSize="10" Padding="0"
+                      IsEnabled="{Binding Modo, Converter={x:Static vm:CadastroModoConverters.IsNavegando}}"/>
+              <Button Content="▶" Command="{Binding NavegarProximoCommand}" Width="22" Height="22"
+                      FontSize="10" Padding="0"
+                      IsEnabled="{Binding Modo, Converter={x:Static vm:CadastroModoConverters.IsNavegando}}"/>
+              <Button Content="▶▶" Command="{Binding NavegarUltimoCommand}" Width="22" Height="22"
+                      FontSize="10" Padding="0"
+                      IsEnabled="{Binding Modo, Converter={x:Static vm:CadastroModoConverters.IsNavegando}}"/>
+            </StackPanel>
+          </Border>
+        </StackPanel>
+      </DockPanel>
+    </Border>
+
+    <Grid>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="*"/>
+        <RowDefinition Height="Auto"/>
+      </Grid.RowDefinitions>
+
+      <Border Grid.Row="0" Background="#FFF8F0E0" Height="36" BorderBrush="#E9ECEF" BorderThickness="0,0,0,1">
+        <TextBlock Text="{Binding TituloCadastro, StringFormat='SIAPEN - {0}'}"
+                   FontSize="15" FontWeight="Bold" Foreground="#2B3A4A"
+                   VerticalAlignment="Center" Margin="12,0"/>
+      </Border>
+
+      <TabControl Grid.Row="1" SelectedIndex="{Binding TabIndex}" Margin="0" TabStripPlacement="Top">
+        <TabItem Header="{Binding TituloCadastro}">
+          <Border Background="White" BorderBrush="#DEE2E6" BorderThickness="1" Padding="8">
+            <Grid RowDefinitions="Auto,Auto,Auto"
+                  ColumnDefinitions="Auto,*"
+                  Margin="4">
+              <TextBlock Grid.Row="0" Grid.Column="0" Text="C\u00f3digo" FontSize="12"
+                         VerticalAlignment="Center" Margin="4,8,4,4" Width="100"/>
+              <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding IdGaleria}"
+                       IsReadOnly="True" Height="24" FontSize="12" Margin="4" Width="134"/>
+
+              <TextBlock Grid.Row="1" Grid.Column="0" Text="Galeria" FontSize="12"
+                         VerticalAlignment="Center" Margin="4,4"/>
+              <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding NomeGaleria}"
+                       Height="24" FontSize="12" Margin="4" Width="400"
+                       IsEnabled="{Binding CamposHabilitados}"/>
+
+              <TextBlock Grid.Row="2" Grid.Column="0" Text="Pavilh\u00e3o" FontSize="12"
+                         VerticalAlignment="Center" Margin="4,4"/>
+              <ComboBox Grid.Row="2" Grid.Column="1"
+                        ItemsSource="{Binding Pavilhoes.DefaultView}"
+                        SelectedItem="{Binding PavilhaoSelecionado}"
+                        Height="24" FontSize="12" Margin="4" Width="300"
+                        IsEnabled="{Binding CamposHabilitados}"
+                        x:CompileBindings="False">
+                <ComboBox.ItemTemplate>
+                  <DataTemplate>
+                    <TextBlock Text="{Binding pavilhao}"/>
+                  </DataTemplate>
+                </ComboBox.ItemTemplate>
+              </ComboBox>
+            </Grid>
+          </Border>
+        </TabItem>
+
+        <TabItem Header="Consulta">
+          <DockPanel>
+            <Border DockPanel.Dock="Top" Background="#F8F9FA" Padding="8" BorderBrush="#DEE2E6" BorderThickness="0,0,0,1">
+              <Grid ColumnDefinitions="Auto,*">
+                <TextBlock Grid.Column="0" Text="Localizar:" VerticalAlignment="Center" Margin="0,0,8,0"
+                           Foreground="#2B3A4A" FontSize="13"/>
+                <TextBox Grid.Column="1" Text="{Binding SearchText}"
+                         PlaceholderText="Digite para filtrar..."
+                         FontSize="14" Height="30"/>
+              </Grid>
+            </Border>
+
+            <Border Background="White" BorderBrush="#DEE2E6" BorderThickness="1" Margin="0">
+              <DataGrid ItemsSource="{Binding DataSource}"
+                        SelectedItem="{Binding SelectedRow}"
+                        AutoGenerateColumns="False"
+                        IsReadOnly="True"
+                        GridLinesVisibility="Horizontal"
+                        BorderThickness="0" Background="White"
+                        RowHeight="28" FontSize="12"
+                        x:CompileBindings="False">
+                <DataGrid.Columns>
+                  <DataGridTextColumn Header="C\u00f3digo" Binding="{Binding id_galeria}" Width="100"/>
+                  <DataGridTextColumn Header="Descri\u00e7\u00e3o" Binding="{Binding galeria}" Width="*"/>
+                  <DataGridTextColumn Header="Pavilh\u00e3o" Binding="{Binding pavilhao_nome}" Width="150"/>
+                </DataGrid.Columns>
+              </DataGrid>
+            </Border>
+          </DockPanel>
+        </TabItem>
+      </TabControl>
+
+      <Border Grid.Row="2" Background="#212529" Padding="8,4" Height="26">
+        <TextBlock Text="{Binding StatusMessage}" Foreground="#20C997" FontSize="12"/>
+      </Border>
+    </Grid>
+  </DockPanel>
+</Window>

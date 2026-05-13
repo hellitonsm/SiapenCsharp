@@ -82,7 +82,10 @@ src/Siapen/
 - [x] AuthHelper reescrito para ler senha como bytes brutos via CAST BLOB
 - [x] **Login funcionando!** — Login `226080` / senha correta → `HELLITON SOARES MESQUITA` (ID=8024)
 - [x] MainWindow NullReferenceException corrigida (UpdateDataHora movido para OnOpened)
-- [ ] Telas de cadastro
+- [x] **CadastroPavilhao** — CRUD completo com lookup de UP
+- [x] **CadastroGaleria** — CRUD completo com lookup de Pavilhão
+- [x] **CadastroSolário** — CRUD completo com cascata Pavilhão→Galeria + Recursos sub-grid
+- [x] **CadastroCela** — CRUD completo com cascata Pavilhão→Galeria→Solário + manutenção/isolamento
 - [ ] Telas de setores
 - [ ] Telas de movimentação
 - [ ] Relatórios

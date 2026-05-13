@@ -111,15 +111,6 @@ public partial class MainWindowViewModel : ViewModelBase
         });
 
     [RelayCommand]
-    private void CadastroGaleria() => NaoImplementado();
-
-    [RelayCommand]
-    private void CadastroSolario() => NaoImplementado();
-
-    [RelayCommand]
-    private void CadastroCela() => NaoImplementado();
-
-    [RelayCommand]
     private void CadastroInternos() => NaoImplementado();
 
     [RelayCommand]

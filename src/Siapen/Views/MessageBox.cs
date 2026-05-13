@@ -1,3 +1,4 @@
+using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Layout;
@@ -52,14 +53,16 @@ public class MessageBox : Window
 
     public new void Show()
     {
-        if (Application.Current?.ApplicationLifetime is Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime desktop && desktop.MainWindow != null)
+        if (Application.Current?.ApplicationLifetime is Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime desktop)
         {
-            ShowDialog(desktop.MainWindow);
+            var owner = desktop.Windows?.FirstOrDefault(w => w.IsVisible);
+            if (owner != null)
+            {
+                ShowDialog(owner);
+                return;
+            }
         }
-        else
-        {
-            base.Show();
-        }
+        base.Show();
     }
 
     public new void Show(Window owner)

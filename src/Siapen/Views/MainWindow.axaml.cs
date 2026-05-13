@@ -91,6 +91,24 @@ public partial class MainWindow : Window
         view.Show();
     }
 
+    private void CadastroGaleria_Click(object? sender, RoutedEventArgs e)
+    {
+        var view = new CadastroGaleriaView();
+        view.Show();
+    }
+
+    private void CadastroSolario_Click(object? sender, RoutedEventArgs e)
+    {
+        var view = new CadastroSolarioView();
+        view.Show();
+    }
+
+    private void CadastroCela_Click(object? sender, RoutedEventArgs e)
+    {
+        var view = new CadastroCelaView();
+        view.Show();
+    }
+
     private void SairMenuItem_Click(object? sender, RoutedEventArgs e)
     {
         var confirmWindow = new Window

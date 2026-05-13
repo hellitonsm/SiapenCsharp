@@ -20,9 +20,9 @@
     <Menu DockPanel.Dock="Top">
       <MenuItem Header="Cadastro">
         <MenuItem Header="Pavilhão" Click="CadastroPavilhao_Click"/>
-        <MenuItem Header="Galeria" Command="{Binding CadastroGaleriaCommand}"/>
-        <MenuItem Header="Solário" Command="{Binding CadastroSolarioCommand}"/>
-        <MenuItem Header="Cela" Command="{Binding CadastroCelaCommand}"/>
+        <MenuItem Header="Galeria" Click="CadastroGaleria_Click"/>
+        <MenuItem Header="Solário" Click="CadastroSolario_Click"/>
+        <MenuItem Header="Cela" Click="CadastroCela_Click"/>
         <Separator/>
         <MenuItem Header="Internos" Command="{Binding CadastroInternosCommand}"/>
         <MenuItem Header="Condição do Interno" Command="{Binding CadastroCondicaoInternoCommand}"/>

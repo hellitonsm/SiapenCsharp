@@ -1,6 +1,7 @@
 using System;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using System.Linq;
 using Siapen.Helpers;
 using Siapen.ViewModels;
 
@@ -25,6 +26,19 @@ public partial class CadastroPavilhaoView : Window
         {
             _viewModel.LoadUnidades();
             await _viewModel.LoadAsync();
+            LogHelper.Debug($"CadastroPavilhao: IdUp={_viewModel.IdUp}", "UI");
+            var dv = _viewModel.DataViewSource;
+            if (dv != null && dv.Count > 0)
+            {
+                var dt = dv.Table;
+                var cols = string.Join(", ", dt.Columns.Cast<System.Data.DataColumn>().Select(c => c.ColumnName));
+                LogHelper.Debug($"CadastroPavilhao: columns=[{cols}]", "UI");
+                LogHelper.Debug($"CadastroPavilhao: DataViewSource={dv.Count} rows", "UI");
+            }
+            else
+            {
+                LogHelper.Debug($"CadastroPavilhao: DataViewSource={dv?.Count ?? -1} rows", "UI");
+            }
         }
         catch (Exception ex)
         {

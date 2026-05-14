@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using System.Data;
+using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -46,9 +48,32 @@ public abstract partial class ModeloCadastroViewModel : ViewModelBase
     private int _tabIndex;
 
     public DataView? DataViewSource => DataSource;
+    public DataTable? DataTableSource => _dataTable;
+
+    private IList? _gridItems;
+    public IList? GridItems
+    {
+        get => _gridItems;
+        private set => _gridItems = value;
+    }
 
     protected DataTable? _dataTable;
     protected string _orderBy = string.Empty;
+    private object? _selectedGridItem;
+
+    public object? SelectedGridItem
+    {
+        get => _selectedGridItem;
+        set
+        {
+            if (SetProperty(ref _selectedGridItem, value) && value != null && DataSource != null && GridItems != null)
+            {
+                int idx = GridItems.IndexOf(value);
+                if (idx >= 0 && idx < DataSource.Count)
+                    SelectedRow = DataSource[idx];
+            }
+        }
+    }
 
     protected abstract string GetSqlConsulta();
     protected virtual FbParameter[] GetSqlParametros() => Array.Empty<FbParameter>();
@@ -76,6 +101,8 @@ public abstract partial class ModeloCadastroViewModel : ViewModelBase
             DataSource.RowFilter = string.Empty;
         else
             DataSource.RowFilter = Filtrar(value);
+        GridItems = DataSource.Cast<DataRowView>().Select(r => CreateGridItem(r.Row)).ToList();
+        OnPropertyChanged(nameof(GridItems));
         StatusMessage = $"Registros: {DataSource.Count}";
     }
 
@@ -95,7 +122,9 @@ public abstract partial class ModeloCadastroViewModel : ViewModelBase
             DataSource = _dataTable.DefaultView;
             if (!string.IsNullOrEmpty(_orderBy))
                 DataSource.Sort = _orderBy;
+            GridItems = DataSource.Cast<DataRowView>().Select(r => CreateGridItem(r.Row)).ToList();
             OnPropertyChanged(nameof(DataViewSource));
+            OnPropertyChanged(nameof(GridItems));
             StatusMessage = $"Registros: {DataSource.Count}";
         }
         catch (Exception ex)

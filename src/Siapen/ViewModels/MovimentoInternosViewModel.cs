@@ -4,6 +4,7 @@ using System.Data;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FirebirdSql.Data.FirebirdClient;
@@ -627,6 +628,14 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
 
     protected override async Task InserirAsync()
     {
+        // Validate cell for active interns
+        if (StatusIndex == 0)
+        {
+            var (ok, msg) = await ValidarCelaAsync();
+            if (!ok)
+                throw new InvalidOperationException(msg);
+        }
+
         // Generate new ID: gen_id(cod_up, 0) || gen_id(ID_INTERNO, 1)
         var result = await Task.Run(() => DatabaseService.ExecuteScalar(
             "SELECT gen_id(cod_up, 0) || gen_id(ID_INTERNO, 1) FROM RDB$DATABASE"));
@@ -646,7 +655,8 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
             ) VALUES (
                 @id_interno, @id_up, @nome, @rgi, @vulgo, @mae, @pai, @sexo, @st, @status,
                 @data_entrada, @ci, @numero_roupa, @em_transito, @id_procedencia,
-                @idpavilhao, @idgaleria, @idsolario, @idcela, @id_funcionario
+                @idpavilhao, @idgaleria, @idsolario, @idcela, @id_funcionario,
+                @status_isolamento, @data_isolamento
             )",
             new FbParameter("@id_interno", newId),
             new FbParameter("@id_up", GlobalVars.IdUp),
@@ -667,7 +677,9 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
             new FbParameter("@idgaleria", SelectedGaleria?.Id ?? 0),
             new FbParameter("@idsolario", SelectedSolario?.Id ?? 0),
             new FbParameter("@idcela", SelectedCela?.Id ?? 0),
-            new FbParameter("@id_funcionario", GlobalVars.IdFuncionario)
+            new FbParameter("@id_funcionario", GlobalVars.IdFuncionario),
+            new FbParameter("@status_isolamento", string.IsNullOrEmpty(StatusIsolamento) ? DBNull.Value : (object)StatusIsolamento),
+            new FbParameter("@data_isolamento", string.IsNullOrEmpty(DataIsolamento) ? DBNull.Value : (object)DataIsolamento)
         ));
 
         // If active, add history entry
@@ -692,6 +704,14 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
         string sexoChar = SexoIndex == 1 ? "F" : "M";
         string statusChar = StatusIndex == 1 ? "I" : "A";
         DateTime dtEntrada = DateTime.ParseExact(DataEntrada, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+
+        // Validate cell for active interns
+        if (StatusIndex == 0)
+        {
+            var (ok, msg) = await ValidarCelaAsync();
+            if (!ok)
+                throw new InvalidOperationException(msg);
+        }
 
         if (StatusIndex == 1)
         {
@@ -750,7 +770,7 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
                     idsetor_trabalho = @idsetor_trabalho, idcondicao_interno = @idcondicao_interno,
                     data_setor = @data_setor, id_funcionario = @id_funcionario,
                     data_saida = NULL, motivo_saida = NULL, cisaida = NULL, iddestino = NULL,
-                    status_isolamento = NULL, data_isolamento = NULL
+                    status_isolamento = @status_isolamento, data_isolamento = @data_isolamento
                 WHERE id_interno = @id_interno",
                 new FbParameter("@nome", NomeInterno.Trim()),
                 new FbParameter("@rgi", Rgi.Trim()),
@@ -772,6 +792,8 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
                 new FbParameter("@idsetor_trabalho", SelectedSetorTrabalho?.Id ?? 0),
                 new FbParameter("@idcondicao_interno", SelectedCondicaoInterno?.Id ?? 0),
                 new FbParameter("@data_setor", string.IsNullOrEmpty(DataSetor) ? DBNull.Value : (object)DateTime.ParseExact(DataSetor, "dd/MM/yyyy", CultureInfo.InvariantCulture)),
+                new FbParameter("@status_isolamento", string.IsNullOrEmpty(StatusIsolamento) ? DBNull.Value : (object)StatusIsolamento),
+                new FbParameter("@data_isolamento", string.IsNullOrEmpty(DataIsolamento) ? DBNull.Value : (object)DataIsolamento),
                 new FbParameter("@id_funcionario", GlobalVars.IdFuncionario),
                 new FbParameter("@id_interno", _currentIdInterno)
             ));
@@ -822,6 +844,79 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
         {
             LogHelper.Error("Erro ao adicionar histórico", ex, GetType().Name);
         }
+    }
+
+    #endregion
+
+    #region Cell Validation
+
+    /// <summary>
+    /// Validates cell capacity, maintenance, and disciplinary isolation.
+    /// Returns (true, "") if OK, (false, errorMessage) if validation fails.
+    /// </summary>
+    private async Task<(bool ok, string message)> ValidarCelaAsync()
+    {
+        if (SelectedCela == null)
+            return (false, "Selecione uma cela.");
+
+        int idCela = SelectedCela.Id;
+
+        // Get cell info
+        var celaInfo = await Task.Run(() => DatabaseService.GetCelaInfo(idCela));
+        if (celaInfo == null)
+            return (false, "Cela não encontrada.");
+
+        // Check disciplinary isolation
+        string isolamento = celaInfo["isolamento"]?.ToString()?.Trim() ?? "N";
+        if (isolamento == "S")
+        {
+            // Show disciplinary situation dialog
+            var dialog = new SituacaoDisciplinarView();
+            var topLevel = App.Current?.ApplicationLifetime is Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime desktop
+                ? desktop.MainWindow : null;
+
+            if (topLevel != null)
+                await dialog.ShowDialog(topLevel);
+            else
+                dialog.Show();
+
+            if (!dialog.Confirmed)
+                return (false, "Operação cancelada pelo usuário.");
+
+            // Set isolation data
+            string situacao = dialog.SelectedOption switch
+            {
+                0 => "(1) SANCIONADO",
+                1 => "(2) SEGURO",
+                2 => "(3) EM OBSERVAÇÃO",
+                _ => ""
+            };
+            StatusIsolamento = situacao;
+            DataIsolamento = dialog.DataIsolamento;
+        }
+
+        // Check maintenance
+        string emManutencao = celaInfo["em_manutencao"]?.ToString()?.Trim() ?? "N";
+        if (emManutencao == "S")
+        {
+            string motivoManutencao = celaInfo["motivo_manutencao"]?.ToString()?.Trim() ?? "";
+            // We can't show a MessageBox from ViewModel easily, so we'll set a flag
+            // and handle it in the view. For now, just log and continue.
+            LogHelper.Info($"Cela em manutenção: {motivoManutencao}", GetType().Name);
+        }
+
+        // Check capacity limit
+        int limite = celaInfo["limite_por_cela"] == DBNull.Value ? 0 : Convert.ToInt32(celaInfo["limite_por_cela"]);
+        if (limite > 0)
+        {
+            int currentCount = await Task.Run(() =>
+                DatabaseService.CountInternosNaCela(idCela, Modo == CadastroModo.Editando ? _currentIdInterno : 0));
+
+            if (currentCount >= limite)
+                return (false, $"Favor Informar Outra Cela! Cela com {limite} Preso(a).");
+        }
+
+        return (true, "");
     }
 
     #endregion

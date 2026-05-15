@@ -7,6 +7,7 @@ public partial class SituacaoDisciplinarView : Window
 {
     public int SelectedOption { get; private set; } = 0;
     public string DataIsolamento { get; private set; } = string.Empty;
+    public bool Confirmed { get; private set; }
 
     public SituacaoDisciplinarView()
     {
@@ -23,12 +24,14 @@ public partial class SituacaoDisciplinarView : Window
             SelectedOption = 2;
 
         DataIsolamento = TxtDataIsolamento?.Text ?? string.Empty;
-        Close(true);
+        Confirmed = true;
+        Close();
     }
 
     private void Cancelar_Click(object? sender, RoutedEventArgs e)
     {
         SelectedOption = -1;
-        Close(false);
+        Confirmed = false;
+        Close();
     }
 }

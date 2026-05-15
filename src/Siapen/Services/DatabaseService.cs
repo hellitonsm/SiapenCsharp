@@ -201,6 +201,34 @@ public static class DatabaseService
     }
 
     /// <summary>
+    /// Retorna informações de uma cela específica
+    /// </summary>
+    public static DataRow? GetCelaInfo(int idCela)
+    {
+        var dt = ExecuteQuery(
+            "SELECT id_cela, cela, limite_por_cela, isolamento, em_manutencao, motivo_manutencao FROM cela WHERE id_cela = @id",
+            CreateParameter("@id", idCela));
+        return dt.Rows.Count > 0 ? dt.Rows[0] : null;
+    }
+
+    /// <summary>
+    /// Conta quantos internos ativos estão em uma cela
+    /// </summary>
+    public static int CountInternosNaCela(int idCela, int excludeIdInterno = 0)
+    {
+        string sql = "SELECT COUNT(*) FROM INTERNO WHERE st = 'A' AND nome_interno IS NOT NULL AND idcela = @idcela";
+        if (excludeIdInterno > 0)
+            sql += " AND id_interno <> @exclude";
+
+        var paramList = new List<FbParameter> { CreateParameter("@idcela", idCela) };
+        if (excludeIdInterno > 0)
+            paramList.Add(CreateParameter("@exclude", excludeIdInterno));
+
+        var result = ExecuteScalar(sql, paramList.ToArray());
+        return Convert.ToInt32(result);
+    }
+
+    /// <summary>
     /// Retorna lista de internos por UP
     /// </summary>
     public static DataTable GetInternos(int idUp)

@@ -3,12 +3,12 @@
         xmlns:vm="using:Siapen.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="940" d:DesignHeight="560"
+        mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="500"
         x:Class="Siapen.Views.MovimentoInternosView"
         x:DataType="vm:MovimentoInternosViewModel"
         Title="SIAPEN - Movimentação de Internos(as)"
         WindowStartupLocation="CenterScreen"
-        Width="940" Height="560"
+        Width="900" Height="500"
         Background="#F4F6F8">
 
   <Design.DataContext>
@@ -20,44 +20,44 @@
     <Border DockPanel.Dock="Top" Background="#2B3A4A">
       <DockPanel>
         <!-- Buttons bar -->
-        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Background="#2B3A4A" Spacing="4" Margin="4,2">
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Background="#2B3A4A" Spacing="2" Margin="3,1">
           <Button Content="Novo" Command="{Binding NovoCommand}"
-                  Height="30" FontSize="12" FontWeight="Bold"
+                  Height="26" FontSize="11" FontWeight="Bold"
                   Foreground="White" Background="#198754"
                   IsEnabled="{Binding Modo, Converter={x:Static vm:CadastroModoConverters.IsNavegando}}"/>
           <Button Content="Editar" Command="{Binding EditarCommand}"
-                  Height="30" FontSize="12" FontWeight="Bold"
+                  Height="26" FontSize="11" FontWeight="Bold"
                   Foreground="White" Background="#0D6EFD"
                   IsEnabled="{Binding Modo, Converter={x:Static vm:CadastroModoConverters.IsNavegando}}"/>
           <Button Content="Cancelar" Command="{Binding CancelarCommand}"
-                  Height="30" FontSize="12" FontWeight="Bold"
+                  Height="26" FontSize="11" FontWeight="Bold"
                   Foreground="White" Background="#6C757D"
                   IsEnabled="{Binding CamposHabilitados}"/>
           <Button Content="Salvar" Command="{Binding SalvarCommand}"
-                  Height="30" FontSize="12" FontWeight="Bold"
+                  Height="26" FontSize="11" FontWeight="Bold"
                   Foreground="White" Background="#0D6EFD"
                   IsEnabled="{Binding CamposHabilitados}"/>
           <Button Content="Fechar" Click="Fechar_Click"
-                  Height="30" FontSize="12" FontWeight="Bold"
+                  Height="26" FontSize="11" FontWeight="Bold"
                   Foreground="White" Background="#DC3545"/>
         </StackPanel>
 
         <!-- Search bar -->
-        <Border Background="#F8F9FA" Padding="8" BorderBrush="#DEE2E6" BorderThickness="0,1">
+        <Border Background="#F8F9FA" Padding="4,2" BorderBrush="#DEE2E6" BorderThickness="0,1">
           <Grid ColumnDefinitions="Auto,*,Auto,Auto">
             <TextBlock Grid.Column="0" Text="Localizar:" VerticalAlignment="Center"
-                       Margin="0,0,8,0" Foreground="#2B3A4A" FontSize="13"/>
+                       Margin="0,0,4,0" Foreground="#2B3A4A" FontSize="10"/>
             <TextBox Grid.Column="1" Text="{Binding SearchText}"
                      PlaceholderText="Digite para filtrar..."
-                     FontSize="14" Height="30"/>
-            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4" Margin="8,0,0,0">
+                     FontSize="11" Height="22"/>
+            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="3" Margin="4,0,0,0">
               <RadioButton Content="Ativo" IsChecked="{Binding FiltroStatusIndex, Converter={x:Static vm:IndexToBoolConverter.Instance}, ConverterParameter=0}"
-                           GroupName="Status" FontSize="12"/>
+                           GroupName="Status" FontSize="10"/>
               <RadioButton Content="Inativo" IsChecked="{Binding FiltroStatusIndex, Converter={x:Static vm:IndexToBoolConverter.Instance}, ConverterParameter=1}"
-                           GroupName="Status" FontSize="12"/>
+                           GroupName="Status" FontSize="10"/>
             </StackPanel>
             <CheckBox Grid.Column="3" Content="Fonética" IsChecked="{Binding UsarSoundex}"
-                      Margin="8,0,0,0" FontSize="12"/>
+                      Margin="4,0,0,0" FontSize="10"/>
           </Grid>
         </Border>
       </DockPanel>
@@ -74,7 +74,7 @@
       <!-- Cadastro TabControl -->
       <TabControl Grid.Row="0" TabStripPlacement="Top" IsEnabled="{Binding CamposHabilitados}">
         <TabItem Header="Cadastro">
-          <Border Background="White" BorderBrush="#DEE2E6" BorderThickness="1" Padding="8" MinHeight="200">
+          <Border Background="White" BorderBrush="#DEE2E6" BorderThickness="1" Padding="4" MinHeight="155">
             <Grid>
               <!-- Top fields: Nome, Nº Roupa, CI, Data Entrada, Status, Em Trânsito -->
               <Grid.RowDefinitions>
@@ -84,33 +84,33 @@
 
               <!-- Row 0: Nome, Nº Roupa, CI, Data Entrada, Status, Em Trânsito -->
               <Grid Grid.Row="0" ColumnDefinitions="*,Auto,Auto,Auto,Auto,Auto">
-                <StackPanel Grid.Column="0" Margin="0,0,4,0">
-                  <TextBlock Text="Nome" FontSize="11" Foreground="#666"/>
-                  <TextBox Text="{Binding NomeInterno}" FontSize="14" FontWeight="Bold"
-                           PlaceholderText="Nome do Interno"/>
+                <StackPanel Grid.Column="0" Margin="0,0,3,0">
+                  <TextBlock Text="Nome" FontSize="10" Foreground="#666"/>
+                  <TextBox Text="{Binding NomeInterno}" FontSize="12" FontWeight="Bold"
+                           PlaceholderText="Nome do Interno" Height="24"/>
                 </StackPanel>
-                <StackPanel Grid.Column="1" Width="110" Margin="4,0">
-                  <TextBlock Text="Nº Roupa" FontSize="11" Foreground="#666"/>
-                  <TextBox Text="{Binding NumeroRoupa}" FontSize="12"/>
+                <StackPanel Grid.Column="1" Width="90" Margin="3,0">
+                  <TextBlock Text="Nº Roupa" FontSize="10" Foreground="#666"/>
+                  <TextBox Text="{Binding NumeroRoupa}" FontSize="11" Height="24"/>
                 </StackPanel>
-                <StackPanel Grid.Column="2" Width="100" Margin="4,0">
-                  <TextBlock Text="CI/OF. MOVIMENTO" FontSize="11" Foreground="#666"/>
-                  <TextBox Text="{Binding CiOfMovimento}" FontSize="12"/>
+                <StackPanel Grid.Column="2" Width="90" Margin="3,0">
+                  <TextBlock Text="CI/OF. MOV." FontSize="10" Foreground="#666"/>
+                  <TextBox Text="{Binding CiOfMovimento}" FontSize="11" Height="24"/>
                 </StackPanel>
-                <StackPanel Grid.Column="3" Width="100" Margin="4,0">
-                  <TextBlock Text="Data de Entrada" FontSize="11" Foreground="#666"/>
-                  <TextBox Text="{Binding DataEntrada}" FontSize="12" PlaceholderText="dd/mm/aaaa"/>
+                <StackPanel Grid.Column="3" Width="85" Margin="3,0">
+                  <TextBlock Text="Dt. Entrada" FontSize="10" Foreground="#666"/>
+                  <TextBox Text="{Binding DataEntrada}" FontSize="11" PlaceholderText="dd/mm/aaaa" Height="24"/>
                 </StackPanel>
-                <StackPanel Grid.Column="4" Width="75" Margin="4,0">
-                  <TextBlock Text="Status" FontSize="11" Foreground="#666"/>
-                  <ComboBox SelectedIndex="{Binding StatusIndex}" FontSize="12">
+                <StackPanel Grid.Column="4" Width="65" Margin="3,0">
+                  <TextBlock Text="Status" FontSize="10" Foreground="#666"/>
+                  <ComboBox SelectedIndex="{Binding StatusIndex}" FontSize="11" Height="24">
                     <ComboBoxItem Content="Ativo"/>
                     <ComboBoxItem Content="Inativo"/>
                   </ComboBox>
                 </StackPanel>
-                <StackPanel Grid.Column="5" Width="75" Margin="4,0,0,0">
-                  <TextBlock Text="Em Trânsito" FontSize="11" Foreground="#666"/>
-                  <ComboBox SelectedItem="{Binding EmTransito}" FontSize="12">
+                <StackPanel Grid.Column="5" Width="65" Margin="3,0,0,0">
+                  <TextBlock Text="Trânsito" FontSize="10" Foreground="#666"/>
+                  <ComboBox SelectedItem="{Binding EmTransito}" FontSize="11" Height="24">
                     <ComboBoxItem Content="S"/>
                     <ComboBoxItem Content="N"/>
                   </ComboBox>
@@ -118,62 +118,62 @@
               </Grid>
 
               <!-- Row 1: PageControlDadosInterno (sub-tabs) -->
-              <TabControl Grid.Row="1" TabStripPlacement="Top" Margin="0,8,0,0">
+              <TabControl Grid.Row="1" TabStripPlacement="Top" Margin="0,4,0,0">
                 <!-- Aba Dados -->
                 <TabItem Header="Dados">
-                  <Grid ColumnDefinitions="*,200">
+                  <Grid ColumnDefinitions="*,120">
                     <Grid Grid.Column="0" ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto,Auto,Auto">
                       <!-- Row 0: RGI, Procedência, Vulgo -->
-                      <StackPanel Grid.Column="0" Grid.Row="0" Margin="0,0,4,4">
-                        <TextBlock Text="RGI" FontSize="11" Foreground="#666"/>
-                        <TextBox Text="{Binding Rgi}" FontSize="12"/>
+                      <StackPanel Grid.Column="0" Grid.Row="0" Margin="0,0,3,3">
+                        <TextBlock Text="RGI" FontSize="10" Foreground="#666"/>
+                        <TextBox Text="{Binding Rgi}" FontSize="11" Height="22"/>
                       </StackPanel>
-                      <StackPanel Grid.Column="1" Grid.Row="0" Margin="4,0,4,4">
-                        <TextBlock Text="PROCEDÊNCIA" FontSize="11" Foreground="#666"/>
+                      <StackPanel Grid.Column="1" Grid.Row="0" Margin="3,0,3,3">
+                        <TextBlock Text="PROCEDÊNCIA" FontSize="10" Foreground="#666"/>
                         <ComboBox ItemsSource="{Binding Procedencias}"
                                   SelectedItem="{Binding SelectedProcedencia}"
                                   DisplayMemberBinding="{Binding DisplayName}"
-                                  FontSize="12"/>
+                                  FontSize="11" Height="22"/>
                       </StackPanel>
-                      <StackPanel Grid.Column="2" Grid.Row="0" Margin="4,0,0,4">
-                        <TextBlock Text="Vulgo" FontSize="11" Foreground="#666"/>
-                        <TextBox Text="{Binding Vulgo}" FontSize="12"/>
+                      <StackPanel Grid.Column="2" Grid.Row="0" Margin="3,0,0,3">
+                        <TextBlock Text="Vulgo" FontSize="10" Foreground="#666"/>
+                        <TextBox Text="{Binding Vulgo}" FontSize="11" Height="22"/>
                       </StackPanel>
 
                       <!-- Row 1: Mãe, Pai -->
-                      <StackPanel Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Margin="0,0,4,4">
-                        <TextBlock Text="Mãe" FontSize="11" Foreground="#666"/>
-                        <TextBox Text="{Binding Mae}" FontSize="12"/>
+                      <StackPanel Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Margin="0,0,3,3">
+                        <TextBlock Text="Mãe" FontSize="10" Foreground="#666"/>
+                        <TextBox Text="{Binding Mae}" FontSize="11" Height="22"/>
                       </StackPanel>
-                      <StackPanel Grid.Column="2" Grid.Row="1" Margin="4,0,0,4">
-                        <TextBlock Text="Pai" FontSize="11" Foreground="#666"/>
-                        <TextBox Text="{Binding Pai}" FontSize="12"/>
+                      <StackPanel Grid.Column="2" Grid.Row="1" Margin="3,0,0,3">
+                        <TextBlock Text="Pai" FontSize="10" Foreground="#666"/>
+                        <TextBox Text="{Binding Pai}" FontSize="11" Height="22"/>
                       </StackPanel>
 
                       <!-- Row 2: Data Setor, Setor Trabalho -->
-                      <StackPanel Grid.Column="0" Grid.Row="2" Margin="0,0,4,4">
-                        <TextBlock Text="DATA SETOR" FontSize="11" Foreground="#666"/>
-                        <TextBox Text="{Binding DataEntrada}" FontSize="12" PlaceholderText="dd/mm/aaaa" IsEnabled="False"/>
+                      <StackPanel Grid.Column="0" Grid.Row="2" Margin="0,0,3,3">
+                        <TextBlock Text="DATA SETOR" FontSize="10" Foreground="#666"/>
+                        <TextBox Text="{Binding DataEntrada}" FontSize="11" PlaceholderText="dd/mm/aaaa" IsEnabled="False" Height="22"/>
                       </StackPanel>
-                      <StackPanel Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2" Margin="4,0,0,4">
-                        <TextBlock Text="SETOR TRABALHO" FontSize="11" Foreground="#666"/>
+                      <StackPanel Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2" Margin="3,0,0,3">
+                        <TextBlock Text="SETOR TRABALHO" FontSize="10" Foreground="#666"/>
                         <ComboBox ItemsSource="{Binding SetoresTrabalho}"
                                   SelectedItem="{Binding SelectedSetorTrabalho}"
                                   DisplayMemberBinding="{Binding DisplayName}"
-                                  FontSize="12"/>
+                                  FontSize="11" Height="22"/>
                       </StackPanel>
 
                       <!-- Row 3: Condição Interno, Sexo -->
-                      <StackPanel Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" Margin="0,0,4,0">
-                        <TextBlock Text="Condição do Interno" FontSize="11" Foreground="#666"/>
+                      <StackPanel Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" Margin="0,0,3,0">
+                        <TextBlock Text="Condição do Interno" FontSize="10" Foreground="#666"/>
                         <ComboBox ItemsSource="{Binding CondicoesInterno}"
                                   SelectedItem="{Binding SelectedCondicaoInterno}"
                                   DisplayMemberBinding="{Binding DisplayName}"
-                                  FontSize="12"/>
+                                  FontSize="11" Height="22"/>
                       </StackPanel>
-                      <StackPanel Grid.Column="2" Grid.Row="3" Margin="4,0,0,0">
-                        <TextBlock Text="Sexo" FontSize="11" Foreground="#666"/>
-                        <ComboBox SelectedIndex="{Binding SexoIndex}" FontSize="12">
+                      <StackPanel Grid.Column="2" Grid.Row="3" Margin="3,0,0,0">
+                        <TextBlock Text="Sexo" FontSize="10" Foreground="#666"/>
+                        <ComboBox SelectedIndex="{Binding SexoIndex}" FontSize="11" Height="22">
                           <ComboBoxItem Content="Masculino"/>
                           <ComboBoxItem Content="Feminino"/>
                         </ComboBox>
@@ -182,9 +182,9 @@
 
                     <!-- Foto placeholder -->
                     <Border Grid.Column="1" Background="#EEE" BorderBrush="#CCC" BorderThickness="1"
-                            Margin="8,0,0,0" VerticalAlignment="Stretch">
+                            Margin="4,0,0,0" VerticalAlignment="Stretch">
                       <TextBlock Text="Foto" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                 Foreground="#999" FontSize="14"/>
+                                 Foreground="#999" FontSize="11"/>
                     </Border>
                   </Grid>
                 </TabItem>
@@ -192,29 +192,29 @@
                 <!-- Aba Cela -->
                 <TabItem Header="Cela">
                   <Grid ColumnDefinitions="*,*">
-                    <StackPanel Grid.Column="0" Margin="0,0,8,0">
-                      <TextBlock Text="Pavilhão" FontSize="11" Foreground="#666" Margin="0,0,0,4"/>
+                    <StackPanel Grid.Column="0" Margin="0,0,4,0">
+                      <TextBlock Text="Pavilhão" FontSize="10" Foreground="#666" Margin="0,0,0,2"/>
                       <ComboBox ItemsSource="{Binding Pavilhoes}"
                                 SelectedItem="{Binding SelectedPavilhao}"
                                 DisplayMemberBinding="{Binding DisplayName}"
-                                FontSize="12" Margin="0,0,0,8"/>
-                      <TextBlock Text="Galeria" FontSize="11" Foreground="#666" Margin="0,0,0,4"/>
+                                FontSize="11" Height="22" Margin="0,0,0,4"/>
+                      <TextBlock Text="Galeria" FontSize="10" Foreground="#666" Margin="0,0,0,2"/>
                       <ComboBox ItemsSource="{Binding Galerias}"
                                 SelectedItem="{Binding SelectedGaleria}"
                                 DisplayMemberBinding="{Binding DisplayName}"
-                                FontSize="12" Margin="0,0,0,8"/>
+                                FontSize="11" Height="22" Margin="0,0,0,4"/>
                     </StackPanel>
-                    <StackPanel Grid.Column="1" Margin="8,0,0,0">
-                      <TextBlock Text="Solário" FontSize="11" Foreground="#666" Margin="0,0,0,4"/>
+                    <StackPanel Grid.Column="1" Margin="4,0,0,0">
+                      <TextBlock Text="Solário" FontSize="10" Foreground="#666" Margin="0,0,0,2"/>
                       <ComboBox ItemsSource="{Binding Solarios}"
                                 SelectedItem="{Binding SelectedSolario}"
                                 DisplayMemberBinding="{Binding DisplayName}"
-                                FontSize="12" Margin="0,0,0,8"/>
-                      <TextBlock Text="Cela" FontSize="11" Foreground="#666" Margin="0,0,0,4"/>
+                                FontSize="11" Height="22" Margin="0,0,0,4"/>
+                      <TextBlock Text="Cela" FontSize="10" Foreground="#666" Margin="0,0,0,2"/>
                       <ComboBox ItemsSource="{Binding Celas}"
                                 SelectedItem="{Binding SelectedCela}"
                                 DisplayMemberBinding="{Binding DisplayName}"
-                                FontSize="12" Margin="0,0,0,8"/>
+                                FontSize="11" Height="22" Margin="0,0,0,4"/>
                     </StackPanel>
                   </Grid>
                 </TabItem>
@@ -222,22 +222,22 @@
                 <!-- Aba Fotos -->
                 <TabItem Header="Fotos">
                   <Border Background="#EEE" BorderBrush="#CCC" BorderThickness="1"
-                          HorizontalAlignment="Left" Width="140" Height="130">
+                          HorizontalAlignment="Left" Width="100" Height="90">
                     <TextBlock Text="Foto Perfil" HorizontalAlignment="Center" VerticalAlignment="Center"
-                               Foreground="#999" FontSize="12"/>
+                               Foreground="#999" FontSize="11"/>
                   </Border>
                 </TabItem>
 
                 <!-- Aba Saída -->
                 <TabItem Header="Saída">
                   <Grid ColumnDefinitions="Auto,Auto,Auto,*" RowDefinitions="Auto,Auto">
-                    <StackPanel Grid.Column="0" Grid.Row="0" Width="100" Margin="0,0,8,8">
-                      <TextBlock Text="DATA SAÍDA" FontSize="11" Foreground="#666"/>
-                      <TextBox Text="{Binding DataSaida}" FontSize="12" PlaceholderText="dd/mm/aaaa"/>
+                    <StackPanel Grid.Column="0" Grid.Row="0" Width="85" Margin="0,0,4,4">
+                      <TextBlock Text="DATA SAÍDA" FontSize="10" Foreground="#666"/>
+                      <TextBox Text="{Binding DataSaida}" FontSize="11" PlaceholderText="dd/mm/aaaa" Height="22"/>
                     </StackPanel>
-                    <StackPanel Grid.Column="1" Grid.Row="0" Width="150" Margin="8,0,8,8">
-                      <TextBlock Text="MOTIVO" FontSize="11" Foreground="#666"/>
-                      <ComboBox SelectedItem="{Binding MotivoSaida}" FontSize="12" IsEditable="True">
+                    <StackPanel Grid.Column="1" Grid.Row="0" Width="130" Margin="4,0,4,4">
+                      <TextBlock Text="MOTIVO" FontSize="10" Foreground="#666"/>
+                      <ComboBox SelectedItem="{Binding MotivoSaida}" FontSize="11" IsEditable="True" Height="22">
                         <ComboBoxItem Content="Alvará de Soltura"/>
                         <ComboBoxItem Content="Livramento Condicional"/>
                         <ComboBoxItem Content="Saída Temporária"/>
@@ -247,16 +247,16 @@
                         <ComboBoxItem Content="Outros"/>
                       </ComboBox>
                     </StackPanel>
-                    <StackPanel Grid.Column="2" Grid.Row="0" Width="120" Margin="8,0,0,8">
-                      <TextBlock Text="CI/OF/AUTOS SAÍDA" FontSize="11" Foreground="#666"/>
-                      <TextBox Text="{Binding CiOfSaida}" FontSize="12"/>
+                    <StackPanel Grid.Column="2" Grid.Row="0" Width="100" Margin="4,0,0,4">
+                      <TextBlock Text="CI/OF SAÍDA" FontSize="10" Foreground="#666"/>
+                      <TextBox Text="{Binding CiOfSaida}" FontSize="11" Height="22"/>
                     </StackPanel>
                     <StackPanel Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" Margin="0,0,0,0">
-                      <TextBlock Text="DESTINO" FontSize="11" Foreground="#666"/>
+                      <TextBlock Text="DESTINO" FontSize="10" Foreground="#666"/>
                       <ComboBox ItemsSource="{Binding Destinos}"
                                 SelectedItem="{Binding SelectedDestino}"
                                 DisplayMemberBinding="{Binding DisplayName}"
-                                FontSize="12"/>
+                                FontSize="11" Height="22"/>
                     </StackPanel>
                   </Grid>
                 </TabItem>
@@ -276,16 +276,16 @@
                       IsReadOnly="True"
                       GridLinesVisibility="Horizontal"
                       BorderThickness="0" Background="White"
-                      RowHeight="28" FontSize="12"
+                      RowHeight="20" FontSize="10"
                       x:CompileBindings="False">
               <DataGrid.Columns>
                 <DataGridTextColumn Header="Nome" Binding="{Binding NomeInterno}" Width="*"/>
-                <DataGridTextColumn Header="Sigla" Binding="{Binding Sigla}" Width="80"/>
-                <DataGridTextColumn Header="Pavilhão" Binding="{Binding Pavilhao}" Width="100"/>
-                <DataGridTextColumn Header="Solário" Binding="{Binding Solario}" Width="80"/>
-                <DataGridTextColumn Header="Cela" Binding="{Binding Cela}" Width="60"/>
-                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="60"/>
-                <DataGridTextColumn Header="Trânsito" Binding="{Binding EmTransito}" Width="60"/>
+                <DataGridTextColumn Header="Sigla" Binding="{Binding Sigla}" Width="70"/>
+                <DataGridTextColumn Header="Pavilhão" Binding="{Binding Pavilhao}" Width="90"/>
+                <DataGridTextColumn Header="Solário" Binding="{Binding Solario}" Width="70"/>
+                <DataGridTextColumn Header="Cela" Binding="{Binding Cela}" Width="50"/>
+                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="50"/>
+                <DataGridTextColumn Header="Trânsito" Binding="{Binding EmTransito}" Width="50"/>
               </DataGrid.Columns>
             </DataGrid>
           </Border>
@@ -298,14 +298,14 @@
                       IsReadOnly="True"
                       GridLinesVisibility="Horizontal"
                       BorderThickness="0" Background="White"
-                      RowHeight="28" FontSize="12"/>
+                      RowHeight="20" FontSize="10"/>
           </Border>
         </TabItem>
       </TabControl>
 
       <!-- Status bar -->
-      <Border Grid.Row="2" Background="#212529" Padding="8,4" Height="26">
-        <TextBlock Text="{Binding StatusMessage}" Foreground="#20C997" FontSize="12"/>
+      <Border Grid.Row="2" Background="#212529" Padding="6,2" Height="22">
+        <TextBlock Text="{Binding StatusMessage}" Foreground="#20C997" FontSize="10"/>
       </Border>
     </Grid>
   </DockPanel>

@@ -188,7 +188,7 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
                 mi.data_movimentacao,
                 mi.hora_movimentacao,
                 mi.id_funcionario,
-                (SELECT procedencia FROM procedencia WHERE procedencia.id_procedencia = mi.id_procedencia) AS procedencia,
+                (SELECT proedencia FROM procedencia WHERE procedencia.id_procedencia = mi.id_procedencia) AS procedencia,
                 (SELECT destino FROM destino WHERE destino.id_destino = mi.id_destino) AS destino
             FROM mov_interno mi
             WHERE mi.id_interno = @id_interno";
@@ -276,11 +276,12 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
         try
         {
             LogHelper.Debug("[LOOKUP] Loading Procedencias...", GetType().Name);
+            // NOTE: column is PROEDENCIA (with E), not PROCEDENCIA — matches original Delphi DFM
             var dtProc = await Task.Run(() => DatabaseService.ExecuteQuery(
-                "SELECT id_procedencia, procedencia FROM procedencia ORDER BY procedencia"));
+                "SELECT id_procedencia, proedencia FROM procedencia ORDER BY proedencia"));
             Procedencias = dtProc.AsEnumerable().Select(r => new LookupItem(
                 Convert.ToInt32(r["id_procedencia"]),
-                r["procedencia"]?.ToString()?.Trim() ?? ""
+                r["proedencia"]?.ToString()?.Trim() ?? ""
             )).ToList();
             LogHelper.Debug($"[LOOKUP] Procedencias: {Procedencias?.Count ?? 0}", GetType().Name);
 
@@ -409,8 +410,15 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
 
         try
         {
+            // NOTE: Do NOT use SELECT * — Firebird 2.5 has block size limits with wide tables.
+            // List columns explicitly to avoid 'block size exceeds implementation restriction'.
             var dt = DatabaseService.ExecuteQuery(
-                "SELECT * FROM interno WHERE id_interno = @id",
+                @"SELECT id_interno, id_up, nome_interno, rgi, vulgo, mae, pai, sexo, st,
+                         data_entrada, data_saida, ci, numero_roupa, em_transito, id_procedencia,
+                         iddestino, idpavilhao, idgaleria, idsolario, idcela, idsetor_trabalho,
+                         idcondicao_interno, data_setor, motivo_saida, cisaida, status_isolamento,
+                         data_isolamento, id_funcionario
+                  FROM interno WHERE id_interno = @id",
                 new FbParameter("@id", gridItem.IdInterno));
 
             LogHelper.Debug($"[PREENCHE] Query returned {dt.Rows.Count} rows", GetType().Name);

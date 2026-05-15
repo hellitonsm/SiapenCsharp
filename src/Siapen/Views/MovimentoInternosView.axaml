@@ -276,7 +276,8 @@
                       IsReadOnly="True"
                       GridLinesVisibility="Horizontal"
                       BorderThickness="0" Background="White"
-                      RowHeight="28" FontSize="12">
+                      RowHeight="28" FontSize="12"
+                      x:CompileBindings="False">
               <DataGrid.Columns>
                 <DataGridTextColumn Header="Nome" Binding="{Binding NomeInterno}" Width="*"/>
                 <DataGridTextColumn Header="Sigla" Binding="{Binding Sigla}" Width="80"/>

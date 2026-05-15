@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
@@ -6,7 +7,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using FirebirdSql.Data.FirebirdClient;
 using Siapen.Helpers;
 using Siapen.Models;
@@ -23,13 +23,6 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
 
     [ObservableProperty]
     private bool _usarSoundex;
-
-    // Grid items for typed binding
-    [ObservableProperty]
-    private IList<MovimentoInternosGridItem> _gridItems = new List<MovimentoInternosGridItem>();
-
-    [ObservableProperty]
-    private MovimentoInternosGridItem? _selectedGridItem;
 
     // Cadastro fields - Aba Dados
     [ObservableProperty]
@@ -209,6 +202,32 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
 
     #endregion
 
+    #region Grid Item Factory
+
+    protected override object CreateGridItem(DataRow row)
+    {
+        return new MovimentoInternosGridItem
+        {
+            IdInterno = Convert.ToInt32(row["id_interno"]),
+            IdUp = Convert.ToInt32(row["id_up"]),
+            NomeInterno = row["nome_interno"]?.ToString()?.Trim() ?? "",
+            NomeFonetica = row["nome_fonetica"]?.ToString()?.Trim() ?? "",
+            Sigla = row["sigla"]?.ToString()?.Trim() ?? "",
+            Pavilhao = row["pavilhao"]?.ToString()?.Trim() ?? "",
+            Solario = row["solario"]?.ToString()?.Trim() ?? "",
+            Cela = row["cela"]?.ToString()?.Trim() ?? "",
+            St = row["st"]?.ToString()?.Trim() ?? "A",
+            Status = row["status"]?.ToString()?.Trim() ?? "A",
+            EmTransito = row["em_transito"]?.ToString()?.Trim() ?? "N",
+            IdPavilhao = row["idpavilhao"] == DBNull.Value ? 0 : Convert.ToInt32(row["idpavilhao"]),
+            IdGaleria = row["idgaleria"] == DBNull.Value ? 0 : Convert.ToInt32(row["idgaleria"]),
+            IdSolario = row["idsolario"] == DBNull.Value ? 0 : Convert.ToInt32(row["idsolario"]),
+            NumeroRoupa = row["numero_roupa"]?.ToString()?.Trim() ?? ""
+        };
+    }
+
+    #endregion
+
     #region Load
 
     public override async Task LoadAsync()
@@ -216,15 +235,10 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
         IsLoading = true;
         try
         {
-            var sqlConsulta = GetSqlConsulta();
-            var parametros = GetSqlParametrosConsulta();
-            _consultaTable = await Task.Run(() => DatabaseService.ExecuteQuery(sqlConsulta, parametros));
-            ConsultaDataSource = _consultaTable.DefaultView;
-
-            BuildGridItems();
+            // Let base LoadAsync handle the query, grid items, and movement loading
+            await base.LoadAsync();
             await LoadLookupsAsync();
-
-            StatusMessage = $"Registros: {_consultaTable.Rows.Count}";
+            ApplyStatusFilter();
         }
         catch (Exception ex)
         {
@@ -235,35 +249,6 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
         {
             IsLoading = false;
         }
-    }
-
-    private void BuildGridItems()
-    {
-        var items = new List<MovimentoInternosGridItem>();
-        if (_consultaTable == null) return;
-
-        foreach (DataRow row in _consultaTable.Rows)
-        {
-            items.Add(new MovimentoInternosGridItem
-            {
-                IdInterno = Convert.ToInt32(row["id_interno"]),
-                IdUp = Convert.ToInt32(row["id_up"]),
-                NomeInterno = row["nome_interno"]?.ToString()?.Trim() ?? "",
-                NomeFonetica = row["nome_fonetica"]?.ToString()?.Trim() ?? "",
-                Sigla = row["sigla"]?.ToString()?.Trim() ?? "",
-                Pavilhao = row["pavilhao"]?.ToString()?.Trim() ?? "",
-                Solario = row["solario"]?.ToString()?.Trim() ?? "",
-                Cela = row["cela"]?.ToString()?.Trim() ?? "",
-                St = row["st"]?.ToString()?.Trim() ?? "A",
-                Status = row["status"]?.ToString()?.Trim() ?? "A",
-                EmTransito = row["em_transito"]?.ToString()?.Trim() ?? "N",
-                IdPavilhao = row["idpavilhao"] == DBNull.Value ? 0 : Convert.ToInt32(row["idpavilhao"]),
-                IdGaleria = row["idgaleria"] == DBNull.Value ? 0 : Convert.ToInt32(row["idgaleria"]),
-                IdSolario = row["idsolario"] == DBNull.Value ? 0 : Convert.ToInt32(row["idsolario"]),
-                NumeroRoupa = row["numero_roupa"]?.ToString()?.Trim() ?? ""
-            });
-        }
-        GridItems = items;
     }
 
     private async Task LoadLookupsAsync()
@@ -326,43 +311,55 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
 
     partial void OnFiltroStatusIndexChanged(int value)
     {
-        ApplyFilter();
+        ApplyStatusFilter();
     }
 
     partial void OnUsarSoundexChanged(bool value)
     {
-        ApplyFilter();
+        ApplyStatusFilter();
     }
 
     protected override string Filtrar(string texto)
     {
-        return string.Empty; // Filtering done in ApplyFilter
+        // Custom filter: status + soundex/text search
+        string status = FiltroStatusIndex == 0 ? "A" : "I";
+
+        if (string.IsNullOrWhiteSpace(texto))
+            return $"st = '{status}'";
+
+        string search = texto.Replace("'", "''");
+        if (UsarSoundex)
+            return $"st = '{status}' AND (nome_interno LIKE '%{search}%' OR nome_fonetica LIKE '%{search}%')";
+        else
+            return $"st = '{status}' AND nome_interno LIKE '%{search}%'";
     }
 
-    private void ApplyFilter()
+    private void ApplyStatusFilter()
     {
+        // Rebuild grid items from current DataSource with status filter
         if (ConsultaDataSource == null) return;
 
         string status = FiltroStatusIndex == 0 ? "A" : "I";
-        var filtered = GridItems.Where(g => g.St == status).ToList();
+        var allItems = ConsultaDataSource.Cast<DataRowView>().Select(r => CreateGridItem(r.Row)).ToList();
+        var filtered = allItems.Where(g => g is MovimentoInternosGridItem item && item.St == status).ToList();
 
         if (!string.IsNullOrWhiteSpace(SearchText))
         {
             string search = SearchText.ToUpper().Trim();
             if (UsarSoundex)
             {
-                filtered = filtered.Where(g =>
-                    g.NomeInterno.ToUpper().Contains(search) ||
-                    g.NomeFonetica.ToUpper().Contains(search)).ToList();
+                filtered = filtered.Where(g => g is MovimentoInternosGridItem item &&
+                    (item.NomeInterno.ToUpper().Contains(search) || item.NomeFonetica.ToUpper().Contains(search))).ToList();
             }
             else
             {
-                filtered = filtered.Where(g =>
-                    g.NomeInterno.ToUpper().Contains(search)).ToList();
+                filtered = filtered.Where(g => g is MovimentoInternosGridItem item &&
+                    item.NomeInterno.ToUpper().Contains(search)).ToList();
             }
         }
 
         GridItems = filtered;
+        OnPropertyChanged(nameof(GridItems));
         StatusMessage = $"Registros: {filtered.Count}";
     }
 
@@ -370,82 +367,24 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
 
     #region Selection Sync
 
-    partial void OnSelectedGridItemChanged(MovimentoInternosGridItem? value)
-    {
-        if (value == null || Modo != CadastroModo.Navegando) return;
-        _currentIdInterno = value.IdInterno;
-        _ = LoadMovimentoAsync();
-    }
-
-    private async Task LoadMovimentoAsync()
-    {
-        try
-        {
-            var sqlMov = GetSqlMovimento();
-            var paramMov = GetSqlParametrosMovimento();
-            _movimentoTable = await Task.Run(() => DatabaseService.ExecuteQuery(sqlMov, paramMov));
-            MovimentoDataSource = _movimentoTable.DefaultView;
-        }
-        catch (Exception ex)
-        {
-            LogHelper.Error("Erro ao carregar movimentação", ex, GetType().Name);
-        }
-    }
-
-    #endregion
-
-    #region CRUD
-
-    protected override void LimparCampos()
-    {
-        NomeInterno = string.Empty;
-        Rgi = string.Empty;
-        Vulgo = string.Empty;
-        Mae = string.Empty;
-        Pai = string.Empty;
-        SexoIndex = -1;
-        StatusIndex = 0;
-        DataEntrada = string.Empty;
-        CiOfMovimento = string.Empty;
-        NumeroRoupa = string.Empty;
-        EmTransito = "N";
-        DataSetor = string.Empty;
-        DataSaida = string.Empty;
-        MotivoSaida = string.Empty;
-        CiOfSaida = string.Empty;
-        DataIsolamento = string.Empty;
-        StatusIsolamento = string.Empty;
-        SelectedProcedencia = null;
-        SelectedDestino = null;
-        SelectedCondicaoInterno = null;
-        SelectedSetorTrabalho = null;
-        SelectedPavilhao = null;
-        SelectedGaleria = null;
-        SelectedSolario = null;
-        SelectedCela = null;
-        Galerias.Clear();
-        Solarios.Clear();
-        Celas.Clear();
-        _currentIdInterno = 0;
-        _statusOld = "A";
-        _emTransitoOld = "N";
-    }
-
     protected override void PreencherCampos()
     {
-        if (SelectedGridItem == null) return;
+        // Get the selected grid item (set by base when ConsultaSelectedRow changes)
+        var gridItem = SelectedGridItem as MovimentoInternosGridItem;
+        if (gridItem == null) return;
+
+        _currentIdInterno = gridItem.IdInterno;
 
         // Load full interno data from database
         try
         {
             var dt = DatabaseService.ExecuteQuery(
                 "SELECT * FROM interno WHERE id_interno = @id",
-                new FbParameter("@id", SelectedGridItem.IdInterno));
+                new FbParameter("@id", gridItem.IdInterno));
 
             if (dt.Rows.Count == 0) return;
 
             var row = dt.Rows[0];
-            _currentIdInterno = Convert.ToInt32(row["id_interno"]);
             _statusOld = row["st"]?.ToString()?.Trim() ?? "A";
             _emTransitoOld = row["em_transito"]?.ToString()?.Trim() ?? "N";
 
@@ -509,13 +448,11 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
             if (idPav > 0)
             {
                 SelectedPavilhao = Pavilhoes.FirstOrDefault(p => p.Id == idPav);
-                _ = LoadGaleriasAsync(idPav);
-                if (idGal > 0)
-                {
-                    // Will be set after galerias load - use a simple approach
-                    _ = LoadGaleriasAndSetAsync(idPav, idGal, idSol, idCela);
-                }
+                _ = LoadGaleriasAndSetAsync(idPav, idGal, idSol, idCela);
             }
+
+            // Load movement history
+            _ = LoadMovimentoAsync();
         }
         catch (Exception ex)
         {
@@ -537,6 +474,60 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
                 SelectedCela = Celas.FirstOrDefault(c => c.Id == idCela);
             }
         }
+    }
+
+    private async Task LoadMovimentoAsync()
+    {
+        try
+        {
+            var sqlMov = GetSqlMovimento();
+            var paramMov = GetSqlParametrosMovimento();
+            _movimentoTable = await Task.Run(() => DatabaseService.ExecuteQuery(sqlMov, paramMov));
+            MovimentoDataSource = _movimentoTable.DefaultView;
+        }
+        catch (Exception ex)
+        {
+            LogHelper.Error("Erro ao carregar movimentação", ex, GetType().Name);
+        }
+    }
+
+    #endregion
+
+    #region CRUD
+
+    protected override void LimparCampos()
+    {
+        NomeInterno = string.Empty;
+        Rgi = string.Empty;
+        Vulgo = string.Empty;
+        Mae = string.Empty;
+        Pai = string.Empty;
+        SexoIndex = -1;
+        StatusIndex = 0;
+        DataEntrada = string.Empty;
+        CiOfMovimento = string.Empty;
+        NumeroRoupa = string.Empty;
+        EmTransito = "N";
+        DataSetor = string.Empty;
+        DataSaida = string.Empty;
+        MotivoSaida = string.Empty;
+        CiOfSaida = string.Empty;
+        DataIsolamento = string.Empty;
+        StatusIsolamento = string.Empty;
+        SelectedProcedencia = null;
+        SelectedDestino = null;
+        SelectedCondicaoInterno = null;
+        SelectedSetorTrabalho = null;
+        SelectedPavilhao = null;
+        SelectedGaleria = null;
+        SelectedSolario = null;
+        SelectedCela = null;
+        Galerias.Clear();
+        Solarios.Clear();
+        Celas.Clear();
+        _currentIdInterno = 0;
+        _statusOld = "A";
+        _emTransitoOld = "N";
     }
 
     protected override bool ValidarCampos()
@@ -651,7 +642,8 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
             @"INSERT INTO interno (
                 id_interno, id_up, nome_interno, rgi, vulgo, mae, pai, sexo, st, status,
                 data_entrada, ci, numero_roupa, em_transito, id_procedencia,
-                idpavilhao, idgaleria, idsolario, idcela, id_funcionario
+                idpavilhao, idgaleria, idsolario, idcela, id_funcionario,
+                status_isolamento, data_isolamento
             ) VALUES (
                 @id_interno, @id_up, @nome, @rgi, @vulgo, @mae, @pai, @sexo, @st, @status,
                 @data_entrada, @ci, @numero_roupa, @em_transito, @id_procedencia,
@@ -850,10 +842,6 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
 
     #region Cell Validation
 
-    /// <summary>
-    /// Validates cell capacity, maintenance, and disciplinary isolation.
-    /// Returns (true, "") if OK, (false, errorMessage) if validation fails.
-    /// </summary>
     private async Task<(bool ok, string message)> ValidarCelaAsync()
     {
         if (SelectedCela == null)
@@ -861,7 +849,6 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
 
         int idCela = SelectedCela.Id;
 
-        // Get cell info
         var celaInfo = await Task.Run(() => DatabaseService.GetCelaInfo(idCela));
         if (celaInfo == null)
             return (false, "Cela não encontrada.");
@@ -870,7 +857,6 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
         string isolamento = celaInfo["isolamento"]?.ToString()?.Trim() ?? "N";
         if (isolamento == "S")
         {
-            // Show disciplinary situation dialog
             var dialog = new SituacaoDisciplinarView();
             var topLevel = App.Current?.ApplicationLifetime is Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime desktop
                 ? desktop.MainWindow : null;
@@ -883,7 +869,6 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
             if (!dialog.Confirmed)
                 return (false, "Operação cancelada pelo usuário.");
 
-            // Set isolation data
             string situacao = dialog.SelectedOption switch
             {
                 0 => "(1) SANCIONADO",
@@ -900,8 +885,6 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
         if (emManutencao == "S")
         {
             string motivoManutencao = celaInfo["motivo_manutencao"]?.ToString()?.Trim() ?? "";
-            // We can't show a MessageBox from ViewModel easily, so we'll set a flag
-            // and handle it in the view. For now, just log and continue.
             LogHelper.Info($"Cela em manutenção: {motivoManutencao}", GetType().Name);
         }
 

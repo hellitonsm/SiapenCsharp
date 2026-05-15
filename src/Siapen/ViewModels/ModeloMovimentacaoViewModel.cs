@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using System.Data;
+using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -38,6 +40,29 @@ public partial class ModeloMovimentacaoViewModel : ViewModelBase
     [ObservableProperty]
     private string _tituloMovimentacao = "Movimentação";
 
+    // Typed grid items (like ModeloCadastroViewModel)
+    private IList? _gridItems;
+    public IList? GridItems
+    {
+        get => _gridItems;
+        protected set => _gridItems = value;
+    }
+
+    private object? _selectedGridItem;
+    public object? SelectedGridItem
+    {
+        get => _selectedGridItem;
+        set
+        {
+            if (SetProperty(ref _selectedGridItem, value) && value != null && ConsultaDataSource != null && GridItems != null)
+            {
+                int idx = GridItems.IndexOf(value);
+                if (idx >= 0 && idx < ConsultaDataSource.Count)
+                    ConsultaSelectedRow = ConsultaDataSource[idx];
+            }
+        }
+    }
+
     protected DataTable? _consultaTable;
     protected DataTable? _movimentoTable;
     protected string _orderBy = string.Empty;
@@ -51,6 +76,11 @@ public partial class ModeloMovimentacaoViewModel : ViewModelBase
     protected virtual string GetSqlMovimento() => string.Empty;
     protected virtual FbParameter[] GetSqlParametrosMovimento() => Array.Empty<FbParameter>();
 
+    /// <summary>
+    /// Creates a typed grid item from a DataRow. Override to provide typed items.
+    /// </summary>
+    protected virtual object CreateGridItem(DataRow row) => row;
+
     public virtual async Task LoadAsync()
     {
         IsLoading = true;
@@ -63,6 +93,10 @@ public partial class ModeloMovimentacaoViewModel : ViewModelBase
             if (!string.IsNullOrEmpty(_orderBy))
                 ConsultaDataSource.Sort = _orderBy;
 
+            // Build typed grid items
+            GridItems = ConsultaDataSource.Cast<DataRowView>().Select(r => CreateGridItem(r.Row)).ToList();
+            OnPropertyChanged(nameof(GridItems));
+
             var sqlMov = GetSqlMovimento();
             if (!string.IsNullOrEmpty(sqlMov))
             {
@@ -71,7 +105,7 @@ public partial class ModeloMovimentacaoViewModel : ViewModelBase
                 MovimentoDataSource = _movimentoTable.DefaultView;
             }
 
-            StatusMessage = $"Registros: {_consultaTable.Rows.Count}";
+            StatusMessage = $"Registros: {ConsultaDataSource.Count}";
         }
         catch (Exception ex)
         {
@@ -84,6 +118,16 @@ public partial class ModeloMovimentacaoViewModel : ViewModelBase
         }
     }
 
+    partial void OnConsultaSelectedRowChanged(DataRowView? value)
+    {
+        if (value != null && Modo == CadastroModo.Navegando && GridItems != null)
+        {
+            int idx = GetRowIndex(value);
+            if (idx >= 0 && idx < GridItems.Count)
+                SelectedGridItem = GridItems[idx];
+        }
+    }
+
     partial void OnSearchTextChanged(string value)
     {
         if (ConsultaDataSource == null) return;
@@ -91,6 +135,23 @@ public partial class ModeloMovimentacaoViewModel : ViewModelBase
             ConsultaDataSource.RowFilter = string.Empty;
         else
             ConsultaDataSource.RowFilter = Filtrar(value);
+
+        // Rebuild grid items after filter
+        if (GridItems != null)
+        {
+            GridItems = ConsultaDataSource.Cast<DataRowView>().Select(r => CreateGridItem(r.Row)).ToList();
+            OnPropertyChanged(nameof(GridItems));
+        }
+
+        StatusMessage = $"Registros: {ConsultaDataSource.Count}";
+    }
+
+    private int GetRowIndex(DataRowView row)
+    {
+        if (ConsultaDataSource == null) return -1;
+        for (int i = 0; i < ConsultaDataSource.Count; i++)
+            if (ConsultaDataSource[i] == row) return i;
+        return -1;
     }
 
     protected virtual string Filtrar(string texto) => string.Empty;

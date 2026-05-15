@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -63,6 +64,24 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
     [ObservableProperty]
     private string _emTransito = "N";
 
+    [ObservableProperty]
+    private string _dataSetor = string.Empty;
+
+    [ObservableProperty]
+    private string _dataSaida = string.Empty;
+
+    [ObservableProperty]
+    private string _motivoSaida = string.Empty;
+
+    [ObservableProperty]
+    private string _ciOfSaida = string.Empty;
+
+    [ObservableProperty]
+    private string _dataIsolamento = string.Empty;
+
+    [ObservableProperty]
+    private string _statusIsolamento = string.Empty;
+
     // Lookup ComboBoxes
     [ObservableProperty]
     private List<LookupItem> _procedencias = new();
@@ -88,17 +107,7 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
     [ObservableProperty]
     private LookupItem? _selectedSetorTrabalho;
 
-    // Aba Saída
-    [ObservableProperty]
-    private string _dataSaida = string.Empty;
-
-    [ObservableProperty]
-    private string _motivoSaida = string.Empty;
-
-    [ObservableProperty]
-    private string _ciOfSaida = string.Empty;
-
-    // Aba Cela - RadioGroups
+    // Aba Cela - ComboBoxes
     [ObservableProperty]
     private List<LookupItem> _pavilhoes = new();
 
@@ -206,16 +215,12 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
         IsLoading = true;
         try
         {
-            // Load consultation grid
             var sqlConsulta = GetSqlConsulta();
             var parametros = GetSqlParametrosConsulta();
             _consultaTable = await Task.Run(() => DatabaseService.ExecuteQuery(sqlConsulta, parametros));
             ConsultaDataSource = _consultaTable.DefaultView;
 
-            // Build typed grid items
             BuildGridItems();
-
-            // Load lookup tables
             await LoadLookupsAsync();
 
             StatusMessage = $"Registros: {_consultaTable.Rows.Count}";
@@ -233,12 +238,12 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
 
     private void BuildGridItems()
     {
-        GridItems = new List<MovimentoInternosGridItem>();
+        var items = new List<MovimentoInternosGridItem>();
         if (_consultaTable == null) return;
 
         foreach (DataRow row in _consultaTable.Rows)
         {
-            GridItems.Add(new MovimentoInternosGridItem
+            items.Add(new MovimentoInternosGridItem
             {
                 IdInterno = Convert.ToInt32(row["id_interno"]),
                 IdUp = Convert.ToInt32(row["id_up"]),
@@ -257,6 +262,7 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
                 NumeroRoupa = row["numero_roupa"]?.ToString()?.Trim() ?? ""
             });
         }
+        GridItems = items;
     }
 
     private async Task LoadLookupsAsync()
@@ -344,7 +350,6 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
             string search = SearchText.ToUpper().Trim();
             if (UsarSoundex)
             {
-                // Phonetic search - simplified: match nome_interno or nome_fonetica containing search
                 filtered = filtered.Where(g =>
                     g.NomeInterno.ToUpper().Contains(search) ||
                     g.NomeFonetica.ToUpper().Contains(search)).ToList();
@@ -367,7 +372,6 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
     partial void OnSelectedGridItemChanged(MovimentoInternosGridItem? value)
     {
         if (value == null || Modo != CadastroModo.Navegando) return;
-        // Load movimento grid for selected interno
         _currentIdInterno = value.IdInterno;
         _ = LoadMovimentoAsync();
     }
@@ -389,7 +393,7 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
 
     #endregion
 
-    #region CRUD - Etapa 1: Basic structure
+    #region CRUD
 
     protected override void LimparCampos()
     {
@@ -404,13 +408,16 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
         CiOfMovimento = string.Empty;
         NumeroRoupa = string.Empty;
         EmTransito = "N";
+        DataSetor = string.Empty;
+        DataSaida = string.Empty;
+        MotivoSaida = string.Empty;
+        CiOfSaida = string.Empty;
+        DataIsolamento = string.Empty;
+        StatusIsolamento = string.Empty;
         SelectedProcedencia = null;
         SelectedDestino = null;
         SelectedCondicaoInterno = null;
         SelectedSetorTrabalho = null;
-        DataSaida = string.Empty;
-        MotivoSaida = string.Empty;
-        CiOfSaida = string.Empty;
         SelectedPavilhao = null;
         SelectedGaleria = null;
         SelectedSolario = null;
@@ -418,41 +425,408 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
         Galerias.Clear();
         Solarios.Clear();
         Celas.Clear();
+        _currentIdInterno = 0;
+        _statusOld = "A";
+        _emTransitoOld = "N";
     }
 
     protected override void PreencherCampos()
     {
         if (SelectedGridItem == null) return;
-        // Full field loading will be implemented in Etapa 2
+
+        // Load full interno data from database
+        try
+        {
+            var dt = DatabaseService.ExecuteQuery(
+                "SELECT * FROM interno WHERE id_interno = @id",
+                new FbParameter("@id", SelectedGridItem.IdInterno));
+
+            if (dt.Rows.Count == 0) return;
+
+            var row = dt.Rows[0];
+            _currentIdInterno = Convert.ToInt32(row["id_interno"]);
+            _statusOld = row["st"]?.ToString()?.Trim() ?? "A";
+            _emTransitoOld = row["em_transito"]?.ToString()?.Trim() ?? "N";
+
+            NomeInterno = row["nome_interno"]?.ToString()?.Trim() ?? "";
+            Rgi = row["rgi"]?.ToString()?.Trim() ?? "";
+            Vulgo = row["vulgo"]?.ToString()?.Trim() ?? "";
+            Mae = row["mae"]?.ToString()?.Trim() ?? "";
+            Pai = row["pai"]?.ToString()?.Trim() ?? "";
+            NumeroRoupa = row["numero_roupa"]?.ToString()?.Trim() ?? "";
+            EmTransito = _emTransitoOld;
+            DataIsolamento = row["data_isolamento"]?.ToString()?.Trim() ?? "";
+            StatusIsolamento = row["status_isolamento"]?.ToString()?.Trim() ?? "";
+
+            // Sexo
+            string sexo = row["sexo"]?.ToString()?.Trim() ?? "";
+            SexoIndex = sexo == "F" ? 1 : (sexo == "M" ? 0 : -1);
+
+            // Status
+            string st = row["st"]?.ToString()?.Trim() ?? "A";
+            StatusIndex = st == "I" ? 1 : 0;
+
+            // Dates
+            if (row["data_entrada"] != DBNull.Value)
+                DataEntrada = Convert.ToDateTime(row["data_entrada"]).ToString("dd/MM/yyyy");
+            else
+                DataEntrada = string.Empty;
+
+            if (row["data_saida"] != DBNull.Value)
+                DataSaida = Convert.ToDateTime(row["data_saida"]).ToString("dd/MM/yyyy");
+            else
+                DataSaida = string.Empty;
+
+            if (row["data_setor"] != DBNull.Value)
+                DataSetor = Convert.ToDateTime(row["data_setor"]).ToString("dd/MM/yyyy");
+            else
+                DataSetor = string.Empty;
+
+            CiOfMovimento = row["ci"]?.ToString()?.Trim() ?? "";
+            MotivoSaida = row["motivo_saida"]?.ToString()?.Trim() ?? "";
+            CiOfSaida = row["cisaida"]?.ToString()?.Trim() ?? "";
+
+            // Lookup selections
+            int idProc = row["id_procedencia"] == DBNull.Value ? 0 : Convert.ToInt32(row["id_procedencia"]);
+            SelectedProcedencia = Procedencias.FirstOrDefault(p => p.Id == idProc);
+
+            int idDest = row["iddestino"] == DBNull.Value ? 0 : Convert.ToInt32(row["iddestino"]);
+            SelectedDestino = Destinos.FirstOrDefault(d => d.Id == idDest);
+
+            int idCond = row["idcondicao_interno"] == DBNull.Value ? 0 : Convert.ToInt32(row["idcondicao_interno"]);
+            SelectedCondicaoInterno = CondicoesInterno.FirstOrDefault(c => c.Id == idCond);
+
+            int idSetor = row["idsetor_trabalho"] == DBNull.Value ? 0 : Convert.ToInt32(row["idsetor_trabalho"]);
+            SelectedSetorTrabalho = SetoresTrabalho.FirstOrDefault(s => s.Id == idSetor);
+
+            // Cell cascade
+            int idPav = row["idpavilhao"] == DBNull.Value ? 0 : Convert.ToInt32(row["idpavilhao"]);
+            int idGal = row["idgaleria"] == DBNull.Value ? 0 : Convert.ToInt32(row["idgaleria"]);
+            int idSol = row["idsolario"] == DBNull.Value ? 0 : Convert.ToInt32(row["idsolario"]);
+            int idCela = row["idcela"] == DBNull.Value ? 0 : Convert.ToInt32(row["idcela"]);
+
+            if (idPav > 0)
+            {
+                SelectedPavilhao = Pavilhoes.FirstOrDefault(p => p.Id == idPav);
+                _ = LoadGaleriasAsync(idPav);
+                if (idGal > 0)
+                {
+                    // Will be set after galerias load - use a simple approach
+                    _ = LoadGaleriasAndSetAsync(idPav, idGal, idSol, idCela);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            LogHelper.Error("Erro ao preencher campos", ex, GetType().Name);
+        }
+    }
+
+    private async Task LoadGaleriasAndSetAsync(int idPavilhao, int idGaleria, int idSolario, int idCela)
+    {
+        await LoadGaleriasAsync(idPavilhao);
+        SelectedGaleria = Galerias.FirstOrDefault(g => g.Id == idGaleria);
+        if (idGaleria > 0)
+        {
+            await LoadSolariosAsync(idGaleria);
+            SelectedSolario = Solarios.FirstOrDefault(s => s.Id == idSolario);
+            if (idSolario > 0)
+            {
+                await LoadCelasAsync(idSolario);
+                SelectedCela = Celas.FirstOrDefault(c => c.Id == idCela);
+            }
+        }
     }
 
     protected override bool ValidarCampos()
     {
-        // Validation will be implemented in Etapa 2
+        // Data de entrada required
+        if (string.IsNullOrWhiteSpace(DataEntrada))
+        {
+            StatusMessage = "Digite a Data de Entrada!";
+            return false;
+        }
+
+        if (!LibHelper.ValidaData(DataEntrada))
+        {
+            StatusMessage = "Data de Entrada inválida!";
+            return false;
+        }
+
+        // Sexo required
+        if (SexoIndex < 0)
+        {
+            StatusMessage = "Informe o sexo!";
+            return false;
+        }
+
+        // Status required
+        if (StatusIndex < 0)
+        {
+            StatusMessage = "Informe o Status!";
+            return false;
+        }
+
+        // Procedência required
+        if (SelectedProcedencia == null)
+        {
+            StatusMessage = "Digite a Procedência!";
+            return false;
+        }
+
+        // Nome required
+        if (string.IsNullOrWhiteSpace(NomeInterno))
+        {
+            StatusMessage = "Digite o Nome do Interno!";
+            return false;
+        }
+
+        // If inactive (Inativo), validate output fields
+        if (StatusIndex == 1)
+        {
+            if (string.IsNullOrWhiteSpace(DataSaida) || !LibHelper.ValidaData(DataSaida))
+            {
+                StatusMessage = "Digite a Data da Saída!";
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(MotivoSaida))
+            {
+                StatusMessage = "Digite o Motivo!";
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(CiOfSaida))
+            {
+                StatusMessage = "Digite a CI/OF SAÍDA!";
+                return false;
+            }
+        }
+        else
+        {
+            // If active, validate cell
+            if (SelectedCela == null)
+            {
+                StatusMessage = "Digite a Cela!";
+                return false;
+            }
+
+            // If new or reactivated, mother name required
+            if (Modo == CadastroModo.Inserindo || _statusOld != "A")
+            {
+                if (string.IsNullOrWhiteSpace(Mae))
+                {
+                    StatusMessage = "Digite o Nome da Mãe!";
+                    return false;
+                }
+            }
+        }
+
         return true;
     }
 
     protected override async Task InserirAsync()
     {
-        // Insert logic will be implemented in Etapa 2
-        await Task.CompletedTask;
+        // Generate new ID: gen_id(cod_up, 0) || gen_id(ID_INTERNO, 1)
+        var result = await Task.Run(() => DatabaseService.ExecuteScalar(
+            "SELECT gen_id(cod_up, 0) || gen_id(ID_INTERNO, 1) FROM RDB$DATABASE"));
+        int newId = Convert.ToInt32(result);
+
+        _currentIdInterno = newId;
+        string sexoChar = SexoIndex == 1 ? "F" : "M";
+        string statusChar = StatusIndex == 1 ? "I" : "A";
+        DateTime dtEntrada = DateTime.ParseExact(DataEntrada, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+
+        // Insert INTERNO
+        await Task.Run(() => DatabaseService.ExecuteNonQuery(
+            @"INSERT INTO interno (
+                id_interno, id_up, nome_interno, rgi, vulgo, mae, pai, sexo, st, status,
+                data_entrada, ci, numero_roupa, em_transito, id_procedencia,
+                idpavilhao, idgaleria, idsolario, idcela, id_funcionario
+            ) VALUES (
+                @id_interno, @id_up, @nome, @rgi, @vulgo, @mae, @pai, @sexo, @st, @status,
+                @data_entrada, @ci, @numero_roupa, @em_transito, @id_procedencia,
+                @idpavilhao, @idgaleria, @idsolario, @idcela, @id_funcionario
+            )",
+            new FbParameter("@id_interno", newId),
+            new FbParameter("@id_up", GlobalVars.IdUp),
+            new FbParameter("@nome", NomeInterno.Trim()),
+            new FbParameter("@rgi", Rgi.Trim()),
+            new FbParameter("@vulgo", Vulgo.Trim()),
+            new FbParameter("@mae", Mae.Trim()),
+            new FbParameter("@pai", Pai.Trim()),
+            new FbParameter("@sexo", sexoChar),
+            new FbParameter("@st", statusChar),
+            new FbParameter("@status", statusChar),
+            new FbParameter("@data_entrada", dtEntrada),
+            new FbParameter("@ci", CiOfMovimento.Trim()),
+            new FbParameter("@numero_roupa", NumeroRoupa.Trim()),
+            new FbParameter("@em_transito", EmTransito),
+            new FbParameter("@id_procedencia", SelectedProcedencia?.Id ?? 0),
+            new FbParameter("@idpavilhao", SelectedPavilhao?.Id ?? 0),
+            new FbParameter("@idgaleria", SelectedGaleria?.Id ?? 0),
+            new FbParameter("@idsolario", SelectedSolario?.Id ?? 0),
+            new FbParameter("@idcela", SelectedCela?.Id ?? 0),
+            new FbParameter("@id_funcionario", GlobalVars.IdFuncionario)
+        ));
+
+        // If active, add history entry
+        if (StatusIndex == 0)
+        {
+            await AddHistoricoEntry(newId, dtEntrada,
+                $"Deu Entrada na Unidade Penal: {GlobalVars.UpLogado}, Procedente {SelectedProcedencia?.DisplayName}, Conforme OF/CI {CiOfMovimento.Trim()}.",
+                "E", SelectedProcedencia?.Id ?? 0);
+        }
+
+        // If inactive, add output history
+        if (StatusIndex == 1)
+        {
+            DateTime dtSaida = DateTime.ParseExact(DataSaida, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+            string descricao = $"Deu Saída da Unidade Penal: {GlobalVars.UpLogado}, Motivo: {MotivoSaida.Trim()}, Conforme CI/OF/AUTOS: {CiOfSaida.Trim()}.";
+            await AddHistoricoEntry(newId, dtSaida, descricao, "S", SelectedProcedencia?.Id ?? 0);
+        }
     }
 
     protected override async Task AtualizarAsync()
     {
-        // Update logic will be implemented in Etapa 2
-        await Task.CompletedTask;
+        string sexoChar = SexoIndex == 1 ? "F" : "M";
+        string statusChar = StatusIndex == 1 ? "I" : "A";
+        DateTime dtEntrada = DateTime.ParseExact(DataEntrada, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+
+        if (StatusIndex == 1)
+        {
+            // Inactive - update and add output history
+            DateTime dtSaida = DateTime.ParseExact(DataSaida, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+
+            await Task.Run(() => DatabaseService.ExecuteNonQuery(
+                @"UPDATE interno SET
+                    nome_interno = @nome, rgi = @rgi, vulgo = @vulgo, mae = @mae, pai = @pai,
+                    sexo = @sexo, st = @st, status = @status, data_entrada = @data_entrada,
+                    ci = @ci, numero_roupa = @numero_roupa, em_transito = @em_transito,
+                    id_procedencia = @id_procedencia, data_saida = @data_saida,
+                    motivo_saida = @motivo_saida, cisaida = @cisaida,
+                    iddestino = @iddestino, id_funcionario = @id_funcionario,
+                    data_setor = NULL, idsetor_trabalho = NULL, idcondicao_interno = NULL,
+                    idpavilhao = NULL, idgaleria = NULL, idsolario = NULL, idcela = NULL
+                WHERE id_interno = @id_interno",
+                new FbParameter("@nome", NomeInterno.Trim()),
+                new FbParameter("@rgi", Rgi.Trim()),
+                new FbParameter("@vulgo", Vulgo.Trim()),
+                new FbParameter("@mae", Mae.Trim()),
+                new FbParameter("@pai", Pai.Trim()),
+                new FbParameter("@sexo", sexoChar),
+                new FbParameter("@st", statusChar),
+                new FbParameter("@status", statusChar),
+                new FbParameter("@data_entrada", dtEntrada),
+                new FbParameter("@ci", CiOfMovimento.Trim()),
+                new FbParameter("@numero_roupa", NumeroRoupa.Trim()),
+                new FbParameter("@em_transito", EmTransito),
+                new FbParameter("@id_procedencia", SelectedProcedencia?.Id ?? 0),
+                new FbParameter("@data_saida", dtSaida),
+                new FbParameter("@motivo_saida", MotivoSaida.Trim()),
+                new FbParameter("@cisaida", CiOfSaida.Trim()),
+                new FbParameter("@iddestino", SelectedDestino?.Id ?? 0),
+                new FbParameter("@id_funcionario", GlobalVars.IdFuncionario),
+                new FbParameter("@id_interno", _currentIdInterno)
+            ));
+
+            // Output history
+            string descricao = $"Deu Saída da Unidade Penal: {GlobalVars.UpLogado}, Motivo: {MotivoSaida.Trim()}, Conforme CI/OF/AUTOS: {CiOfSaida.Trim()}.";
+            if (SelectedDestino != null)
+                descricao = $"Deu Saída da Unidade Penal: {GlobalVars.UpLogado}, Motivo: {MotivoSaida.Trim()} Destino: {SelectedDestino.DisplayName}, Conforme OF/CI{CiOfSaida.Trim()}.";
+
+            await AddHistoricoEntry(_currentIdInterno, dtSaida, descricao, "S", SelectedProcedencia?.Id ?? 0);
+        }
+        else
+        {
+            // Active - update and handle history
+            await Task.Run(() => DatabaseService.ExecuteNonQuery(
+                @"UPDATE interno SET
+                    nome_interno = @nome, rgi = @rgi, vulgo = @vulgo, mae = @mae, pai = @pai,
+                    sexo = @sexo, st = @st, status = @status, data_entrada = @data_entrada,
+                    ci = @ci, numero_roupa = @numero_roupa, em_transito = @em_transito,
+                    id_procedencia = @id_procedencia, idpavilhao = @idpavilhao,
+                    idgaleria = @idgaleria, idsolario = @idsolario, idcela = @idcela,
+                    idsetor_trabalho = @idsetor_trabalho, idcondicao_interno = @idcondicao_interno,
+                    data_setor = @data_setor, id_funcionario = @id_funcionario,
+                    data_saida = NULL, motivo_saida = NULL, cisaida = NULL, iddestino = NULL,
+                    status_isolamento = NULL, data_isolamento = NULL
+                WHERE id_interno = @id_interno",
+                new FbParameter("@nome", NomeInterno.Trim()),
+                new FbParameter("@rgi", Rgi.Trim()),
+                new FbParameter("@vulgo", Vulgo.Trim()),
+                new FbParameter("@mae", Mae.Trim()),
+                new FbParameter("@pai", Pai.Trim()),
+                new FbParameter("@sexo", sexoChar),
+                new FbParameter("@st", statusChar),
+                new FbParameter("@status", statusChar),
+                new FbParameter("@data_entrada", dtEntrada),
+                new FbParameter("@ci", CiOfMovimento.Trim()),
+                new FbParameter("@numero_roupa", NumeroRoupa.Trim()),
+                new FbParameter("@em_transito", EmTransito),
+                new FbParameter("@id_procedencia", SelectedProcedencia?.Id ?? 0),
+                new FbParameter("@idpavilhao", SelectedPavilhao?.Id ?? 0),
+                new FbParameter("@idgaleria", SelectedGaleria?.Id ?? 0),
+                new FbParameter("@idsolario", SelectedSolario?.Id ?? 0),
+                new FbParameter("@idcela", SelectedCela?.Id ?? 0),
+                new FbParameter("@idsetor_trabalho", SelectedSetorTrabalho?.Id ?? 0),
+                new FbParameter("@idcondicao_interno", SelectedCondicaoInterno?.Id ?? 0),
+                new FbParameter("@data_setor", string.IsNullOrEmpty(DataSetor) ? DBNull.Value : (object)DateTime.ParseExact(DataSetor, "dd/MM/yyyy", CultureInfo.InvariantCulture)),
+                new FbParameter("@id_funcionario", GlobalVars.IdFuncionario),
+                new FbParameter("@id_interno", _currentIdInterno)
+            ));
+
+            // History: entry if reactivated (was inactive, now active)
+            if (_statusOld != "A")
+            {
+                await AddHistoricoEntry(_currentIdInterno, dtEntrada,
+                    $"Deu Entrada na Unidade Penal: {GlobalVars.UpLogado}, Procedente {SelectedProcedencia?.DisplayName}, Conforme OF/CI {CiOfMovimento.Trim()}.",
+                    "E", SelectedProcedencia?.Id ?? 0);
+            }
+
+            // History: transit change
+            if (_emTransitoOld != EmTransito)
+            {
+                string descricao = EmTransito == "S"
+                    ? $"Saiu em transito: {GlobalVars.UpLogado}, Destino {SelectedProcedencia?.DisplayName}, Conforme OF/CI {CiOfMovimento.Trim()}."
+                    : $"Retorno do transito: {GlobalVars.UpLogado}, Origem {SelectedProcedencia?.DisplayName}, Conforme OF/CI {CiOfMovimento.Trim()}.";
+                await AddHistoricoEntry(_currentIdInterno, DateTime.Now, descricao, "S", SelectedProcedencia?.Id ?? 0);
+            }
+        }
     }
 
     protected override async Task ExcluirAsync()
     {
-        // Delete not available in original Delphi (Excluir button is hidden)
         await Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// Add a history entry to HISTORICO_INTERNO
+    /// </summary>
+    private async Task AddHistoricoEntry(int idInterno, DateTime dataHora, string descricao, string status, int idProcedencia)
+    {
+        try
+        {
+            await Task.Run(() => DatabaseService.ExecuteNonQuery(
+                @"INSERT INTO historico_interno (idhistorico_interno, idinterno, data_hora, descricao, status, idprocedencia, idup)
+                  VALUES (0, @idinterno, @data_hora, @descricao, @status, @idprocedencia, @idup)",
+                new FbParameter("@idinterno", idInterno),
+                new FbParameter("@data_hora", dataHora),
+                new FbParameter("@descricao", descricao),
+                new FbParameter("@status", status),
+                new FbParameter("@idprocedencia", idProcedencia),
+                new FbParameter("@idup", GlobalVars.IdUp)
+            ));
+        }
+        catch (Exception ex)
+        {
+            LogHelper.Error("Erro ao adicionar histórico", ex, GetType().Name);
+        }
     }
 
     #endregion
 
-    #region Cell Cascade (Etapa 3)
+    #region Cell Cascade
 
     partial void OnSelectedPavilhaoChanged(LookupItem? value)
     {

@@ -88,13 +88,30 @@ public partial class ModeloMovimentacaoViewModel : ViewModelBase
         {
             var sqlConsulta = GetSqlConsulta();
             var parametros = GetSqlParametrosConsulta();
+            LogHelper.Debug($"[LOAD] SQL: {sqlConsulta?.Replace("\n", " ").Replace("\r", " ").Substring(0, Math.Min(200, sqlConsulta?.Length ?? 0))}...", GetType().Name);
+            LogHelper.Debug($"[LOAD] Params: {(parametros != null ? string.Join(", ", parametros.Select(p => $"{p.ParameterName}={p.Value}")) : "none")}", GetType().Name);
             _consultaTable = await Task.Run(() => DatabaseService.ExecuteQuery(sqlConsulta, parametros));
-            ConsultaDataSource = _consultaTable.DefaultView;
-            if (!string.IsNullOrEmpty(_orderBy))
+            LogHelper.Debug($"[LOAD] DataTable rows: {_consultaTable?.Rows.Count ?? -1}, cols: {_consultaTable?.Columns.Count ?? -1}", GetType().Name);
+            if (_consultaTable != null && _consultaTable.Columns.Count > 0)
+            {
+                LogHelper.Debug($"[LOAD] Columns: {string.Join(", ", _consultaTable.Columns.Cast<DataColumn>().Select(c => c.ColumnName))}", GetType().Name);
+            }
+            ConsultaDataSource = _consultaTable?.DefaultView;
+            if (!string.IsNullOrEmpty(_orderBy) && ConsultaDataSource != null)
                 ConsultaDataSource.Sort = _orderBy;
 
-            // Build typed grid items
-            GridItems = ConsultaDataSource.Cast<DataRowView>().Select(r => CreateGridItem(r.Row)).ToList();
+            if (ConsultaDataSource != null)
+            {
+                var items = ConsultaDataSource.Cast<DataRowView>().ToList();
+                LogHelper.Debug($"[LOAD] DataView count: {items.Count}", GetType().Name);
+                GridItems = items.Select(r => CreateGridItem(r.Row)).ToList();
+                LogHelper.Debug($"[LOAD] GridItems count: {GridItems?.Count ?? -1}", GetType().Name);
+            }
+            else
+            {
+                LogHelper.Debug("[LOAD] ConsultaDataSource is NULL!", GetType().Name);
+                GridItems = null;
+            }
             OnPropertyChanged(nameof(GridItems));
 
             var sqlMov = GetSqlMovimento();
@@ -102,10 +119,11 @@ public partial class ModeloMovimentacaoViewModel : ViewModelBase
             {
                 var paramMov = GetSqlParametrosMovimento();
                 _movimentoTable = await Task.Run(() => DatabaseService.ExecuteQuery(sqlMov, paramMov));
-                MovimentoDataSource = _movimentoTable.DefaultView;
+                MovimentoDataSource = _movimentoTable?.DefaultView;
             }
 
-            StatusMessage = $"Registros: {ConsultaDataSource.Count}";
+            StatusMessage = $"Registros: {ConsultaDataSource?.Count ?? 0}";
+            LogHelper.Debug($"[LOAD] Done. Status: {StatusMessage}", GetType().Name);
         }
         catch (Exception ex)
         {
@@ -130,11 +148,14 @@ public partial class ModeloMovimentacaoViewModel : ViewModelBase
 
     partial void OnSearchTextChanged(string value)
     {
+        LogHelper.Debug($"[SEARCH] OnSearchTextChanged: value='{value}', ConsultaDataSource={ConsultaDataSource?.Count ?? -1}", GetType().Name);
         if (ConsultaDataSource == null) return;
         if (string.IsNullOrWhiteSpace(value))
             ConsultaDataSource.RowFilter = string.Empty;
         else
             ConsultaDataSource.RowFilter = Filtrar(value);
+
+        LogHelper.Debug($"[SEARCH] RowFilter='{ConsultaDataSource.RowFilter}', count after filter={ConsultaDataSource.Count}", GetType().Name);
 
         // Rebuild grid items after filter
         if (GridItems != null)
@@ -170,47 +191,66 @@ public partial class ModeloMovimentacaoViewModel : ViewModelBase
     [RelayCommand]
     protected virtual void Novo()
     {
+        LogHelper.Debug($"[CMD] Novo — current Modo={Modo}", GetType().Name);
         if (Modo != CadastroModo.Navegando) return;
         Modo = CadastroModo.Inserindo;
         LimparCampos();
+        LogHelper.Debug($"[CMD] Novo — Modo set to Inserindo", GetType().Name);
     }
 
     [RelayCommand]
     protected virtual void Editar()
     {
+        LogHelper.Debug($"[CMD] Editar — current Modo={Modo}, SelectedRow={ConsultaSelectedRow != null}", GetType().Name);
         if (Modo != CadastroModo.Navegando) return;
         if (ConsultaSelectedRow == null) return;
         Modo = CadastroModo.Editando;
         PreencherCampos();
+        LogHelper.Debug($"[CMD] Editar — Modo set to Editando", GetType().Name);
     }
 
     [RelayCommand]
     protected virtual void Cancelar()
     {
+        LogHelper.Debug($"[CMD] Cancelar — current Modo={Modo}", GetType().Name);
         Modo = CadastroModo.Navegando;
         if (ConsultaSelectedRow != null)
             PreencherCampos();
         else
             LimparCampos();
+        LogHelper.Debug($"[CMD] Cancelar — Modo set to Navegando", GetType().Name);
     }
 
     [RelayCommand]
     protected virtual async Task Salvar()
     {
+        LogHelper.Debug($"[CMD] Salvar — Modo={Modo}", GetType().Name);
         if (Modo == CadastroModo.Navegando) return;
-        if (!ValidarCampos()) return;
+        if (!ValidarCampos())
+        {
+            LogHelper.Debug($"[CMD] Salvar — validation failed: {StatusMessage}", GetType().Name);
+            return;
+        }
 
         IsLoading = true;
         try
         {
             if (Modo == CadastroModo.Inserindo)
+            {
+                LogHelper.Debug("[CMD] Salvar — calling InserirAsync", GetType().Name);
                 await InserirAsync();
+            }
             else
+            {
+                LogHelper.Debug("[CMD] Salvar — calling AtualizarAsync", GetType().Name);
                 await AtualizarAsync();
+            }
 
             Modo = CadastroModo.Navegando;
+            LogHelper.Debug("[CMD] Salvar — reloading data", GetType().Name);
             await LoadAsync();
             StatusMessage = "Registro salvo com sucesso.";
+            LogHelper.Debug($"[CMD] Salvar — done: {StatusMessage}", GetType().Name);
         }
         catch (Exception ex)
         {
@@ -226,6 +266,7 @@ public partial class ModeloMovimentacaoViewModel : ViewModelBase
     [RelayCommand]
     protected virtual async Task Excluir()
     {
+        LogHelper.Debug($"[CMD] Excluir — Modo={Modo}, SelectedRow={ConsultaSelectedRow != null}", GetType().Name);
         if (Modo != CadastroModo.Navegando) return;
         if (ConsultaSelectedRow == null) return;
 
@@ -235,6 +276,7 @@ public partial class ModeloMovimentacaoViewModel : ViewModelBase
             await ExcluirAsync();
             await LoadAsync();
             StatusMessage = "Registro excluído com sucesso.";
+            LogHelper.Debug($"[CMD] Excluir — done: {StatusMessage}", GetType().Name);
         }
         catch (Exception ex)
         {

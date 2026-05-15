@@ -118,14 +118,33 @@ public abstract partial class ModeloCadastroViewModel : ViewModelBase
         {
             var sql = GetSqlConsulta();
             var parametros = GetSqlParametros();
+            LogHelper.Debug($"[LOAD] SQL: {sql?.Replace("\n", " ").Replace("\r", " ").Substring(0, Math.Min(200, sql?.Length ?? 0))}...", GetType().Name);
+            LogHelper.Debug($"[LOAD] Params: {(parametros != null ? string.Join(", ", parametros.Select(p => $"{p.ParameterName}={p.Value}")) : "none")}", GetType().Name);
             _dataTable = await Task.Run(() => DatabaseService.ExecuteQuery(sql, parametros));
-            DataSource = _dataTable.DefaultView;
-            if (!string.IsNullOrEmpty(_orderBy))
+            LogHelper.Debug($"[LOAD] DataTable rows: {_dataTable?.Rows.Count ?? -1}, cols: {_dataTable?.Columns.Count ?? -1}", GetType().Name);
+            if (_dataTable != null && _dataTable.Columns.Count > 0)
+            {
+                LogHelper.Debug($"[LOAD] Columns: {string.Join(", ", _dataTable.Columns.Cast<DataColumn>().Select(c => c.ColumnName))}", GetType().Name);
+            }
+            DataSource = _dataTable?.DefaultView;
+            if (!string.IsNullOrEmpty(_orderBy) && DataSource != null)
                 DataSource.Sort = _orderBy;
-            GridItems = DataSource.Cast<DataRowView>().Select(r => CreateGridItem(r.Row)).ToList();
+            if (DataSource != null)
+            {
+                var items = DataSource.Cast<DataRowView>().ToList();
+                LogHelper.Debug($"[LOAD] DataView count: {items.Count}", GetType().Name);
+                GridItems = items.Select(r => CreateGridItem(r.Row)).ToList();
+                LogHelper.Debug($"[LOAD] GridItems count: {GridItems?.Count ?? -1}", GetType().Name);
+            }
+            else
+            {
+                LogHelper.Debug("[LOAD] DataSource is NULL!", GetType().Name);
+                GridItems = null;
+            }
             OnPropertyChanged(nameof(DataViewSource));
             OnPropertyChanged(nameof(GridItems));
-            StatusMessage = $"Registros: {DataSource.Count}";
+            StatusMessage = $"Registros: {DataSource?.Count ?? 0}";
+            LogHelper.Debug($"[LOAD] Done. Status: {StatusMessage}", GetType().Name);
         }
         catch (Exception ex)
         {

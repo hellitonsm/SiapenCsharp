@@ -140,18 +140,20 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
 
     protected override string GetSqlConsulta()
     {
+        // NOTE: nome_fonetica column does not exist in the INTERNO table.
+        // The original DFM used '' as nome_interno_soundex (empty placeholder).
+        // We use the same approach here.
         return @"
             SELECT
                 i.id_interno,
                 i.id_up,
                 i.nome_interno,
-                i.nome_fonetica,
+                '' as nome_fonetica,
                 up.sigla,
                 p.pavilhao,
                 s.solario,
                 c.cela,
                 i.st,
-                i.status,
                 i.em_transito,
                 i.idpavilhao,
                 i.idgaleria,
@@ -206,6 +208,12 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
 
     protected override object CreateGridItem(DataRow row)
     {
+        // NOTE: 'status' column does not exist in the INTERNO table.
+        // The original DFM used iif(interno.st='A','ATIVO','INATIVO') as status.
+        // We derive it from 'st' here.
+        string st = row["st"]?.ToString()?.Trim() ?? "A";
+        string status = st == "A" ? "ATIVO" : "INATIVO";
+
         return new MovimentoInternosGridItem
         {
             IdInterno = Convert.ToInt32(row["id_interno"]),
@@ -216,8 +224,8 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
             Pavilhao = row["pavilhao"]?.ToString()?.Trim() ?? "",
             Solario = row["solario"]?.ToString()?.Trim() ?? "",
             Cela = row["cela"]?.ToString()?.Trim() ?? "",
-            St = row["st"]?.ToString()?.Trim() ?? "A",
-            Status = row["status"]?.ToString()?.Trim() ?? "A",
+            St = st,
+            Status = status,
             EmTransito = row["em_transito"]?.ToString()?.Trim() ?? "N",
             IdPavilhao = row["idpavilhao"] == DBNull.Value ? 0 : Convert.ToInt32(row["idpavilhao"]),
             IdGaleria = row["idgaleria"] == DBNull.Value ? 0 : Convert.ToInt32(row["idgaleria"]),
@@ -235,10 +243,21 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
         IsLoading = true;
         try
         {
-            // Let base LoadAsync handle the query, grid items, and movement loading
+            LogHelper.Debug($"[LOAD] START — IdUp={GlobalVars.IdUp}, IsLoading={IsLoading}", GetType().Name);
+            LogHelper.Debug($"[LOAD] SQL Consulta: {GetSqlConsulta()?.Replace("\n", " ").Replace("\r", " ").Substring(0, Math.Min(300, GetSqlConsulta()?.Length ?? 0))}", GetType().Name);
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+
             await base.LoadAsync();
+            sw.Stop();
+            LogHelper.Debug($"[LOAD] base.LoadAsync done in {sw.ElapsedMilliseconds}ms — ConsultaDataSource={ConsultaDataSource?.Count ?? -1}, GridItems={GridItems?.Count ?? -1}", GetType().Name);
+
+            sw.Restart();
             await LoadLookupsAsync();
+            sw.Stop();
+            LogHelper.Debug($"[LOAD] LoadLookupsAsync done in {sw.ElapsedMilliseconds}ms", GetType().Name);
+
             ApplyStatusFilter();
+            LogHelper.Debug($"[LOAD] After ApplyStatusFilter: GridItems={GridItems?.Count ?? -1}", GetType().Name);
         }
         catch (Exception ex)
         {
@@ -248,6 +267,7 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
         finally
         {
             IsLoading = false;
+            LogHelper.Debug($"[LOAD] END — StatusMessage='{StatusMessage}'", GetType().Name);
         }
     }
 
@@ -255,40 +275,45 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
     {
         try
         {
-            // Procedencias
+            LogHelper.Debug("[LOOKUP] Loading Procedencias...", GetType().Name);
             var dtProc = await Task.Run(() => DatabaseService.ExecuteQuery(
                 "SELECT id_procedencia, procedencia FROM procedencia ORDER BY procedencia"));
             Procedencias = dtProc.AsEnumerable().Select(r => new LookupItem(
                 Convert.ToInt32(r["id_procedencia"]),
                 r["procedencia"]?.ToString()?.Trim() ?? ""
             )).ToList();
+            LogHelper.Debug($"[LOOKUP] Procedencias: {Procedencias?.Count ?? 0}", GetType().Name);
 
-            // Destinos
+            LogHelper.Debug("[LOOKUP] Loading Destinos...", GetType().Name);
             var dtDest = await Task.Run(() => DatabaseService.ExecuteQuery(
                 "SELECT id_destino, destino FROM destino ORDER BY destino"));
             Destinos = dtDest.AsEnumerable().Select(r => new LookupItem(
                 Convert.ToInt32(r["id_destino"]),
                 r["destino"]?.ToString()?.Trim() ?? ""
             )).ToList();
+            LogHelper.Debug($"[LOOKUP] Destinos: {Destinos?.Count ?? 0}", GetType().Name);
 
-            // Condições Interno
+            LogHelper.Debug("[LOOKUP] Loading CondicoesInterno...", GetType().Name);
             var dtCond = await Task.Run(() => DatabaseService.ExecuteQuery(
                 "SELECT id_condicao_interno, descricao FROM condicao_interno ORDER BY descricao"));
             CondicoesInterno = dtCond.AsEnumerable().Select(r => new LookupItem(
                 Convert.ToInt32(r["id_condicao_interno"]),
                 r["descricao"]?.ToString()?.Trim() ?? ""
             )).ToList();
+            LogHelper.Debug($"[LOOKUP] CondicoesInterno: {CondicoesInterno?.Count ?? 0}", GetType().Name);
 
-            // Setores Trabalho
+            LogHelper.Debug("[LOOKUP] Loading SetoresTrabalho...", GetType().Name);
             var dtSetor = await Task.Run(() => DatabaseService.ExecuteQuery(
                 "SELECT id_setor_trabalho, setor_trabalho FROM setor_trabalho ORDER BY setor_trabalho"));
             SetoresTrabalho = dtSetor.AsEnumerable().Select(r => new LookupItem(
                 Convert.ToInt32(r["id_setor_trabalho"]),
                 r["setor_trabalho"]?.ToString()?.Trim() ?? ""
             )).ToList();
+            LogHelper.Debug($"[LOOKUP] SetoresTrabalho: {SetoresTrabalho?.Count ?? 0}", GetType().Name);
 
-            // Pavilhões for this UP
+            LogHelper.Debug($"[LOOKUP] Loading Pavilhoes for IdUp={GlobalVars.IdUp}...", GetType().Name);
             await LoadPavilhoesAsync();
+            LogHelper.Debug($"[LOOKUP] Pavilhoes: {Pavilhoes?.Count ?? 0}", GetType().Name);
         }
         catch (Exception ex)
         {
@@ -299,6 +324,7 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
     private async Task LoadPavilhoesAsync()
     {
         var dt = await Task.Run(() => DatabaseService.GetPavilhoes(GlobalVars.IdUp));
+        LogHelper.Debug($"[LOOKUP] GetPavilhoes returned {dt?.Rows.Count ?? 0} rows", GetType().Name);
         Pavilhoes = dt.AsEnumerable().Select(r => new LookupItem(
             Convert.ToInt32(r["id_pavilhao"]),
             r["pavilhao"]?.ToString()?.Trim() ?? ""
@@ -321,46 +347,48 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
 
     protected override string Filtrar(string texto)
     {
-        // Custom filter: status + soundex/text search
         string status = FiltroStatusIndex == 0 ? "A" : "I";
 
         if (string.IsNullOrWhiteSpace(texto))
-            return $"st = '{status}'";
+        {
+            string f = $"st = '{status}'";
+            LogHelper.Debug($"[FILTRAR] texto vazio, filter='{f}'", GetType().Name);
+            return f;
+        }
 
         string search = texto.Replace("'", "''");
-        if (UsarSoundex)
-            return $"st = '{status}' AND (nome_interno LIKE '%{search}%' OR nome_fonetica LIKE '%{search}%')";
-        else
-            return $"st = '{status}' AND nome_interno LIKE '%{search}%'";
+        string filter = $"st = '{status}' AND nome_interno LIKE '%{search}%'";
+        LogHelper.Debug($"[FILTRAR] texto='{texto}', filter='{filter}'", GetType().Name);
+        return filter;
     }
 
     private void ApplyStatusFilter()
     {
-        // Rebuild grid items from current DataSource with status filter
-        if (ConsultaDataSource == null) return;
+        LogHelper.Debug($"[FILTER] START: ConsultaDataSource={ConsultaDataSource?.Count ?? -1}, FiltroStatusIndex={FiltroStatusIndex}, SearchText='{SearchText}', UsarSoundex={UsarSoundex}", GetType().Name);
+        if (ConsultaDataSource == null)
+        {
+            LogHelper.Warning("[FILTER] ConsultaDataSource is NULL!", GetType().Name);
+            return;
+        }
 
         string status = FiltroStatusIndex == 0 ? "A" : "I";
         var allItems = ConsultaDataSource.Cast<DataRowView>().Select(r => CreateGridItem(r.Row)).ToList();
+        LogHelper.Debug($"[FILTER] allItems={allItems.Count}, filtering by st='{status}'", GetType().Name);
         var filtered = allItems.Where(g => g is MovimentoInternosGridItem item && item.St == status).ToList();
+        LogHelper.Debug($"[FILTER] after st filter: {filtered.Count}", GetType().Name);
 
         if (!string.IsNullOrWhiteSpace(SearchText))
         {
             string search = SearchText.ToUpper().Trim();
-            if (UsarSoundex)
-            {
-                filtered = filtered.Where(g => g is MovimentoInternosGridItem item &&
-                    (item.NomeInterno.ToUpper().Contains(search) || item.NomeFonetica.ToUpper().Contains(search))).ToList();
-            }
-            else
-            {
-                filtered = filtered.Where(g => g is MovimentoInternosGridItem item &&
-                    item.NomeInterno.ToUpper().Contains(search)).ToList();
-            }
+            filtered = filtered.Where(g => g is MovimentoInternosGridItem item &&
+                item.NomeInterno.ToUpper().Contains(search)).ToList();
+            LogHelper.Debug($"[FILTER] after search filter '{search}': {filtered.Count}", GetType().Name);
         }
 
         GridItems = filtered;
         OnPropertyChanged(nameof(GridItems));
         StatusMessage = $"Registros: {filtered.Count}";
+        LogHelper.Debug($"[FILTER] END: GridItems={GridItems?.Count ?? -1}, StatusMessage='{StatusMessage}'", GetType().Name);
     }
 
     #endregion
@@ -369,20 +397,28 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
 
     protected override void PreencherCampos()
     {
-        // Get the selected grid item (set by base when ConsultaSelectedRow changes)
         var gridItem = SelectedGridItem as MovimentoInternosGridItem;
-        if (gridItem == null) return;
+        if (gridItem == null)
+        {
+            LogHelper.Debug("[PREENCHE] SelectedGridItem is null or not MovimentoInternosGridItem", GetType().Name);
+            return;
+        }
 
+        LogHelper.Debug($"[PREENCHE] IdInterno={gridItem.IdInterno}, Nome='{gridItem.NomeInterno}', St='{gridItem.St}'", GetType().Name);
         _currentIdInterno = gridItem.IdInterno;
 
-        // Load full interno data from database
         try
         {
             var dt = DatabaseService.ExecuteQuery(
                 "SELECT * FROM interno WHERE id_interno = @id",
                 new FbParameter("@id", gridItem.IdInterno));
 
-            if (dt.Rows.Count == 0) return;
+            LogHelper.Debug($"[PREENCHE] Query returned {dt.Rows.Count} rows", GetType().Name);
+            if (dt.Rows.Count == 0)
+            {
+                LogHelper.Warning($"[PREENCHE] Interno id={gridItem.IdInterno} not found in DB!", GetType().Name);
+                return;
+            }
 
             var row = dt.Rows[0];
             _statusOld = row["st"]?.ToString()?.Trim() ?? "A";
@@ -482,8 +518,10 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
         {
             var sqlMov = GetSqlMovimento();
             var paramMov = GetSqlParametrosMovimento();
+            LogHelper.Debug($"[MOVIMENTO] Loading history for id_interno={_currentIdInterno}", GetType().Name);
             _movimentoTable = await Task.Run(() => DatabaseService.ExecuteQuery(sqlMov, paramMov));
             MovimentoDataSource = _movimentoTable.DefaultView;
+            LogHelper.Debug($"[MOVIMENTO] Loaded {_movimentoTable.Rows.Count} history entries", GetType().Name);
         }
         catch (Exception ex)
         {
@@ -497,6 +535,7 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
 
     protected override void LimparCampos()
     {
+        LogHelper.Debug($"[LIMPAR] Modo={Modo}, _currentIdInterno={_currentIdInterno}", GetType().Name);
         NomeInterno = string.Empty;
         Rgi = string.Empty;
         Vulgo = string.Empty;
@@ -532,120 +571,130 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
 
     protected override bool ValidarCampos()
     {
-        // Data de entrada required
+        LogHelper.Debug($"[VALIDAR] Nome='{NomeInterno}', DataEntrada='{DataEntrada}', SexoIndex={SexoIndex}, StatusIndex={StatusIndex}, Procedencia={SelectedProcedencia?.DisplayName ?? "null"}, Cela={SelectedCela?.DisplayName ?? "null"}", GetType().Name);
+
         if (string.IsNullOrWhiteSpace(DataEntrada))
         {
             StatusMessage = "Digite a Data de Entrada!";
+            LogHelper.Debug($"[VALIDAR] FAIL: {StatusMessage}", GetType().Name);
             return false;
         }
 
         if (!LibHelper.ValidaData(DataEntrada))
         {
             StatusMessage = "Data de Entrada inválida!";
+            LogHelper.Debug($"[VALIDAR] FAIL: {StatusMessage}", GetType().Name);
             return false;
         }
 
-        // Sexo required
         if (SexoIndex < 0)
         {
             StatusMessage = "Informe o sexo!";
+            LogHelper.Debug($"[VALIDAR] FAIL: {StatusMessage}", GetType().Name);
             return false;
         }
 
-        // Status required
         if (StatusIndex < 0)
         {
             StatusMessage = "Informe o Status!";
+            LogHelper.Debug($"[VALIDAR] FAIL: {StatusMessage}", GetType().Name);
             return false;
         }
 
-        // Procedência required
         if (SelectedProcedencia == null)
         {
             StatusMessage = "Digite a Procedência!";
+            LogHelper.Debug($"[VALIDAR] FAIL: {StatusMessage}", GetType().Name);
             return false;
         }
 
-        // Nome required
         if (string.IsNullOrWhiteSpace(NomeInterno))
         {
             StatusMessage = "Digite o Nome do Interno!";
+            LogHelper.Debug($"[VALIDAR] FAIL: {StatusMessage}", GetType().Name);
             return false;
         }
 
-        // If inactive (Inativo), validate output fields
         if (StatusIndex == 1)
         {
             if (string.IsNullOrWhiteSpace(DataSaida) || !LibHelper.ValidaData(DataSaida))
             {
                 StatusMessage = "Digite a Data da Saída!";
+                LogHelper.Debug($"[VALIDAR] FAIL: {StatusMessage}", GetType().Name);
                 return false;
             }
 
             if (string.IsNullOrWhiteSpace(MotivoSaida))
             {
                 StatusMessage = "Digite o Motivo!";
+                LogHelper.Debug($"[VALIDAR] FAIL: {StatusMessage}", GetType().Name);
                 return false;
             }
 
             if (string.IsNullOrWhiteSpace(CiOfSaida))
             {
                 StatusMessage = "Digite a CI/OF SAÍDA!";
+                LogHelper.Debug($"[VALIDAR] FAIL: {StatusMessage}", GetType().Name);
                 return false;
             }
         }
         else
         {
-            // If active, validate cell
             if (SelectedCela == null)
             {
                 StatusMessage = "Digite a Cela!";
+                LogHelper.Debug($"[VALIDAR] FAIL: {StatusMessage}", GetType().Name);
                 return false;
             }
 
-            // If new or reactivated, mother name required
             if (Modo == CadastroModo.Inserindo || _statusOld != "A")
             {
                 if (string.IsNullOrWhiteSpace(Mae))
                 {
                     StatusMessage = "Digite o Nome da Mãe!";
+                    LogHelper.Debug($"[VALIDAR] FAIL: {StatusMessage}", GetType().Name);
                     return false;
                 }
             }
         }
 
+        LogHelper.Debug("[VALIDAR] OK — all validations passed", GetType().Name);
         return true;
     }
 
     protected override async Task InserirAsync()
     {
-        // Validate cell for active interns
+        LogHelper.Debug($"[INSERIR] START — Nome='{NomeInterno}', StatusIndex={StatusIndex}, SexoIndex={SexoIndex}", GetType().Name);
+
         if (StatusIndex == 0)
         {
             var (ok, msg) = await ValidarCelaAsync();
             if (!ok)
+            {
+                LogHelper.Warning($"[INSERIR] ValidarCela failed: {msg}", GetType().Name);
                 throw new InvalidOperationException(msg);
+            }
         }
 
-        // Generate new ID: gen_id(cod_up, 0) || gen_id(ID_INTERNO, 1)
         var result = await Task.Run(() => DatabaseService.ExecuteScalar(
             "SELECT gen_id(cod_up, 0) || gen_id(ID_INTERNO, 1) FROM RDB$DATABASE"));
         int newId = Convert.ToInt32(result);
+        LogHelper.Debug($"[INSERIR] Generated newId={newId}", GetType().Name);
 
         _currentIdInterno = newId;
         string sexoChar = SexoIndex == 1 ? "F" : "M";
         string statusChar = StatusIndex == 1 ? "I" : "A";
         DateTime dtEntrada = DateTime.ParseExact(DataEntrada, "dd/MM/yyyy", CultureInfo.InvariantCulture);
 
-        // Insert INTERNO
+        LogHelper.Debug($"[INSERIR] INSERT INTO interno — id={newId}, nome='{NomeInterno}', sexo={sexoChar}, st={statusChar}, data={DataEntrada}", GetType().Name);
         await Task.Run(() => DatabaseService.ExecuteNonQuery(
             @"INSERT INTO interno (
-                id_interno, id_up, nome_interno, rgi, vulgo, mae, pai, sexo, st, status,
+                id_interno, id_up, nome_interno, rgi, vulgo, mae, pai, sexo, st,
                 data_entrada, ci, numero_roupa, em_transito, id_procedencia,
                 idpavilhao, idgaleria, idsolario, idcela, id_funcionario,
                 status_isolamento, data_isolamento
             ) VALUES (
-                @id_interno, @id_up, @nome, @rgi, @vulgo, @mae, @pai, @sexo, @st, @status,
+                @id_interno, @id_up, @nome, @rgi, @vulgo, @mae, @pai, @sexo, @st,
                 @data_entrada, @ci, @numero_roupa, @em_transito, @id_procedencia,
                 @idpavilhao, @idgaleria, @idsolario, @idcela, @id_funcionario,
                 @status_isolamento, @data_isolamento
@@ -659,7 +708,6 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
             new FbParameter("@pai", Pai.Trim()),
             new FbParameter("@sexo", sexoChar),
             new FbParameter("@st", statusChar),
-            new FbParameter("@status", statusChar),
             new FbParameter("@data_entrada", dtEntrada),
             new FbParameter("@ci", CiOfMovimento.Trim()),
             new FbParameter("@numero_roupa", NumeroRoupa.Trim()),
@@ -674,35 +722,40 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
             new FbParameter("@data_isolamento", string.IsNullOrEmpty(DataIsolamento) ? DBNull.Value : (object)DataIsolamento)
         ));
 
-        // If active, add history entry
         if (StatusIndex == 0)
         {
+            LogHelper.Debug($"[INSERIR] Adding historico ENTRADA for id={newId}", GetType().Name);
             await AddHistoricoEntry(newId, dtEntrada,
                 $"Deu Entrada na Unidade Penal: {GlobalVars.UpLogado}, Procedente {SelectedProcedencia?.DisplayName}, Conforme OF/CI {CiOfMovimento.Trim()}.",
                 "E", SelectedProcedencia?.Id ?? 0);
         }
 
-        // If inactive, add output history
         if (StatusIndex == 1)
         {
             DateTime dtSaida = DateTime.ParseExact(DataSaida, "dd/MM/yyyy", CultureInfo.InvariantCulture);
             string descricao = $"Deu Saída da Unidade Penal: {GlobalVars.UpLogado}, Motivo: {MotivoSaida.Trim()}, Conforme CI/OF/AUTOS: {CiOfSaida.Trim()}.";
+            LogHelper.Debug($"[INSERIR] Adding historico SAIDA for id={newId}", GetType().Name);
             await AddHistoricoEntry(newId, dtSaida, descricao, "S", SelectedProcedencia?.Id ?? 0);
         }
+
+        LogHelper.Debug($"[INSERIR] END — id={newId} inserted successfully", GetType().Name);
     }
 
     protected override async Task AtualizarAsync()
     {
+        LogHelper.Debug($"[ATUALIZAR] START — id={_currentIdInterno}, Nome='{NomeInterno}', StatusIndex={StatusIndex}, _statusOld='{_statusOld}'", GetType().Name);
         string sexoChar = SexoIndex == 1 ? "F" : "M";
         string statusChar = StatusIndex == 1 ? "I" : "A";
         DateTime dtEntrada = DateTime.ParseExact(DataEntrada, "dd/MM/yyyy", CultureInfo.InvariantCulture);
 
-        // Validate cell for active interns
         if (StatusIndex == 0)
         {
             var (ok, msg) = await ValidarCelaAsync();
             if (!ok)
+            {
+                LogHelper.Warning($"[ATUALIZAR] ValidarCela failed: {msg}", GetType().Name);
                 throw new InvalidOperationException(msg);
+            }
         }
 
         if (StatusIndex == 1)
@@ -713,7 +766,7 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
             await Task.Run(() => DatabaseService.ExecuteNonQuery(
                 @"UPDATE interno SET
                     nome_interno = @nome, rgi = @rgi, vulgo = @vulgo, mae = @mae, pai = @pai,
-                    sexo = @sexo, st = @st, status = @status, data_entrada = @data_entrada,
+                    sexo = @sexo, st = @st, data_entrada = @data_entrada,
                     ci = @ci, numero_roupa = @numero_roupa, em_transito = @em_transito,
                     id_procedencia = @id_procedencia, data_saida = @data_saida,
                     motivo_saida = @motivo_saida, cisaida = @cisaida,
@@ -728,7 +781,6 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
                 new FbParameter("@pai", Pai.Trim()),
                 new FbParameter("@sexo", sexoChar),
                 new FbParameter("@st", statusChar),
-                new FbParameter("@status", statusChar),
                 new FbParameter("@data_entrada", dtEntrada),
                 new FbParameter("@ci", CiOfMovimento.Trim()),
                 new FbParameter("@numero_roupa", NumeroRoupa.Trim()),
@@ -755,7 +807,7 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
             await Task.Run(() => DatabaseService.ExecuteNonQuery(
                 @"UPDATE interno SET
                     nome_interno = @nome, rgi = @rgi, vulgo = @vulgo, mae = @mae, pai = @pai,
-                    sexo = @sexo, st = @st, status = @status, data_entrada = @data_entrada,
+                    sexo = @sexo, st = @st, data_entrada = @data_entrada,
                     ci = @ci, numero_roupa = @numero_roupa, em_transito = @em_transito,
                     id_procedencia = @id_procedencia, idpavilhao = @idpavilhao,
                     idgaleria = @idgaleria, idsolario = @idsolario, idcela = @idcela,
@@ -771,7 +823,6 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
                 new FbParameter("@pai", Pai.Trim()),
                 new FbParameter("@sexo", sexoChar),
                 new FbParameter("@st", statusChar),
-                new FbParameter("@status", statusChar),
                 new FbParameter("@data_entrada", dtEntrada),
                 new FbParameter("@ci", CiOfMovimento.Trim()),
                 new FbParameter("@numero_roupa", NumeroRoupa.Trim()),
@@ -790,27 +841,30 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
                 new FbParameter("@id_interno", _currentIdInterno)
             ));
 
-            // History: entry if reactivated (was inactive, now active)
             if (_statusOld != "A")
             {
+                LogHelper.Debug($"[ATUALIZAR] Adding historico ENTRADA (reactivated) for id={_currentIdInterno}", GetType().Name);
                 await AddHistoricoEntry(_currentIdInterno, dtEntrada,
                     $"Deu Entrada na Unidade Penal: {GlobalVars.UpLogado}, Procedente {SelectedProcedencia?.DisplayName}, Conforme OF/CI {CiOfMovimento.Trim()}.",
                     "E", SelectedProcedencia?.Id ?? 0);
             }
 
-            // History: transit change
             if (_emTransitoOld != EmTransito)
             {
                 string descricao = EmTransito == "S"
                     ? $"Saiu em transito: {GlobalVars.UpLogado}, Destino {SelectedProcedencia?.DisplayName}, Conforme OF/CI {CiOfMovimento.Trim()}."
                     : $"Retorno do transito: {GlobalVars.UpLogado}, Origem {SelectedProcedencia?.DisplayName}, Conforme OF/CI {CiOfMovimento.Trim()}.";
+                LogHelper.Debug($"[ATUALIZAR] Adding historico TRANSITO for id={_currentIdInterno}", GetType().Name);
                 await AddHistoricoEntry(_currentIdInterno, DateTime.Now, descricao, "S", SelectedProcedencia?.Id ?? 0);
             }
         }
+
+        LogHelper.Debug($"[ATUALIZAR] END — id={_currentIdInterno} updated successfully", GetType().Name);
     }
 
     protected override async Task ExcluirAsync()
     {
+        LogHelper.Debug($"[EXCLUIR] id={_currentIdInterno} — NOT IMPLEMENTED", GetType().Name);
         await Task.CompletedTask;
     }
 
@@ -821,6 +875,7 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
     {
         try
         {
+            LogHelper.Debug($"[HISTORICO] INSERT id_interno={idInterno}, status='{status}', data={dataHora:dd/MM/yyyy}", GetType().Name);
             await Task.Run(() => DatabaseService.ExecuteNonQuery(
                 @"INSERT INTO historico_interno (idhistorico_interno, idinterno, data_hora, descricao, status, idprocedencia, idup)
                   VALUES (0, @idinterno, @data_hora, @descricao, @status, @idprocedencia, @idup)",
@@ -831,6 +886,7 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
                 new FbParameter("@idprocedencia", idProcedencia),
                 new FbParameter("@idup", GlobalVars.IdUp)
             ));
+            LogHelper.Debug($"[HISTORICO] INSERT OK for id_interno={idInterno}", GetType().Name);
         }
         catch (Exception ex)
         {

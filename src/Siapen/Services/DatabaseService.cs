@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using FirebirdSql.Data.FirebirdClient;
 using Siapen.Helpers;
 
@@ -81,6 +82,13 @@ public static class DatabaseService
     /// </summary>
     public static DataTable ExecuteQuery(string sql, params FbParameter[] parameters)
     {
+        var sw = System.Diagnostics.Stopwatch.StartNew();
+        string sqlShort = sql.Replace("\n", " ").Replace("\r", " ").Substring(0, Math.Min(150, sql.Length));
+        string paramSummary = parameters != null && parameters.Length > 0
+            ? string.Join(", ", parameters.Select(p => $"{p.ParameterName}={p.Value}"))
+            : "(none)";
+        LogHelper.Debug($"[DB] Query START: {sqlShort}... | Params: {paramSummary}", "DB");
+
         using var cmd = new FbCommand(sql, Connection);
         if (parameters != null)
             cmd.Parameters.AddRange(parameters);
@@ -88,6 +96,8 @@ public static class DatabaseService
         var dt = new DataTable();
         using var adapter = new FbDataAdapter(cmd);
         adapter.Fill(dt);
+        sw.Stop();
+        LogHelper.Debug($"[DB] Query END: {dt.Rows.Count} rows in {sw.ElapsedMilliseconds}ms", "DB");
         return dt;
     }
 
@@ -96,10 +106,20 @@ public static class DatabaseService
     /// </summary>
     public static int ExecuteNonQuery(string sql, params FbParameter[] parameters)
     {
+        var sw = System.Diagnostics.Stopwatch.StartNew();
+        string sqlShort = sql.Replace("\n", " ").Replace("\r", " ").Substring(0, Math.Min(150, sql.Length));
+        string paramSummary = parameters != null && parameters.Length > 0
+            ? string.Join(", ", parameters.Select(p => $"{p.ParameterName}={p.Value}"))
+            : "(none)";
+        LogHelper.Debug($"[DB] NonQuery START: {sqlShort}... | Params: {paramSummary}", "DB");
+
         using var cmd = new FbCommand(sql, Connection);
         if (parameters != null)
             cmd.Parameters.AddRange(parameters);
-        return cmd.ExecuteNonQuery();
+        int affected = cmd.ExecuteNonQuery();
+        sw.Stop();
+        LogHelper.Debug($"[DB] NonQuery END: {affected} rows affected in {sw.ElapsedMilliseconds}ms", "DB");
+        return affected;
     }
 
     /// <summary>
@@ -107,10 +127,17 @@ public static class DatabaseService
     /// </summary>
     public static object? ExecuteScalar(string sql, params FbParameter[] parameters)
     {
+        var sw = System.Diagnostics.Stopwatch.StartNew();
+        string sqlShort = sql.Replace("\n", " ").Replace("\r", " ").Substring(0, Math.Min(150, sql.Length));
+        LogHelper.Debug($"[DB] Scalar START: {sqlShort}...", "DB");
+
         using var cmd = new FbCommand(sql, Connection);
         if (parameters != null)
             cmd.Parameters.AddRange(parameters);
-        return cmd.ExecuteScalar();
+        var result = cmd.ExecuteScalar();
+        sw.Stop();
+        LogHelper.Debug($"[DB] Scalar END: result={result} in {sw.ElapsedMilliseconds}ms", "DB");
+        return result;
     }
 
     /// <summary>

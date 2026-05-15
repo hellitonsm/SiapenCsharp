@@ -115,7 +115,11 @@ public partial class MainWindowViewModel : ViewModelBase
         });
 
     [RelayCommand]
-    private void CadastroInternos() => NaoImplementado();
+    private void CadastroInternos()
+    {
+        var view = new Views.MovimentoInternosView();
+        view.Show();
+    }
 
     [RelayCommand]
     private void CadastroCondicaoInterno() => NaoImplementado();

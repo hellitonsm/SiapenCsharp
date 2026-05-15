@@ -33,7 +33,11 @@ public partial class MainWindowViewModel : ViewModelBase
     // === TAB PRINCIPAL ===
 
     [RelayCommand]
-    private void BtnConfere() => NaoImplementado();
+    private void BtnConfere()
+    {
+        var view = new MovimentoInternosView();
+        view.Show();
+    }
 
     [RelayCommand]
     private void BtnRelatorio() => NaoImplementado();

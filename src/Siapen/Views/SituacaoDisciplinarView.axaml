@@ -1,0 +1,37 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="320" d:DesignHeight="160"
+        x:Class="Siapen.Views.SituacaoDisciplinarView"
+        Title="Situação da Disciplinar"
+        WindowStartupLocation="CenterOwner"
+        Width="320" Height="160"
+        CanResize="False"
+        Background="#F4F6F8">
+
+  <Grid RowDefinitions="*,Auto" Margin="12">
+    <StackPanel Grid.Row="0" Spacing="8">
+      <TextBlock Text="Qual motivo do isolamento?" FontSize="13" FontWeight="SemiBold" Foreground="#2B3A4A"/>
+
+      <StackPanel Spacing="4">
+        <RadioButton x:Name="RbSancionado" Content="1 - Sancionado" GroupName="Situacao" IsChecked="True"/>
+        <RadioButton x:Name="RbSeguro" Content="2 - Seguro" GroupName="Situacao"/>
+        <RadioButton x:Name="RbObservacao" Content="3 - Em Observação" GroupName="Situacao"/>
+      </StackPanel>
+
+      <TextBox x:Name="TxtDataIsolamento" PlaceholderText="Data isolamento (dd/mm/aa)"
+               FontSize="12" MaxLength="8"/>
+    </StackPanel>
+
+    <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right"
+                Spacing="8" Margin="0,12,0,0">
+      <Button Content="Confirma" Click="Confirma_Click"
+              Width="90" Height="28" FontSize="12" FontWeight="Bold"
+              Foreground="White" Background="#198754"/>
+      <Button Content="Cancelar" Click="Cancelar_Click"
+              Width="90" Height="28" FontSize="12" FontWeight="Bold"
+              Foreground="White" Background="#DC3545"/>
+    </StackPanel>
+  </Grid>
+</Window>

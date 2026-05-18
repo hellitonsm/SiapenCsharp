@@ -328,7 +328,7 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
     {
         var dt = await Task.Run(() => DatabaseService.GetPavilhoes(GlobalVars.IdUp));
         LogHelper.Debug($"[LOOKUP] GetPavilhoes returned {dt?.Rows.Count ?? 0} rows", GetType().Name);
-        Pavilhoes = dt.AsEnumerable().Select(r => new LookupItem(
+        Pavilhoes = dt!.AsEnumerable().Select(r => new LookupItem(
             Convert.ToInt32(r["id_pavilhao"]),
             r["pavilhao"]?.ToString()?.Trim() ?? ""
         )).ToList();

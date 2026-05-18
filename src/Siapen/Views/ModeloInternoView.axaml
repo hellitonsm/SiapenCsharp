@@ -328,7 +328,7 @@
               <WrapPanel>
                 <TextBlock Text="Localizar:" VerticalAlignment="Center" Margin="0,0,8,0"
                            Foreground="#2B3A4A" FontSize="13"/>
-                <TextBox Text="{Binding SearchText}" Watermark="Digite para filtrar..."
+                <TextBox Text="{Binding SearchText}" PlaceholderText="Digite para filtrar..."
                          FontSize="14" Height="30" Width="250"/>
                 <TextBlock Text="Filtro:" VerticalAlignment="Center" Margin="12,0,4,0"
                            Foreground="#2B3A4A" FontSize="12"/>

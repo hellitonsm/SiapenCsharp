@@ -616,13 +616,13 @@ public partial class CadastroInternoPsicossocialViewModel : ModeloCadastroViewMo
             Personalidade = GetRowString(row, "PERSONALIDADE");
 
             // Radio groups
-            SetRadioPair(GetRowString(row, "tosse_semana"), ref _tosseSemana, ref _notTosseSemana);
-            SetRadioPair(GetRowString(row, "mancha_corpo"), ref _manchaCorpo, ref _notManchaCorpo);
-            SetRadioPair(GetRowString(row, "doenca_venerea"), ref _doencaVenerea, ref _notDoencaVenerea);
-            SetRadioPair(GetRowString(row, "hepatite"), ref _hepatite, ref _notHepatite);
-            SetRadioPair(GetRowString(row, "pressao_alta"), ref _pressaoAlta, ref _notPressaoAlta);
-            SetRadioPair(GetRowString(row, "diabete"), ref _diabete, ref _notDiabete);
-            SetRadioPair(GetRowString(row, "hiv"), ref _hiv, ref _notHiv);
+            (TosseSemana, NotTosseSemana) = GetRowString(row, "tosse_semana") == "S" ? (true, false) : (false, true);
+            (ManchaCorpo, NotManchaCorpo) = GetRowString(row, "mancha_corpo") == "S" ? (true, false) : (false, true);
+            (DoencaVenerea, NotDoencaVenerea) = GetRowString(row, "doenca_venerea") == "S" ? (true, false) : (false, true);
+            (Hepatite, NotHepatite) = GetRowString(row, "hepatite") == "S" ? (true, false) : (false, true);
+            (PressaoAlta, NotPressaoAlta) = GetRowString(row, "pressao_alta") == "S" ? (true, false) : (false, true);
+            (Diabete, NotDiabete) = GetRowString(row, "diabete") == "S" ? (true, false) : (false, true);
+            (Hiv, NotHiv) = GetRowString(row, "hiv") == "S" ? (true, false) : (false, true);
 
             // Notify all lookup selections
             OnPropertyChanged(nameof(SelectedAdvogado));
@@ -648,12 +648,6 @@ public partial class CadastroInternoPsicossocialViewModel : ModeloCadastroViewMo
         if (!row.Table.Columns.Contains(column)) return null;
         var val = row[column];
         return val == DBNull.Value ? null : Convert.ToInt32(val);
-    }
-
-    private void SetRadioPair(string value, ref bool sim, ref bool nao)
-    {
-        if (value == "S") { sim = true; nao = false; }
-        else { sim = false; nao = true; }
     }
 
     protected override bool ValidarCampos()

@@ -287,7 +287,7 @@ public partial class CadastroInternoDisciplinaViewModel : ModeloCadastroViewMode
     partial void OnPreventivoNaoChanged(bool value) { if (value) PreventivoSim = false; }
 
     [RelayCommand]
-    private async void CarregarRegistroSelecionado()
+    private async Task CarregarRegistroSelecionado()
     {
         if (SelectedRow != null && Modo == CadastroModo.Navegando)
         {

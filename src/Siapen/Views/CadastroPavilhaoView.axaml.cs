@@ -30,7 +30,7 @@ public partial class CadastroPavilhaoView : Window
             var dv = _viewModel.DataViewSource;
             if (dv != null && dv.Count > 0)
             {
-                var dt = dv.Table;
+                var dt = dv!.Table!;
                 var cols = string.Join(", ", dt.Columns.Cast<System.Data.DataColumn>().Select(c => c.ColumnName));
                 LogHelper.Debug($"CadastroPavilhao: columns=[{cols}]", "UI");
                 LogHelper.Debug($"CadastroPavilhao: DataViewSource={dv.Count} rows", "UI");

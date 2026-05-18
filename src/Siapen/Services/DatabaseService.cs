@@ -174,7 +174,7 @@ public static class DatabaseService
     /// <summary>
     /// Cria um parâmetro para query
     /// </summary>
-    public static FbParameter CreateParameter(string name, object value)
+    public static FbParameter CreateParameter(string name, object? value)
     {
         return new FbParameter(name, value ?? DBNull.Value);
     }

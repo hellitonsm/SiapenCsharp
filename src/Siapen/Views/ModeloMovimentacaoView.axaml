@@ -49,7 +49,7 @@
             <TextBlock Grid.Column="0" Text="Localizar:" VerticalAlignment="Center"
                        Margin="0,0,8,0" Foreground="#2B3A4A" FontSize="13"/>
             <TextBox Grid.Column="1" Text="{Binding SearchText}"
-                     Watermark="Digite para filtrar..."
+                     PlaceholderText="Digite para filtrar..."
                      FontSize="14" Height="30"/>
           </Grid>
         </Border>

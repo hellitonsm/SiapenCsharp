@@ -404,7 +404,7 @@ public partial class CadastroInternoTrabalhoViewModel : ModeloCadastroViewModel
     partial void OnSelectedSetorTrabalhoChanged(LookupItem? value) => IdSetorTrabalho = value?.Id;
 
     [RelayCommand]
-    private async void CarregarRegistroSelecionado()
+    private async Task CarregarRegistroSelecionado()
     {
         if (SelectedRow != null && Modo == CadastroModo.Navegando)
         {

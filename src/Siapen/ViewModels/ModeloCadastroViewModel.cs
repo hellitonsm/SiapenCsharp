@@ -120,7 +120,7 @@ public abstract partial class ModeloCadastroViewModel : ViewModelBase
             var parametros = GetSqlParametros();
             LogHelper.Debug($"[LOAD] SQL: {sql?.Replace("\n", " ").Replace("\r", " ").Substring(0, Math.Min(200, sql?.Length ?? 0))}...", GetType().Name);
             LogHelper.Debug($"[LOAD] Params: {(parametros != null ? string.Join(", ", parametros.Select(p => $"{p.ParameterName}={p.Value}")) : "none")}", GetType().Name);
-            _dataTable = await Task.Run(() => DatabaseService.ExecuteQuery(sql, parametros));
+            _dataTable = await Task.Run(() => DatabaseService.ExecuteQuery(sql!, parametros!));
             LogHelper.Debug($"[LOAD] DataTable rows: {_dataTable?.Rows.Count ?? -1}, cols: {_dataTable?.Columns.Count ?? -1}", GetType().Name);
             if (_dataTable != null && _dataTable.Columns.Count > 0)
             {

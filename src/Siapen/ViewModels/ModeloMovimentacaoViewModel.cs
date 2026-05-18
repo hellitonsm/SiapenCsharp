@@ -90,7 +90,7 @@ public partial class ModeloMovimentacaoViewModel : ViewModelBase
             var parametros = GetSqlParametrosConsulta();
             LogHelper.Debug($"[LOAD] SQL: {sqlConsulta?.Replace("\n", " ").Replace("\r", " ").Substring(0, Math.Min(200, sqlConsulta?.Length ?? 0))}...", GetType().Name);
             LogHelper.Debug($"[LOAD] Params: {(parametros != null ? string.Join(", ", parametros.Select(p => $"{p.ParameterName}={p.Value}")) : "none")}", GetType().Name);
-            _consultaTable = await Task.Run(() => DatabaseService.ExecuteQuery(sqlConsulta, parametros));
+            _consultaTable = await Task.Run(() => DatabaseService.ExecuteQuery(sqlConsulta!, parametros!));
             LogHelper.Debug($"[LOAD] DataTable rows: {_consultaTable?.Rows.Count ?? -1}, cols: {_consultaTable?.Columns.Count ?? -1}", GetType().Name);
             if (_consultaTable != null && _consultaTable.Columns.Count > 0)
             {

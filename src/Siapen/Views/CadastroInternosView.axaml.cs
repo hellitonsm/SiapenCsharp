@@ -1,3 +1,4 @@
+using System;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -14,6 +15,12 @@ public partial class CadastroInternosView : Window
         _viewModel = new CadastroInternosViewModel();
         DataContext = _viewModel;
         InitializeComponent();
+    }
+
+    protected override async void OnOpened(EventArgs e)
+    {
+        base.OnOpened(e);
+        await _viewModel.LoadAsync();
     }
 
     private void Fechar_Click(object? sender, RoutedEventArgs e)

@@ -336,7 +336,7 @@ public partial class CadastroInternoEducacaoViewModel : ModeloCadastroViewModel
     }
 
     [RelayCommand]
-    private async void CarregarRegistroSelecionado()
+    private async Task CarregarRegistroSelecionado()
     {
         if (SelectedRow != null && Modo == CadastroModo.Navegando)
         {

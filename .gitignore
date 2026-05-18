@@ -18,6 +18,7 @@ Logs/
 # Project
 AGENTS.md
 qwen-code-export*
+.qwen/
 
 # OS
 .DS_Store

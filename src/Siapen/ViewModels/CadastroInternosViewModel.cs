@@ -117,7 +117,7 @@ public partial class CadastroInternosViewModel : ModeloCadastroViewModel
     {
         var sql = "SELECT i.id_interno, i.nome_interno, i.rgi, i.vulgo, i.st, " +
             "u.sigla, p.pavilhao, g.galeria, s.solario, c.cela, " +
-            "pr.procedencia, i.id_procedencia, i.id_up " +
+            "pr.proedencia, i.id_procedencia, i.id_up " +
             "FROM interno i " +
             "LEFT JOIN unidade_penal u ON i.id_up = u.id_up " +
             "LEFT JOIN cela c ON i.idcela = c.id_cela " +
@@ -154,7 +154,7 @@ public partial class CadastroInternosViewModel : ModeloCadastroViewModel
         {
             await Task.Run(() =>
             {
-                LoadLookup(Procedencias, "SELECT ID_PROCEDENCIA, PROCEDENCIA FROM PROCEDENCIA ORDER BY PROCEDENCIA");
+                LoadLookup(Procedencias, "SELECT ID_PROCEDENCIA, PROEDENCIA FROM PROCEDENCIA ORDER BY PROEDENCIA");
                 LoadLookup(CondicoesInterno, "SELECT ID_CONDICAO_INTERNO, DESCRICAO FROM CONDICAO_INTERNO ORDER BY DESCRICAO");
                 LoadLookup(Faccoes, "SELECT ID_FACCAO, NOME_FACCAO FROM FACCAO ORDER BY NOME_FACCAO");
                 LoadLookup(Cidades, "SELECT ID_CIDADE, CIDADE FROM CIDADE ORDER BY CIDADE");

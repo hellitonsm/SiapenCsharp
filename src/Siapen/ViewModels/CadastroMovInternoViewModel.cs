@@ -79,7 +79,7 @@ public partial class CadastroMovInternoViewModel : ModeloCadastroViewModel
                     "WHERE ID_UP = @ID_UP AND COALESCE(NOME_FUNCIONARIO, '') <> '' ORDER BY NOME_FUNCIONARIO",
                     DatabaseService.CreateParameter("@ID_UP", GlobalVars.IdUp));
 
-                LoadLookup(Procedencias, "SELECT ID_PROCEDENCIA, PROCEDENCIA FROM PROCEDENCIA ORDER BY PROCEDENCIA");
+                LoadLookup(Procedencias, "SELECT ID_PROCEDENCIA, PROEDENCIA FROM PROCEDENCIA ORDER BY PROEDENCIA");
                 LoadLookup(Destinos, "SELECT ID_DESTINO, DESTINO FROM DESTINO ORDER BY DESTINO");
             });
             OnPropertyChanged(nameof(Internos));

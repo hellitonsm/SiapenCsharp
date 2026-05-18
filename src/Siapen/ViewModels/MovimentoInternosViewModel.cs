@@ -143,6 +143,8 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
         // NOTE: nome_fonetica column does not exist in the INTERNO table.
         // The original DFM used '' as nome_interno_soundex (empty placeholder).
         // We use the same approach here.
+        // NOTE: Filter by id_up for security, and nome_interno is not null
+        // to exclude empty records (matching original Delphi behavior).
         return @"
             SELECT
                 i.id_interno,
@@ -162,10 +164,10 @@ public partial class MovimentoInternosViewModel : ModeloMovimentacaoViewModel
             FROM interno i
             INNER JOIN unidade_penal up ON up.id_up = i.id_up
             LEFT JOIN pavilhao p ON p.id_pavilhao = i.idpavilhao
-            LEFT JOIN galeria g ON g.id_galeria = i.idgaleria
             LEFT JOIN solario s ON s.id_solario = i.idsolario
             LEFT JOIN cela c ON c.id_cela = i.idcela
             WHERE i.id_up = @id_up
+              AND i.nome_interno IS NOT NULL
             ORDER BY i.nome_interno";
     }
 

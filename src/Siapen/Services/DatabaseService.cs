@@ -90,6 +90,7 @@ public static class DatabaseService
         LogHelper.Debug($"[DB] Query START: {sqlShort}... | Params: {paramSummary}", "DB");
 
         using var cmd = new FbCommand(sql, Connection);
+        cmd.CommandTimeout = 10; // 10 second timeout to avoid hanging
         if (parameters != null)
             cmd.Parameters.AddRange(parameters);
 
@@ -114,6 +115,7 @@ public static class DatabaseService
         LogHelper.Debug($"[DB] NonQuery START: {sqlShort}... | Params: {paramSummary}", "DB");
 
         using var cmd = new FbCommand(sql, Connection);
+        cmd.CommandTimeout = 10;
         if (parameters != null)
             cmd.Parameters.AddRange(parameters);
         int affected = cmd.ExecuteNonQuery();
@@ -132,6 +134,7 @@ public static class DatabaseService
         LogHelper.Debug($"[DB] Scalar START: {sqlShort}...", "DB");
 
         using var cmd = new FbCommand(sql, Connection);
+        cmd.CommandTimeout = 10;
         if (parameters != null)
             cmd.Parameters.AddRange(parameters);
         var result = cmd.ExecuteScalar();
@@ -147,6 +150,7 @@ public static class DatabaseService
     {
         string sql = $"SELECT {functionName} FROM RDB$DATABASE";
         using var cmd = new FbCommand(sql, Connection);
+        cmd.CommandTimeout = 10;
         if (parameters != null)
             cmd.Parameters.AddRange(parameters);
         var result = cmd.ExecuteScalar();

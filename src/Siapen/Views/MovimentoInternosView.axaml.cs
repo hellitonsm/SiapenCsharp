@@ -1,5 +1,6 @@
 using System;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Siapen.Helpers;
 using Siapen.ViewModels;
@@ -43,5 +44,18 @@ public partial class MovimentoInternosView : Window
     {
         LogHelper.Debug("[VIEW] Fechar button clicked", "MOV_INTERNOS");
         Close();
+    }
+
+    private void DataGrid_DoubleTapped(object? sender, TappedEventArgs e)
+    {
+        if (_viewModel.Modo != CadastroModo.Navegando) return;
+        if (_viewModel.SelectedGridItem == null) return;
+
+        LogHelper.Debug("[VIEW] Double-click — showing record in view mode", "MOV_INTERNOS");
+        // Fields are already filled by PreencherCampos() via SelectedGridItem setter.
+        // Just switch to the Cadastro tab so the user sees the data.
+        var tabControl = this.FindControl<TabControl>("CadastroTabControl");
+        if (tabControl != null)
+            tabControl.SelectedIndex = 0;
     }
 }

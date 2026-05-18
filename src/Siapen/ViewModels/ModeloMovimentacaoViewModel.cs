@@ -143,6 +143,7 @@ public partial class ModeloMovimentacaoViewModel : ViewModelBase
             int idx = GetRowIndex(value);
             if (idx >= 0 && idx < GridItems.Count)
                 SelectedGridItem = GridItems[idx];
+            PreencherCampos();
         }
     }
 

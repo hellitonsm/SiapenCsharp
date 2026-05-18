@@ -72,7 +72,8 @@
       </Grid.RowDefinitions>
 
       <!-- Cadastro TabControl -->
-      <TabControl Grid.Row="0" TabStripPlacement="Top" IsEnabled="{Binding CamposHabilitados}">
+      <TabControl Grid.Row="0" TabStripPlacement="Top" IsEnabled="{Binding CamposHabilitados}"
+                  x:Name="CadastroTabControl">
         <TabItem Header="Cadastro">
           <Border Background="White" BorderBrush="#DEE2E6" BorderThickness="1" Padding="4" MinHeight="155">
             <Grid>
@@ -277,7 +278,8 @@
                       GridLinesVisibility="Horizontal"
                       BorderThickness="0" Background="White"
                       RowHeight="20" FontSize="10"
-                      x:CompileBindings="False">
+                      x:CompileBindings="False"
+                      DoubleTapped="DataGrid_DoubleTapped">
               <DataGrid.Columns>
                 <DataGridTextColumn Header="Nome" Binding="{Binding NomeInterno}" Width="*"/>
                 <DataGridTextColumn Header="Sigla" Binding="{Binding Sigla}" Width="70"/>

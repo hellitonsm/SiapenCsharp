@@ -71,6 +71,7 @@ public partial class CadastroInternoDisciplinaViewModel : ModeloCadastroViewMode
     // === Filtro ===
     [ObservableProperty] private bool _filtroAtivo = true;
     [ObservableProperty] private bool _filtroInativo;
+    private bool _somenteInativos;
 
     // === Sexo radio ===
     [ObservableProperty] private bool _sexoMasculino = true;
@@ -83,13 +84,20 @@ public partial class CadastroInternoDisciplinaViewModel : ModeloCadastroViewMode
         NomeUp = GlobalVars.NomeUp;
     }
 
-    protected override string GetSqlConsulta() =>
-        "SELECT i.id_interno, i.nome_interno, i.rgi, i.vulgo, i.st, " +
-        "u.sigla " +
-        "FROM interno i " +
-        "LEFT JOIN unidade_penal u ON i.id_up = u.id_up " +
-        "WHERE i.id_up = @ID_UP " +
-        "ORDER BY i.nome_interno";
+    protected override string GetSqlConsulta()
+    {
+        var sql = "SELECT i.id_interno, i.nome_interno, i.rgi, i.vulgo, i.st, " +
+            "u.sigla " +
+            "FROM interno i " +
+            "LEFT JOIN unidade_penal u ON i.id_up = u.id_up " +
+            "WHERE i.id_up = @ID_UP ";
+        if (_somenteInativos)
+            sql += "AND i.st = 'I' ROWS 500 ";
+        else
+            sql += "AND i.st = 'A' ";
+        sql += "ORDER BY i.nome_interno";
+        return sql;
+    }
 
     protected override FbParameter[] GetSqlParametros() =>
         new[] { DatabaseService.CreateParameter("@ID_UP", GlobalVars.IdUp) };
@@ -253,21 +261,23 @@ public partial class CadastroInternoDisciplinaViewModel : ModeloCadastroViewMode
 
     partial void OnFiltroAtivoChanged(bool value)
     {
-        if (value && DataSource != null)
+        if (value)
         {
             FiltroInativo = false;
-            DataSource.RowFilter = "st = 'A'";
-            OnPropertyChanged(nameof(GridItems));
+            _somenteInativos = false;
+            StatusFilter = null;
+            _ = LoadAsync();
         }
     }
 
     partial void OnFiltroInativoChanged(bool value)
     {
-        if (value && DataSource != null)
+        if (value)
         {
             FiltroAtivo = false;
-            DataSource.RowFilter = "st = 'I'";
-            OnPropertyChanged(nameof(GridItems));
+            _somenteInativos = true;
+            StatusFilter = null;
+            _ = LoadAsync();
         }
     }
 

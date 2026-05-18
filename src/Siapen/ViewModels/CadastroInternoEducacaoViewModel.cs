@@ -66,6 +66,7 @@ public partial class CadastroInternoEducacaoViewModel : ModeloCadastroViewModel
     // === Filtro ===
     [ObservableProperty] private bool _filtroAtivo = true;
     [ObservableProperty] private bool _filtroInativo;
+    private bool _somenteInativos;
 
     // === Grid collections for sub-tables ===
     public List<PortariaGridItem> PortariaGridItems { get; } = new();
@@ -81,14 +82,21 @@ public partial class CadastroInternoEducacaoViewModel : ModeloCadastroViewModel
         NomeUp = GlobalVars.NomeUp;
     }
 
-    protected override string GetSqlConsulta() =>
-        "SELECT i.id_interno, i.nome_interno, i.rgi, i.vulgo, i.st, " +
-        "i.data_matricula, i.serie_fase_atual, i.turma, i.deficiencia, " +
-        "i.periodo, i.obs_educacao, u.sigla " +
-        "FROM interno i " +
-        "LEFT JOIN unidade_penal u ON i.id_up = u.id_up " +
-        "WHERE i.id_up = @ID_UP " +
-        "ORDER BY i.nome_interno";
+    protected override string GetSqlConsulta()
+    {
+        var sql = "SELECT i.id_interno, i.nome_interno, i.rgi, i.vulgo, i.st, " +
+            "i.data_matricula, i.serie_fase_atual, i.turma, i.deficiencia, " +
+            "i.periodo, i.obs_educacao, u.sigla " +
+            "FROM interno i " +
+            "LEFT JOIN unidade_penal u ON i.id_up = u.id_up " +
+            "WHERE i.id_up = @ID_UP ";
+        if (_somenteInativos)
+            sql += "AND i.st = 'I' ROWS 500 ";
+        else
+            sql += "AND i.st = 'A' ";
+        sql += "ORDER BY i.nome_interno";
+        return sql;
+    }
 
     protected override FbParameter[] GetSqlParametros() =>
         new[] { DatabaseService.CreateParameter("@ID_UP", GlobalVars.IdUp) };
@@ -312,21 +320,23 @@ public partial class CadastroInternoEducacaoViewModel : ModeloCadastroViewModel
 
     partial void OnFiltroAtivoChanged(bool value)
     {
-        if (value && DataSource != null)
+        if (value)
         {
             FiltroInativo = false;
-            DataSource.RowFilter = "st = 'A'";
-            OnPropertyChanged(nameof(GridItems));
+            _somenteInativos = false;
+            StatusFilter = null;
+            _ = LoadAsync();
         }
     }
 
     partial void OnFiltroInativoChanged(bool value)
     {
-        if (value && DataSource != null)
+        if (value)
         {
             FiltroAtivo = false;
-            DataSource.RowFilter = "st = 'I'";
-            OnPropertyChanged(nameof(GridItems));
+            _somenteInativos = true;
+            StatusFilter = null;
+            _ = LoadAsync();
         }
     }
 

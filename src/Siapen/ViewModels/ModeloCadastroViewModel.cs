@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
@@ -94,16 +95,33 @@ public abstract partial class ModeloCadastroViewModel : ViewModelBase
             OnPropertyChanged(nameof(DataViewSource));
     }
 
-    partial void OnSearchTextChanged(string value)
+    /// <summary>
+    /// Status filter expression for DataView.RowFilter (e.g. "st = 'A'" or "st = 'I'").
+    /// Combined with search text filter when both are active.
+    /// </summary>
+    protected string? StatusFilter { get; set; }
+
+    private void ApplyFilters()
     {
         if (DataSource == null) return;
-        if (string.IsNullOrWhiteSpace(value))
-            DataSource.RowFilter = string.Empty;
-        else
-            DataSource.RowFilter = Filtrar(value);
+        var filters = new List<string>();
+        if (!string.IsNullOrEmpty(StatusFilter))
+            filters.Add(StatusFilter);
+        if (!string.IsNullOrWhiteSpace(SearchText))
+        {
+            var textFilter = Filtrar(SearchText);
+            if (!string.IsNullOrEmpty(textFilter))
+                filters.Add(textFilter);
+        }
+        DataSource.RowFilter = filters.Count > 0 ? string.Join(" AND ", filters) : string.Empty;
         GridItems = DataSource.Cast<DataRowView>().Select(r => CreateGridItem(r.Row)).ToList();
         OnPropertyChanged(nameof(GridItems));
         StatusMessage = $"Registros: {DataSource.Count}";
+    }
+
+    partial void OnSearchTextChanged(string value)
+    {
+        ApplyFilters();
     }
 
     protected virtual string Filtrar(string texto)
@@ -129,6 +147,9 @@ public abstract partial class ModeloCadastroViewModel : ViewModelBase
             DataSource = _dataTable?.DefaultView;
             if (!string.IsNullOrEmpty(_orderBy) && DataSource != null)
                 DataSource.Sort = _orderBy;
+            // Apply status filter if set (e.g. "st = 'A'")
+            if (!string.IsNullOrEmpty(StatusFilter) && DataSource != null)
+                DataSource.RowFilter = StatusFilter;
             if (DataSource != null)
             {
                 var items = DataSource.Cast<DataRowView>().ToList();

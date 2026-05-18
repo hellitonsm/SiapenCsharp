@@ -100,6 +100,7 @@ public partial class CadastroInternosViewModel : ModeloCadastroViewModel
     // === Filtro ===
     [ObservableProperty] private bool _filtroAtivo = true;
     [ObservableProperty] private bool _filtroInativo;
+    private bool _somenteInativos;
 
     // === Sexo radio ===
     [ObservableProperty] private bool _sexoMasculino = true;
@@ -112,19 +113,26 @@ public partial class CadastroInternosViewModel : ModeloCadastroViewModel
         NomeUp = GlobalVars.NomeUp;
     }
 
-    protected override string GetSqlConsulta() =>
-        "SELECT i.id_interno, i.nome_interno, i.rgi, i.vulgo, i.st, " +
-        "u.sigla, p.pavilhao, g.galeria, s.solario, c.cela, " +
-        "pr.procedencia, i.id_procedencia, i.id_up " +
-        "FROM interno i " +
-        "LEFT JOIN unidade_penal u ON i.id_up = u.id_up " +
-        "LEFT JOIN cela c ON i.idcela = c.id_cela " +
-        "LEFT JOIN solario s ON c.idsolario = s.id_solario " +
-        "LEFT JOIN galeria g ON s.idgaleria = g.id_galeria " +
-        "LEFT JOIN pavilhao p ON g.idpavilhao = p.id_pavilhao " +
-        "LEFT JOIN procedencia pr ON i.id_procedencia = pr.id_procedencia " +
-        "WHERE i.id_up = @ID_UP " +
-        "ORDER BY i.nome_interno";
+    protected override string GetSqlConsulta()
+    {
+        var sql = "SELECT i.id_interno, i.nome_interno, i.rgi, i.vulgo, i.st, " +
+            "u.sigla, p.pavilhao, g.galeria, s.solario, c.cela, " +
+            "pr.procedencia, i.id_procedencia, i.id_up " +
+            "FROM interno i " +
+            "LEFT JOIN unidade_penal u ON i.id_up = u.id_up " +
+            "LEFT JOIN cela c ON i.idcela = c.id_cela " +
+            "LEFT JOIN solario s ON c.idsolario = s.id_solario " +
+            "LEFT JOIN galeria g ON s.idgaleria = g.id_galeria " +
+            "LEFT JOIN pavilhao p ON g.idpavilhao = p.id_pavilhao " +
+            "LEFT JOIN procedencia pr ON i.id_procedencia = pr.id_procedencia " +
+            "WHERE i.id_up = @ID_UP ";
+        if (_somenteInativos)
+            sql += "AND i.st = 'I' ROWS 500 ";
+        else
+            sql += "AND i.st = 'A' ";
+        sql += "ORDER BY i.nome_interno";
+        return sql;
+    }
 
     protected override FbParameter[] GetSqlParametros() =>
         new[] { DatabaseService.CreateParameter("@ID_UP", GlobalVars.IdUp) };
@@ -184,21 +192,23 @@ public partial class CadastroInternosViewModel : ModeloCadastroViewModel
 
     partial void OnFiltroAtivoChanged(bool value)
     {
-        if (value && DataSource != null)
+        if (value)
         {
             FiltroInativo = false;
-            DataSource.RowFilter = "st = 'A'";
-            OnPropertyChanged(nameof(GridItems));
+            _somenteInativos = false;
+            StatusFilter = null;
+            _ = LoadAsync();
         }
     }
 
     partial void OnFiltroInativoChanged(bool value)
     {
-        if (value && DataSource != null)
+        if (value)
         {
             FiltroAtivo = false;
-            DataSource.RowFilter = "st = 'I'";
-            OnPropertyChanged(nameof(GridItems));
+            _somenteInativos = true;
+            StatusFilter = null;
+            _ = LoadAsync();
         }
     }
 

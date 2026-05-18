@@ -198,10 +198,12 @@ public partial class CadastroInternoPsicossocialViewModel : ModeloCadastroViewMo
             "LEFT JOIN pavilhao p ON g.idpavilhao = p.id_pavilhao " +
             "WHERE i.id_up = @ID_UP ";
         if (_somenteInativos)
-            sql += "AND i.st = 'I' ROWS 500 ";
+            sql += "AND i.st = 'I' ";
         else
             sql += "AND i.st = 'A' ";
-        sql += "ORDER BY i.nome_interno";
+        sql += "ORDER BY i.nome_interno ";
+        if (_somenteInativos)
+            sql += "ROWS 500";
         return sql;
     }
 

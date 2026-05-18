@@ -1,0 +1,168 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Siapen.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="950" d:DesignHeight="650"
+        x:Class="Siapen.Views.ConsultaProcedView"
+        x:DataType="vm:ConsultaProcedViewModel"
+        Title="SIAPEN - Consulta ao Proced"
+        WindowStartupLocation="CenterScreen"
+        Width="950" Height="650"
+        Background="#F4F6F8">
+
+  <Design.DataContext>
+    <vm:ConsultaProcedViewModel/>
+  </Design.DataContext>
+
+  <DockPanel>
+    <!-- Left sidebar buttons -->
+    <Border DockPanel.Dock="Left" Width="110" Background="#2B3A4A">
+      <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Spacing="2" Margin="2">
+          <Button Content="CONSULTAR" Command="{Binding ConsultarCommand}"
+                  Height="34" FontSize="11" FontWeight="Bold"
+                  Foreground="White" Background="#0D6EFD"/>
+          <Button Content="FECHAR" Click="Fechar_Click"
+                  Height="34" FontSize="11" FontWeight="Bold"
+                  Foreground="White" Background="#DC3545"/>
+        </StackPanel>
+      </DockPanel>
+    </Border>
+
+    <!-- Main content -->
+    <Grid>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="*"/>
+        <RowDefinition Height="Auto"/>
+      </Grid.RowDefinitions>
+
+      <!-- Header -->
+      <Border Grid.Row="0" Background="#FFF8F0E0" Height="36" BorderBrush="#E9ECEF" BorderThickness="0,0,0,1">
+        <TextBlock Text="SIAPEN - Consulta ao Proced"
+                   FontSize="15" FontWeight="Bold" Foreground="#2B3A4A"
+                   VerticalAlignment="Center" Margin="12,0"/>
+      </Border>
+
+      <!-- TabControl -->
+      <TabControl Grid.Row="1" Margin="0" TabStripPlacement="Top">
+
+        <!-- Aba Indivíduo -->
+        <TabItem Header="Indivíduo">
+          <Grid RowDefinitions="Auto,*,Auto,*,Auto,*">
+
+            <!-- Search fields -->
+            <Grid Grid.Row="0" Margin="8,8,8,4"
+                  ColumnDefinitions="Auto,140,Auto,*,Auto,*,Auto,130"
+                  RowDefinitions="Auto,Auto">
+              <TextBlock Grid.Row="0" Grid.Column="0" Text="Número Proced:"
+                         FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding NumeroProced}"
+                       Height="24" FontSize="12" Margin="4"
+                       PlaceholderText="Nº do procedimento"/>
+
+              <TextBlock Grid.Row="0" Grid.Column="2" Text="Nome"
+                         FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <TextBox Grid.Row="0" Grid.Column="3" Text="{Binding Nome}"
+                       Height="24" FontSize="12" Margin="4"
+                       PlaceholderText="Nome do indivíduo"/>
+
+              <TextBlock Grid.Row="0" Grid.Column="4" Text="Nome da Mãe"
+                         FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <TextBox Grid.Row="0" Grid.Column="5" Text="{Binding NomeMae}"
+                       Height="24" FontSize="12" Margin="4"
+                       PlaceholderText="Nome da mãe"/>
+
+              <TextBlock Grid.Row="0" Grid.Column="6" Text="Data Nascimento"
+                         FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <TextBox Grid.Row="0" Grid.Column="7" Text="{Binding DataNascimento}"
+                       Height="24" FontSize="12" Margin="4"
+                       PlaceholderText="dd/mm/aaaa"/>
+            </Grid>
+
+            <!-- Consulta button -->
+            <Button Grid.Row="1" Content="Consulta"
+                    Command="{Binding ConsultarCommand}"
+                    HorizontalAlignment="Right" Margin="0,4,12,4"
+                    Width="100" Height="28" FontSize="12" FontWeight="Bold"
+                    Foreground="White" Background="#0D6EFD"/>
+
+            <!-- Label Envolvido nos Inquéritos -->
+            <TextBlock Grid.Row="2" Text="Envolvido nos Inquéritos"
+                       FontSize="12" FontWeight="Bold" Foreground="#2B3A4A"
+                       Margin="12,4,0,2"/>
+
+            <!-- DataGrid1: Busca Envolvido -->
+            <Border Grid.Row="3" Background="White" BorderBrush="#DEE2E6" BorderThickness="1"
+                    Margin="8,0">
+              <DataGrid ItemsSource="{Binding Encontrados}"
+                        SelectedItem="{Binding SelectedEncontrado}"
+                        AutoGenerateColumns="False"
+                        IsReadOnly="True"
+                        GridLinesVisibility="Horizontal"
+                        BorderThickness="0" Background="White"
+                        RowHeight="26" FontSize="11"
+                        Height="120">
+                <DataGrid.Columns>
+                  <DataGridTextColumn Header="N.Proced" Binding="{Binding NumeroProced}" Width="90"/>
+                  <DataGridTextColumn Header="Nome" Binding="{Binding Nome}" Width="*"/>
+                  <DataGridTextColumn Header="Mãe" Binding="{Binding Mae}" Width="*"/>
+                  <DataGridTextColumn Header="Pai" Binding="{Binding Pai}" Width="*"/>
+                  <DataGridTextColumn Header="Data Nasc." Binding="{Binding DataNascimentoStr}" Width="100"/>
+                </DataGrid.Columns>
+              </DataGrid>
+            </Border>
+
+            <!-- Label Antecedentes Criminais -->
+            <TextBlock Grid.Row="4" Text="Antecedentes Criminais"
+                       FontSize="12" FontWeight="Bold" Foreground="#2B3A4A"
+                       Margin="12,8,0,2"/>
+
+            <!-- DataGrid2: Antecedentes Criminais -->
+            <Border Grid.Row="5" Background="White" BorderBrush="#DEE2E6" BorderThickness="1"
+                    Margin="8,0">
+              <DataGrid ItemsSource="{Binding Antecedentes}"
+                        SelectedItem="{Binding SelectedAntecedente}"
+                        AutoGenerateColumns="False"
+                        IsReadOnly="True"
+                        GridLinesVisibility="Horizontal"
+                        BorderThickness="0" Background="White"
+                        RowHeight="26" FontSize="11">
+                <DataGrid.Columns>
+                  <DataGridTextColumn Header="Nº" Binding="{Binding Numero}" Width="50"/>
+                  <DataGridTextColumn Header="Ano" Binding="{Binding Ano}" Width="50"/>
+                  <DataGridTextColumn Header="U.P." Binding="{Binding Up}" Width="60"/>
+                  <DataGridTextColumn Header="Tipo" Binding="{Binding Tipo}" Width="100"/>
+                  <DataGridTextColumn Header="Instauração" Binding="{Binding Instauracao}" Width="90"/>
+                  <DataGridTextColumn Header="Sentenças" Binding="{Binding Sentencas}" Width="*"/>
+                  <DataGridTextColumn Header="Baixa" Binding="{Binding Baixa}" Width="80"/>
+                  <DataGridTextColumn Header="Motivo do Alvará" Binding="{Binding MotivoAlvara}" Width="*"/>
+                  <DataGridTextColumn Header="Incidências" Binding="{Binding Incidencias}" Width="*"/>
+                </DataGrid.Columns>
+              </DataGrid>
+            </Border>
+
+            <!-- Rich text sentence display -->
+            <Border Grid.Row="6" Background="White" BorderBrush="#DEE2E6" BorderThickness="1"
+                    Margin="8,8,8,4" Height="80">
+              <TextBox Text="{Binding SentencaTexto}"
+                       IsReadOnly="True"
+                       TextWrapping="Wrap"
+                       AcceptsReturn="True"
+                       Background="Transparent"
+                       BorderThickness="0"
+                       FontSize="11"
+                       Margin="4"/>
+            </Border>
+          </Grid>
+        </TabItem>
+      </TabControl>
+
+      <!-- Status bar -->
+      <Border Grid.Row="2" Background="#212529" Padding="8,4" Height="26">
+        <TextBlock Text="{Binding StatusMessage}" Foreground="#20C997" FontSize="12"/>
+      </Border>
+    </Grid>
+  </DockPanel>
+</Window>

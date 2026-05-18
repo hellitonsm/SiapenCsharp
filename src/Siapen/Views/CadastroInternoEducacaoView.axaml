@@ -1,0 +1,450 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Siapen.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="950" d:DesignHeight="650"
+        x:Class="Siapen.Views.CadastroInternoEducacaoView"
+        x:DataType="vm:CadastroInternoEducacaoViewModel"
+        Title="SIAPEN - Cadastro da Educação"
+        WindowStartupLocation="CenterScreen"
+        Width="950" Height="650"
+        Background="#F4F6F8">
+
+  <Design.DataContext>
+    <vm:CadastroInternoEducacaoViewModel/>
+  </Design.DataContext>
+
+  <DockPanel>
+    <!-- Left sidebar buttons -->
+    <Border DockPanel.Dock="Left" Width="110" Background="#2B3A4A">
+      <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Spacing="2" Margin="2">
+          <Button Content="NOVO" Command="{Binding NovoCommand}"
+                  Height="34" FontSize="11" FontWeight="Bold"
+                  Foreground="White" Background="#198754"
+                  IsEnabled="{Binding Modo, Converter={x:Static vm:CadastroModoConverters.IsNavegando}}"/>
+          <Button Content="EDITAR" Command="{Binding EditarCommand}"
+                  Height="34" FontSize="11" FontWeight="Bold"
+                  Foreground="White" Background="#0D6EFD"
+                  IsEnabled="{Binding Modo, Converter={x:Static vm:CadastroModoConverters.IsNavegando}}"/>
+          <Button Content="CANCELAR" Command="{Binding CancelarCommand}"
+                  Height="34" FontSize="11" FontWeight="Bold"
+                  Foreground="White" Background="#6C757D"
+                  IsEnabled="{Binding CamposHabilitados}"/>
+          <Button Content="SALVAR" Command="{Binding SalvarCommand}"
+                  Height="34" FontSize="11" FontWeight="Bold"
+                  Foreground="White" Background="#0D6EFD"
+                  IsEnabled="{Binding CamposHabilitados}"/>
+          <Button Content="EXCLUIR" Command="{Binding ExcluirCommand}"
+                  Height="34" FontSize="11" FontWeight="Bold"
+                  Foreground="White" Background="#DC3545"
+                  IsEnabled="{Binding Modo, Converter={x:Static vm:CadastroModoConverters.IsNavegando}}"/>
+          <Button Content="FECHAR" Click="Fechar_Click"
+                  Height="34" FontSize="11" FontWeight="Bold"
+                  Foreground="White" Background="#DC3545"/>
+        </StackPanel>
+
+        <StackPanel DockPanel.Dock="Bottom" Spacing="1" Margin="2,0,2,4">
+          <Border Background="#1A2332" CornerRadius="4" Padding="4">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="4">
+              <Button Content="◀◀" Command="{Binding NavegarPrimeiroCommand}" Width="22" Height="22"
+                      FontSize="10" Padding="0"
+                      IsEnabled="{Binding Modo, Converter={x:Static vm:CadastroModoConverters.IsNavegando}}"/>
+              <Button Content="◀" Command="{Binding NavegarAnteriorCommand}" Width="22" Height="22"
+                      FontSize="10" Padding="0"
+                      IsEnabled="{Binding Modo, Converter={x:Static vm:CadastroModoConverters.IsNavegando}}"/>
+              <Button Content="▶" Command="{Binding NavegarProximoCommand}" Width="22" Height="22"
+                      FontSize="10" Padding="0"
+                      IsEnabled="{Binding Modo, Converter={x:Static vm:CadastroModoConverters.IsNavegando}}"/>
+              <Button Content="▶▶" Command="{Binding NavegarUltimoCommand}" Width="22" Height="22"
+                      FontSize="10" Padding="0"
+                      IsEnabled="{Binding Modo, Converter={x:Static vm:CadastroModoConverters.IsNavegando}}"/>
+            </StackPanel>
+          </Border>
+        </StackPanel>
+
+        <Border DockPanel.Dock="Bottom" Width="98" Height="90" Margin="4,0,4,8"
+                Background="#343A40" CornerRadius="4">
+          <TextBlock Text="[FOTO]" Foreground="#6C757D" FontSize="10"
+                     HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </Border>
+      </DockPanel>
+    </Border>
+
+    <!-- Main content -->
+    <Grid>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="*"/>
+        <RowDefinition Height="Auto"/>
+      </Grid.RowDefinitions>
+
+      <!-- Header -->
+      <Border Grid.Row="0" Background="#FFF8F0E0" Height="36" BorderBrush="#E9ECEF" BorderThickness="0,0,0,1">
+        <TextBlock Text="SIAPEN - Cadastro da Educação"
+                   FontSize="15" FontWeight="Bold" Foreground="#2B3A4A"
+                   VerticalAlignment="Center" Margin="12,0"/>
+      </Border>
+
+      <!-- TabControl -->
+      <TabControl Grid.Row="1" SelectedIndex="{Binding TabIndex}" Margin="0"
+                  TabStripPlacement="Top">
+
+        <!-- Aba Educação -->
+        <TabItem Header="Educação">
+          <ScrollViewer>
+            <Grid Margin="8" ColumnDefinitions="Auto,*,Auto,*"
+                  RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto">
+
+              <TextBlock Grid.Row="0" Grid.Column="0" Text="ID" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding IdInterno}" IsReadOnly="True"
+                       Width="80" Height="24" FontSize="12" Margin="4"/>
+              <TextBlock Grid.Row="0" Grid.Column="2" Text="Nome" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <TextBox Grid.Row="0" Grid.Column="3" Text="{Binding NomeInterno}" IsReadOnly="True"
+                       Height="24" FontSize="12" Margin="4"/>
+
+              <TextBlock Grid.Row="1" Grid.Column="0" Text="Data Matrícula" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <DatePicker Grid.Row="1" Grid.Column="1" SelectedDate="{Binding DataMatricula}" Margin="4" Height="24"
+                          IsEnabled="{Binding CamposHabilitados}"/>
+              <TextBlock Grid.Row="1" Grid.Column="2" Text="Série/Fase Atual" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <ComboBox Grid.Row="1" Grid.Column="3" ItemsSource="{Binding SeriesEstudo}"
+                        SelectedItem="{Binding SelectedSerieEstudo}"
+                        DisplayMemberBinding="{Binding DisplayName}"
+                        Height="24" FontSize="12" Margin="4"
+                        IsEnabled="{Binding CamposHabilitados}"/>
+
+              <TextBlock Grid.Row="2" Grid.Column="0" Text="Turma" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Turma}"
+                       Width="80" Height="24" FontSize="12" Margin="4"
+                       IsEnabled="{Binding CamposHabilitados}"/>
+              <TextBlock Grid.Row="2" Grid.Column="2" Text="Deficiência" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <ComboBox Grid.Row="2" Grid.Column="3" SelectedValue="{Binding Deficiencia}"
+                        IsEnabled="{Binding CamposHabilitados}" Height="24" Margin="4">
+                <ComboBoxItem Content=""/>
+                <ComboBoxItem Content="Auditiva"/>
+                <ComboBoxItem Content="Cognitiva"/>
+                <ComboBoxItem Content="Linguagem"/>
+                <ComboBoxItem Content="Motora"/>
+                <ComboBoxItem Content="Visual"/>
+              </ComboBox>
+
+              <TextBlock Grid.Row="3" Grid.Column="0" Text="Período" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <ComboBox Grid.Row="3" Grid.Column="1" SelectedValue="{Binding Periodo}"
+                        IsEnabled="{Binding CamposHabilitados}" Height="24" Margin="4">
+                <ComboBoxItem Content=""/>
+                <ComboBoxItem Content="Matutino"/>
+                <ComboBoxItem Content="Vespertino"/>
+                <ComboBoxItem Content="Noturno"/>
+                <ComboBoxItem Content="Diurno"/>
+              </ComboBox>
+
+              <TextBlock Grid.Row="4" Grid.Column="0" Text="Obs Educação" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <TextBox Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="3" Text="{Binding ObsEducacao}"
+                       Height="60" FontSize="12" Margin="4" AcceptsReturn="True"
+                       IsEnabled="{Binding CamposHabilitados}"/>
+
+              <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="4" Orientation="Horizontal"
+                          HorizontalAlignment="Center" Margin="8" Spacing="12">
+                <Button Content="Cancelar Matrícula" Width="140" Height="28" FontSize="12"
+                        IsEnabled="{Binding CamposHabilitados}"/>
+                <Button Content="Re-Matricular" Width="140" Height="28" FontSize="12"
+                        IsEnabled="{Binding CamposHabilitados}"/>
+              </StackPanel>
+            </Grid>
+          </ScrollViewer>
+        </TabItem>
+
+        <!-- Aba Remição -->
+        <TabItem Header="Remição">
+          <TabControl TabStripPlacement="Top" Margin="0">
+
+            <!-- Sub-aba Portaria -->
+            <TabItem Header="Portaria">
+              <DockPanel>
+                <Grid DockPanel.Dock="Top" Margin="8" ColumnDefinitions="Auto,*,Auto,*,Auto,*"
+                      RowDefinitions="Auto,Auto">
+                  <TextBlock Grid.Row="0" Grid.Column="0" Text="Entrada" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <DatePicker Grid.Row="0" Grid.Column="1" SelectedDate="{Binding PortariaDataEntrada}" Margin="4" Height="24"
+                              IsEnabled="{Binding CamposHabilitados}"/>
+                  <TextBlock Grid.Row="0" Grid.Column="2" Text="Turma/Curso" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="0" Grid.Column="3" Text="{Binding PortariaTurma}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+                  <TextBlock Grid.Row="0" Grid.Column="4" Text="Nº Portaria" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="0" Grid.Column="5" Text="{Binding PortariaNumero}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <Button Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="6" Content="Inserir"
+                          Width="100" Height="26" FontSize="12" FontWeight="Bold"
+                          HorizontalAlignment="Center" Margin="4"
+                          IsEnabled="{Binding CamposHabilitados}"/>
+                </Grid>
+
+                <Border Background="White" BorderBrush="#DEE2E6" BorderThickness="1" Margin="4">
+                  <DataGrid ItemsSource="{Binding PortariaGridItems}"
+                            AutoGenerateColumns="False"
+                            IsReadOnly="True"
+                            GridLinesVisibility="Horizontal"
+                            BorderThickness="0" Background="White"
+                            RowHeight="28" FontSize="12"
+                            x:CompileBindings="False">
+                    <DataGrid.Columns>
+                      <DataGridTextColumn Header="Portaria" Binding="{Binding Portaria}" Width="100"/>
+                      <DataGridTextColumn Header="Data Entrada" Binding="{Binding DataEntrada}" Width="120"/>
+                      <DataGridTextColumn Header="Turma" Binding="{Binding Turma}" Width="*"/>
+                      <DataGridTextColumn Header="Data Final" Binding="{Binding DataFinal}" Width="120"/>
+                    </DataGrid.Columns>
+                  </DataGrid>
+                </Border>
+              </DockPanel>
+            </TabItem>
+
+            <!-- Sub-aba Dados Estudo -->
+            <TabItem Header="Dados Estudo">
+              <DockPanel>
+                <Grid DockPanel.Dock="Top" Margin="8" ColumnDefinitions="Auto,*,Auto,*,Auto,*"
+                      RowDefinitions="Auto,Auto">
+                  <TextBlock Grid.Row="0" Grid.Column="0" Text="Data Inicial" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <DatePicker Grid.Row="0" Grid.Column="1" SelectedDate="{Binding EstudoDataInicial}" Margin="4" Height="24"
+                              IsEnabled="{Binding CamposHabilitados}"/>
+                  <TextBlock Grid.Row="0" Grid.Column="2" Text="Data Final" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <DatePicker Grid.Row="0" Grid.Column="3" SelectedDate="{Binding EstudoDataFinal}" Margin="4" Height="24"
+                              IsEnabled="{Binding CamposHabilitados}"/>
+                  <TextBlock Grid.Row="0" Grid.Column="4" Text="Horas" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="0" Grid.Column="5" Text="{Binding EstudoHoras}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="1" Grid.Column="0" Text="Salas" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding EstudoSalas}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+                  <Button Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="4" Content="Inserir"
+                          Width="100" Height="26" FontSize="12" FontWeight="Bold"
+                          HorizontalAlignment="Center" Margin="4"
+                          IsEnabled="{Binding CamposHabilitados}"/>
+                </Grid>
+
+                <Border Background="White" BorderBrush="#DEE2E6" BorderThickness="1" Margin="4">
+                  <DataGrid ItemsSource="{Binding EstudoGridItems}"
+                            AutoGenerateColumns="False"
+                            IsReadOnly="True"
+                            GridLinesVisibility="Horizontal"
+                            BorderThickness="0" Background="White"
+                            RowHeight="28" FontSize="12"
+                            x:CompileBindings="False">
+                    <DataGrid.Columns>
+                      <DataGridTextColumn Header="Data Inicial" Binding="{Binding DataInicial}" Width="120"/>
+                      <DataGridTextColumn Header="Data Final" Binding="{Binding DataFinal}" Width="120"/>
+                      <DataGridTextColumn Header="Horas" Binding="{Binding Horas}" Width="*"/>
+                    </DataGrid.Columns>
+                  </DataGrid>
+                </Border>
+              </DockPanel>
+            </TabItem>
+
+            <!-- Sub-aba Atestado -->
+            <TabItem Header="Atestado">
+              <DockPanel>
+                <Grid DockPanel.Dock="Top" Margin="8" ColumnDefinitions="Auto,*,Auto,*"
+                      RowDefinitions="Auto,Auto,Auto,Auto">
+                  <TextBlock Grid.Row="0" Grid.Column="0" Text="Data Inicial" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <DatePicker Grid.Row="0" Grid.Column="1" SelectedDate="{Binding AtestadoDataInicial}" Margin="4" Height="24"
+                              IsEnabled="{Binding CamposHabilitados}"/>
+                  <TextBlock Grid.Row="0" Grid.Column="2" Text="Data Final" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <DatePicker Grid.Row="0" Grid.Column="3" SelectedDate="{Binding AtestadoDataFinal}" Margin="4" Height="24"
+                              IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="1" Grid.Column="0" Text="Saldo Anterior" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding AtestadoSaldoAnterior}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+                  <TextBlock Grid.Row="1" Grid.Column="2" Text="Horas Estudadas" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding AtestadoDiasEstudo}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="2" Grid.Column="0" Text="Total Estudo" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding AtestadoTotalEstudo}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+                  <TextBlock Grid.Row="2" Grid.Column="2" Text="Dias Remido" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="2" Grid.Column="3" Text="{Binding AtestadoDiasRemido}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="3" Grid.Column="0" Text="Saldo Próxima" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding AtestadoSaldoProximo}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+                  <StackPanel Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="2" Orientation="Horizontal"
+                              HorizontalAlignment="Center" Spacing="8" Margin="4">
+                    <Button Content="Calcular" Width="90" Height="26" FontSize="12" FontWeight="Bold"
+                            IsEnabled="{Binding CamposHabilitados}"/>
+                    <Button Content="Inserir" Width="90" Height="26" FontSize="12" FontWeight="Bold"
+                            IsEnabled="{Binding CamposHabilitados}"/>
+                  </StackPanel>
+                </Grid>
+
+                <Border Background="White" BorderBrush="#DEE2E6" BorderThickness="1" Margin="4">
+                  <DataGrid ItemsSource="{Binding AtestadoGridItems}"
+                            AutoGenerateColumns="False"
+                            IsReadOnly="True"
+                            GridLinesVisibility="Horizontal"
+                            BorderThickness="0" Background="White"
+                            RowHeight="28" FontSize="12"
+                            x:CompileBindings="False">
+                    <DataGrid.Columns>
+                      <DataGridTextColumn Header="Data Inicial" Binding="{Binding DataInicial}" Width="90"/>
+                      <DataGridTextColumn Header="Data Final" Binding="{Binding DataFinal}" Width="90"/>
+                      <DataGridTextColumn Header="Saldo Anterior" Binding="{Binding SaldoAnterior}" Width="90"/>
+                      <DataGridTextColumn Header="Dias Remido" Binding="{Binding DiasRemido}" Width="90"/>
+                      <DataGridTextColumn Header="Total Horas" Binding="{Binding TotalHoras}" Width="90"/>
+                      <DataGridTextColumn Header="Saldo Próxima" Binding="{Binding SaldoProxima}" Width="*"/>
+                    </DataGrid.Columns>
+                  </DataGrid>
+                </Border>
+              </DockPanel>
+            </TabItem>
+
+            <!-- Sub-aba Livros -->
+            <TabItem Header="Livros">
+              <DockPanel>
+                <Grid DockPanel.Dock="Top" Margin="8" ColumnDefinitions="Auto,*,Auto,*,Auto,*"
+                      RowDefinitions="Auto,Auto,Auto">
+                  <TextBlock Grid.Row="0" Grid.Column="0" Text="Data Inicial" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <DatePicker Grid.Row="0" Grid.Column="1" SelectedDate="{Binding LivrosDataInicial}" Margin="4" Height="24"
+                              IsEnabled="{Binding CamposHabilitados}"/>
+                  <TextBlock Grid.Row="0" Grid.Column="2" Text="Data Final" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <DatePicker Grid.Row="0" Grid.Column="3" SelectedDate="{Binding LivrosDataFinal}" Margin="4" Height="24"
+                              IsEnabled="{Binding CamposHabilitados}"/>
+                  <TextBlock Grid.Row="0" Grid.Column="4" Text="Livros" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="0" Grid.Column="5" Text="{Binding LivrosQtde}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="1" Grid.Column="0" Text="Dias Remidos" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding LivrosDiasRemidos}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="6" Orientation="Horizontal"
+                              HorizontalAlignment="Center" Spacing="8" Margin="4">
+                    <Button Content="Calcular" Width="90" Height="26" FontSize="12" FontWeight="Bold"
+                            IsEnabled="{Binding CamposHabilitados}"/>
+                    <Button Content="Inserir" Width="90" Height="26" FontSize="12" FontWeight="Bold"
+                            IsEnabled="{Binding CamposHabilitados}"/>
+                  </StackPanel>
+                </Grid>
+
+                <Border Background="White" BorderBrush="#DEE2E6" BorderThickness="1" Margin="4">
+                  <DataGrid ItemsSource="{Binding LivrosGridItems}"
+                            AutoGenerateColumns="False"
+                            IsReadOnly="True"
+                            GridLinesVisibility="Horizontal"
+                            BorderThickness="0" Background="White"
+                            RowHeight="28" FontSize="12"
+                            x:CompileBindings="False">
+                    <DataGrid.Columns>
+                      <DataGridTextColumn Header="Data Inicial" Binding="{Binding DataInicial}" Width="120"/>
+                      <DataGridTextColumn Header="Data Final" Binding="{Binding DataFinal}" Width="120"/>
+                      <DataGridTextColumn Header="Livros" Binding="{Binding Livros}" Width="*"/>
+                    </DataGrid.Columns>
+                  </DataGrid>
+                </Border>
+              </DockPanel>
+            </TabItem>
+
+            <!-- Sub-aba Histórico -->
+            <TabItem Header="Histórico">
+              <DockPanel>
+                <Grid DockPanel.Dock="Top" Margin="8" ColumnDefinitions="Auto,*,Auto,*"
+                      RowDefinitions="Auto,Auto,Auto">
+                  <TextBlock Grid.Row="0" Grid.Column="0" Text="Data" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <DatePicker Grid.Row="0" Grid.Column="1" SelectedDate="{Binding HistoricoData}" Margin="4" Height="24"
+                              IsEnabled="{Binding CamposHabilitados}"/>
+                  <TextBlock Grid.Row="0" Grid.Column="2" Text="Histórico" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="0" Grid.Column="3" Text="{Binding HistoricoTexto}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <Button Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Content="Incluir"
+                          Width="100" Height="26" FontSize="12" FontWeight="Bold"
+                          HorizontalAlignment="Center" Margin="4"
+                          IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Text="{Binding HistoricoMemo}"
+                           Height="60" FontSize="12" Margin="4" AcceptsReturn="True"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+                </Grid>
+
+                <Border Background="White" BorderBrush="#DEE2E6" BorderThickness="1" Margin="4">
+                  <DataGrid ItemsSource="{Binding HistoricoGridItems}"
+                            AutoGenerateColumns="False"
+                            IsReadOnly="True"
+                            GridLinesVisibility="Horizontal"
+                            BorderThickness="0" Background="White"
+                            RowHeight="28" FontSize="12"
+                            x:CompileBindings="False">
+                    <DataGrid.Columns>
+                      <DataGridTextColumn Header="Data" Binding="{Binding Data}" Width="100"/>
+                      <DataGridTextColumn Header="Histórico" Binding="{Binding Historico}" Width="*"/>
+                    </DataGrid.Columns>
+                  </DataGrid>
+                </Border>
+              </DockPanel>
+            </TabItem>
+
+          </TabControl>
+        </TabItem>
+
+        <!-- Aba Consulta -->
+        <TabItem Header="Consulta">
+          <DockPanel>
+            <Border DockPanel.Dock="Top" Background="#F8F9FA" Padding="8" BorderBrush="#DEE2E6" BorderThickness="0,0,0,1">
+              <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto">
+                <TextBlock Grid.Column="0" Text="Localizar:" VerticalAlignment="Center" Margin="0,0,8,0"
+                           Foreground="#2B3A4A" FontSize="13"/>
+                <TextBox Grid.Column="1" Text="{Binding SearchText}" PlaceholderText="Digite para filtrar..."
+                         FontSize="14" Height="30" Width="250" HorizontalAlignment="Left"/>
+                <TextBlock Grid.Column="2" Text="Filtro:" VerticalAlignment="Center" Margin="12,0,4,0"
+                           Foreground="#2B3A4A" FontSize="12"/>
+                <RadioButton Grid.Column="3" Content="Ativo" Margin="0,0,8,0" FontSize="12"
+                             IsChecked="{Binding FiltroAtivo}"/>
+                <RadioButton Grid.Column="4" Content="Inativo" FontSize="12"
+                             IsChecked="{Binding FiltroInativo}"/>
+              </Grid>
+            </Border>
+
+            <Border Background="White" BorderBrush="#DEE2E6" BorderThickness="1" Margin="0">
+              <DataGrid ItemsSource="{Binding GridItems}"
+                        SelectedItem="{Binding SelectedGridItem}"
+                        AutoGenerateColumns="False"
+                        IsReadOnly="True"
+                        GridLinesVisibility="Horizontal"
+                        BorderThickness="0" Background="White"
+                        RowHeight="28" FontSize="12"
+                        x:CompileBindings="False"
+                        DoubleTapped="DataGrid_DoubleTapped">
+                <DataGrid.Columns>
+                  <DataGridTextColumn Header="Nome do Interno" Binding="{Binding NomeInterno}" Width="*"/>
+                  <DataGridTextColumn Header="RGI" Binding="{Binding Rgi}" Width="80"/>
+                  <DataGridTextColumn Header="Vulgo" Binding="{Binding Vulgo}" Width="120"/>
+                  <DataGridTextColumn Header="Sigla" Binding="{Binding Sigla}" Width="60"/>
+                  <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="60"/>
+                </DataGrid.Columns>
+              </DataGrid>
+            </Border>
+          </DockPanel>
+        </TabItem>
+      </TabControl>
+
+      <!-- Status bar -->
+      <Border Grid.Row="2" Background="#212529" Padding="8,4" Height="26">
+        <TextBlock Text="{Binding StatusMessage}" Foreground="#20C997" FontSize="12"/>
+      </Border>
+    </Grid>
+  </DockPanel>
+</Window>

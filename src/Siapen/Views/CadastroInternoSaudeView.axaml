@@ -1,0 +1,628 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Siapen.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="950" d:DesignHeight="650"
+        x:Class="Siapen.Views.CadastroInternoSaudeView"
+        x:DataType="vm:CadastroInternoSaudeViewModel"
+        Title="SIAPEN - Cadastro da Saúde"
+        WindowStartupLocation="CenterScreen"
+        Width="950" Height="650"
+        Background="#F4F6F8">
+
+  <Design.DataContext>
+    <vm:CadastroInternoSaudeViewModel/>
+  </Design.DataContext>
+
+  <DockPanel>
+    <!-- Left sidebar buttons -->
+    <Border DockPanel.Dock="Left" Width="110" Background="#2B3A4A">
+      <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Spacing="2" Margin="2">
+          <Button Content="NOVO" Command="{Binding NovoCommand}"
+                  Height="34" FontSize="11" FontWeight="Bold"
+                  Foreground="White" Background="#198754"
+                  IsEnabled="{Binding Modo, Converter={x:Static vm:CadastroModoConverters.IsNavegando}}"/>
+          <Button Content="EDITAR" Command="{Binding EditarCommand}"
+                  Height="34" FontSize="11" FontWeight="Bold"
+                  Foreground="White" Background="#0D6EFD"
+                  IsEnabled="{Binding Modo, Converter={x:Static vm:CadastroModoConverters.IsNavegando}}"/>
+          <Button Content="CANCELAR" Command="{Binding CancelarCommand}"
+                  Height="34" FontSize="11" FontWeight="Bold"
+                  Foreground="White" Background="#6C757D"
+                  IsEnabled="{Binding CamposHabilitados}"/>
+          <Button Content="SALVAR" Command="{Binding SalvarCommand}"
+                  Height="34" FontSize="11" FontWeight="Bold"
+                  Foreground="White" Background="#0D6EFD"
+                  IsEnabled="{Binding CamposHabilitados}"/>
+          <Button Content="EXCLUIR" Command="{Binding ExcluirCommand}"
+                  Height="34" FontSize="11" FontWeight="Bold"
+                  Foreground="White" Background="#DC3545"
+                  IsEnabled="{Binding Modo, Converter={x:Static vm:CadastroModoConverters.IsNavegando}}"/>
+          <Button Content="FECHAR" Click="Fechar_Click"
+                  Height="34" FontSize="11" FontWeight="Bold"
+                  Foreground="White" Background="#DC3545"/>
+        </StackPanel>
+
+        <StackPanel DockPanel.Dock="Bottom" Spacing="1" Margin="2,0,2,4">
+          <Border Background="#1A2332" CornerRadius="4" Padding="4">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="4">
+              <Button Content="◀◀" Command="{Binding NavegarPrimeiroCommand}" Width="22" Height="22"
+                      FontSize="10" Padding="0"
+                      IsEnabled="{Binding Modo, Converter={x:Static vm:CadastroModoConverters.IsNavegando}}"/>
+              <Button Content="◀" Command="{Binding NavegarAnteriorCommand}" Width="22" Height="22"
+                      FontSize="10" Padding="0"
+                      IsEnabled="{Binding Modo, Converter={x:Static vm:CadastroModoConverters.IsNavegando}}"/>
+              <Button Content="▶" Command="{Binding NavegarProximoCommand}" Width="22" Height="22"
+                      FontSize="10" Padding="0"
+                      IsEnabled="{Binding Modo, Converter={x:Static vm:CadastroModoConverters.IsNavegando}}"/>
+              <Button Content="▶▶" Command="{Binding NavegarUltimoCommand}" Width="22" Height="22"
+                      FontSize="10" Padding="0"
+                      IsEnabled="{Binding Modo, Converter={x:Static vm:CadastroModoConverters.IsNavegando}}"/>
+            </StackPanel>
+          </Border>
+        </StackPanel>
+
+        <Border DockPanel.Dock="Bottom" Width="98" Height="90" Margin="4,0,4,8"
+                Background="#343A40" CornerRadius="4">
+          <TextBlock Text="[FOTO]" Foreground="#6C757D" FontSize="10"
+                     HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </Border>
+      </DockPanel>
+    </Border>
+
+    <!-- Main content -->
+    <Grid>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="*"/>
+        <RowDefinition Height="Auto"/>
+      </Grid.RowDefinitions>
+
+      <!-- Header -->
+      <Border Grid.Row="0" Background="#FFF8F0E0" Height="36" BorderBrush="#E9ECEF" BorderThickness="0,0,0,1">
+        <TextBlock Text="SIAPEN - Cadastro da Saúde"
+                   FontSize="15" FontWeight="Bold" Foreground="#2B3A4A"
+                   VerticalAlignment="Center" Margin="12,0"/>
+      </Border>
+
+      <!-- TabControl -->
+      <TabControl Grid.Row="1" SelectedIndex="{Binding TabIndex}" Margin="0"
+                  TabStripPlacement="Top">
+
+        <!-- Aba Identificação -->
+        <TabItem Header="Identificação">
+          <ScrollViewer>
+            <Grid Margin="8" ColumnDefinitions="Auto,*,Auto,*"
+                  RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto">
+
+              <TextBlock Grid.Row="0" Grid.Column="0" Text="ID" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding IdInterno}" IsReadOnly="True"
+                       Width="80" Height="24" FontSize="12" Margin="4"/>
+              <TextBlock Grid.Row="0" Grid.Column="2" Text="Nome" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <TextBox Grid.Row="0" Grid.Column="3" Text="{Binding NomeInterno}" IsReadOnly="True"
+                       Height="24" FontSize="12" Margin="4"/>
+
+              <TextBlock Grid.Row="1" Grid.Column="0" Text="RGI" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Rgi}" IsReadOnly="True"
+                       Width="120" Height="24" FontSize="12" Margin="4"/>
+              <TextBlock Grid.Row="1" Grid.Column="2" Text="Vulgo" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding Vulgo}" IsReadOnly="True"
+                       Width="150" Height="24" FontSize="12" Margin="4"/>
+
+              <TextBlock Grid.Row="2" Grid.Column="0" Text="Status" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Status}" IsReadOnly="True"
+                       Width="40" Height="24" FontSize="12" Margin="4"/>
+              <TextBlock Grid.Row="2" Grid.Column="2" Text="Sexo" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <TextBox Grid.Row="2" Grid.Column="3" Text="{Binding Sexo}" IsReadOnly="True"
+                       Width="40" Height="24" FontSize="12" Margin="4"/>
+
+              <TextBlock Grid.Row="3" Grid.Column="0" Text="Unidade Penal" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <TextBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" Text="{Binding NomeUp}" IsReadOnly="True"
+                       Height="24" FontSize="12" Margin="4"/>
+
+              <TextBlock Grid.Row="4" Grid.Column="0" Text="Pavilhão" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Pavilhao}" IsReadOnly="True"
+                       Height="24" FontSize="12" Margin="4"/>
+              <TextBlock Grid.Row="4" Grid.Column="2" Text="Galeria" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <TextBox Grid.Row="4" Grid.Column="3" Text="{Binding Galeria}" IsReadOnly="True"
+                       Height="24" FontSize="12" Margin="4"/>
+
+              <TextBlock Grid.Row="5" Grid.Column="0" Text="Solário" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding Solario}" IsReadOnly="True"
+                       Height="24" FontSize="12" Margin="4"/>
+              <TextBlock Grid.Row="5" Grid.Column="2" Text="Cela" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <TextBox Grid.Row="5" Grid.Column="3" Text="{Binding Cela}" IsReadOnly="True"
+                       Height="24" FontSize="12" Margin="4"/>
+            </Grid>
+          </ScrollViewer>
+        </TabItem>
+
+        <!-- Aba Saúde -->
+        <TabItem Header="Saúde">
+          <TabControl TabStripPlacement="Top">
+
+            <!-- Sub-tab Histórico -->
+            <TabItem Header="Histórico">
+              <DockPanel>
+                <Grid DockPanel.Dock="Top" Margin="8" ColumnDefinitions="Auto,*,Auto,*"
+                      RowDefinitions="Auto,Auto,Auto">
+                  <TextBlock Grid.Row="0" Grid.Column="0" Text="Data" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <DatePicker Grid.Row="0" Grid.Column="1" SelectedDate="{Binding DataHistorico}" Margin="4" Height="24"
+                              IsEnabled="{Binding CamposHabilitados}"/>
+                  <TextBlock Grid.Row="0" Grid.Column="2" Text="Setor" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="0" Grid.Column="3" Text="{Binding SetorHistorico}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="1" Grid.Column="0" Text="Descrição" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Text="{Binding DescricaoHistorico}"
+                           Height="60" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"
+                           AcceptsReturn="True" TextWrapping="Wrap"/>
+
+                  <Button Grid.Row="2" Grid.Column="0" Content="Incluir" Command="{Binding IncluirHistoricoCommand}"
+                          Width="80" Height="26" FontSize="11" FontWeight="Bold"
+                          Foreground="White" Background="#0D6EFD" Margin="4"
+                          IsEnabled="{Binding CamposHabilitados}"/>
+                </Grid>
+
+                <Border Background="White" BorderBrush="#DEE2E6" BorderThickness="1" Margin="4">
+                  <DataGrid ItemsSource="{Binding HistoricoSaudeItems}"
+                            AutoGenerateColumns="False"
+                            IsReadOnly="True"
+                            GridLinesVisibility="Horizontal"
+                            BorderThickness="0" Background="White"
+                            RowHeight="28" FontSize="12"
+                            x:CompileBindings="False">
+                    <DataGrid.Columns>
+                      <DataGridTextColumn Header="Data" Binding="{Binding Data}" Width="90"/>
+                      <DataGridTextColumn Header="Setor" Binding="{Binding Setor}" Width="100"/>
+                      <DataGridTextColumn Header="Descrição" Binding="{Binding Descricao}" Width="*"/>
+                      <DataGridTextColumn Header="Funcionário" Binding="{Binding Funcionario}" Width="120"/>
+                    </DataGrid.Columns>
+                  </DataGrid>
+                </Border>
+              </DockPanel>
+            </TabItem>
+
+            <!-- Sub-tab Dieta -->
+            <TabItem Header="Dieta">
+              <DockPanel>
+                <Grid DockPanel.Dock="Top" Margin="8" ColumnDefinitions="Auto,*,Auto,*"
+                      RowDefinitions="Auto,Auto,Auto,Auto">
+                  <TextBlock Grid.Row="0" Grid.Column="0" Text="Data Consulta" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <DatePicker Grid.Row="0" Grid.Column="1" SelectedDate="{Binding DataConsultaDieta}" Margin="4" Height="24"
+                              IsEnabled="{Binding CamposHabilitados}"/>
+                  <TextBlock Grid.Row="0" Grid.Column="2" Text="Data Início" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <DatePicker Grid.Row="0" Grid.Column="3" SelectedDate="{Binding DataInicioDieta}" Margin="4" Height="24"
+                              IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="1" Grid.Column="0" Text="Data Término" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <DatePicker Grid.Row="1" Grid.Column="1" SelectedDate="{Binding DataTerminoDieta}" Margin="4" Height="24"
+                              IsEnabled="{Binding CamposHabilitados}"/>
+                  <TextBlock Grid.Row="1" Grid.Column="2" Text="Médico" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <ComboBox Grid.Row="1" Grid.Column="3" ItemsSource="{Binding Medicos}"
+                            SelectedItem="{Binding SelectedMedicoDieta}"
+                            DisplayMemberBinding="{Binding DisplayName}"
+                            Height="24" FontSize="12" Margin="4"
+                            IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="2" Grid.Column="0" Text="Tipo Dieta" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding TipoDietas}"
+                            SelectedItem="{Binding SelectedTipoDieta}"
+                            DisplayMemberBinding="{Binding DisplayName}"
+                            Height="24" FontSize="12" Margin="4"
+                            IsEnabled="{Binding CamposHabilitados}"/>
+                  <TextBlock Grid.Row="2" Grid.Column="2" Text="Descrição" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="2" Grid.Column="3" Text="{Binding DescricaoDieta}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <Button Grid.Row="3" Grid.Column="0" Content="Incluir" Command="{Binding IncluirDietaCommand}"
+                          Width="80" Height="26" FontSize="11" FontWeight="Bold"
+                          Foreground="White" Background="#0D6EFD" Margin="4"
+                          IsEnabled="{Binding CamposHabilitados}"/>
+                </Grid>
+
+                <Border Background="White" BorderBrush="#DEE2E6" BorderThickness="1" Margin="4">
+                  <DataGrid ItemsSource="{Binding DietaItems}"
+                            AutoGenerateColumns="False"
+                            IsReadOnly="True"
+                            GridLinesVisibility="Horizontal"
+                            BorderThickness="0" Background="White"
+                            RowHeight="28" FontSize="12"
+                            x:CompileBindings="False">
+                    <DataGrid.Columns>
+                      <DataGridTextColumn Header="Consulta" Binding="{Binding DataConsulta}" Width="80"/>
+                      <DataGridTextColumn Header="Dt Início" Binding="{Binding DataInicio}" Width="80"/>
+                      <DataGridTextColumn Header="Dt Término" Binding="{Binding DataTermino}" Width="80"/>
+                      <DataGridTextColumn Header="Tipo Dieta" Binding="{Binding TipoDieta}" Width="150"/>
+                      <DataGridTextColumn Header="Descrição" Binding="{Binding Descricao}" Width="*"/>
+                      <DataGridTextColumn Header="Médico" Binding="{Binding Medico}" Width="120"/>
+                    </DataGrid.Columns>
+                  </DataGrid>
+                </Border>
+              </DockPanel>
+            </TabItem>
+
+            <!-- Sub-tab Enfermidade -->
+            <TabItem Header="Enfermidade">
+              <DockPanel>
+                <Grid DockPanel.Dock="Top" Margin="8" ColumnDefinitions="Auto,*,Auto,Auto"
+                      RowDefinitions="Auto,Auto">
+                  <TextBlock Grid.Row="0" Grid.Column="0" Text="Enfermidade" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Enfermidades}"
+                            SelectedItem="{Binding SelectedEnfermidade}"
+                            DisplayMemberBinding="{Binding DisplayName}"
+                            Height="24" FontSize="12" Margin="4"
+                            IsEnabled="{Binding CamposHabilitados}"/>
+                  <Button Grid.Row="0" Grid.Column="2" Content="Inserir" Command="{Binding InserirEnfermidadeCommand}"
+                          Width="70" Height="26" FontSize="11" FontWeight="Bold"
+                          Foreground="White" Background="#0D6EFD" Margin="4"
+                          IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="1" Grid.Column="0" Text="Enfermidade Interno" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding EnfermidadeInternoItems}"
+                            SelectedItem="{Binding SelectedEnfermidadeInterno}"
+                            DisplayMemberBinding="{Binding DisplayName}"
+                            Height="24" FontSize="12" Margin="4"
+                            IsEnabled="{Binding CamposHabilitados}"/>
+                </Grid>
+
+                <Grid ColumnDefinitions="*,*" Margin="4">
+                  <!-- Left: Enfermidades do interno -->
+                  <Border Grid.Column="0" Background="White" BorderBrush="#DEE2E6" BorderThickness="1" Margin="4">
+                    <DataGrid ItemsSource="{Binding EnfermidadeInternoItems}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              GridLinesVisibility="Horizontal"
+                              BorderThickness="0" Background="White"
+                              RowHeight="28" FontSize="12"
+                              x:CompileBindings="False">
+                      <DataGrid.Columns>
+                        <DataGridTextColumn Header="Enfermidade" Binding="{Binding DisplayName}" Width="*"/>
+                      </DataGrid.Columns>
+                    </DataGrid>
+                  </Border>
+
+                  <!-- Right: Remédios sub-tab -->
+                  <DockPanel Grid.Column="1" Margin="4">
+                    <Grid DockPanel.Dock="Top" Margin="4" ColumnDefinitions="Auto,*,Auto,Auto"
+                          RowDefinitions="Auto,Auto,Auto">
+                      <TextBlock Grid.Row="0" Grid.Column="0" Text="Data" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                      <DatePicker Grid.Row="0" Grid.Column="1" SelectedDate="{Binding DataRemedio}" Margin="4" Height="24"
+                                  IsEnabled="{Binding CamposHabilitados}"/>
+                      <TextBlock Grid.Row="0" Grid.Column="2" Text="Remédio" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                      <ComboBox Grid.Row="0" Grid.Column="3" ItemsSource="{Binding Remedios}"
+                                SelectedItem="{Binding SelectedRemedio}"
+                                DisplayMemberBinding="{Binding DisplayName}"
+                                Height="24" FontSize="12" Margin="4"
+                                IsEnabled="{Binding CamposHabilitados}"/>
+
+                      <TextBlock Grid.Row="1" Grid.Column="0" Text="Qtde" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                      <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding QtdeRemedio}"
+                               Height="24" FontSize="12" Margin="4"
+                               IsEnabled="{Binding CamposHabilitados}"/>
+                      <TextBlock Grid.Row="1" Grid.Column="2" Text="OBS" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                      <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding ObsRemedio}"
+                               Height="24" FontSize="12" Margin="4"
+                               IsEnabled="{Binding CamposHabilitados}"/>
+
+                      <Button Grid.Row="2" Grid.Column="0" Content="Inserir" Command="{Binding InserirRemedioCommand}"
+                              Width="70" Height="26" FontSize="11" FontWeight="Bold"
+                              Foreground="White" Background="#0D6EFD" Margin="4"
+                              IsEnabled="{Binding CamposHabilitados}"/>
+                    </Grid>
+
+                    <Border Background="White" BorderBrush="#DEE2E6" BorderThickness="1" Margin="4">
+                      <DataGrid ItemsSource="{Binding RemedioEnfermidadeItems}"
+                                AutoGenerateColumns="False"
+                                IsReadOnly="True"
+                                GridLinesVisibility="Horizontal"
+                                BorderThickness="0" Background="White"
+                                RowHeight="28" FontSize="12"
+                                x:CompileBindings="False">
+                        <DataGrid.Columns>
+                          <DataGridTextColumn Header="Data Início" Binding="{Binding DataInicio}" Width="80"/>
+                          <DataGridTextColumn Header="Remédio" Binding="{Binding Remedio}" Width="120"/>
+                          <DataGridTextColumn Header="Qtde" Binding="{Binding Qtde}" Width="40"/>
+                          <DataGridTextColumn Header="Data Fim" Binding="{Binding DataFim}" Width="80"/>
+                          <DataGridTextColumn Header="OBS" Binding="{Binding Obs}" Width="*"/>
+                        </DataGrid.Columns>
+                      </DataGrid>
+                    </Border>
+                  </DockPanel>
+                </Grid>
+              </DockPanel>
+            </TabItem>
+
+            <!-- Sub-tab Deficiência -->
+            <TabItem Header="Deficiência">
+              <DockPanel>
+                <Grid DockPanel.Dock="Top" Margin="8" ColumnDefinitions="Auto,*,Auto,*"
+                      RowDefinitions="Auto,Auto,Auto,Auto,Auto">
+                  <TextBlock Grid.Row="0" Grid.Column="0" Text="Data" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <DatePicker Grid.Row="0" Grid.Column="1" SelectedDate="{Binding DataDeficiencia}" Margin="4" Height="24"
+                              IsEnabled="{Binding CamposHabilitados}"/>
+                  <TextBlock Grid.Row="0" Grid.Column="2" Text="Deficiência" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <ComboBox Grid.Row="0" Grid.Column="3" ItemsSource="{Binding Deficiencias}"
+                            SelectedItem="{Binding SelectedDeficiencia}"
+                            DisplayMemberBinding="{Binding DisplayName}"
+                            Height="24" FontSize="12" Margin="4"
+                            IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="1" Grid.Column="0" Text="Locomoção" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding LocomocaoDeficiencia}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+                  <TextBlock Grid.Row="1" Grid.Column="2" Text="Membro" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding MembroDeficiencia}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="2" Grid.Column="0" Text="Atrofia" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding AtrofiaDeficiencia}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+                  <TextBlock Grid.Row="2" Grid.Column="2" Text="Motivo" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="2" Grid.Column="3" Text="{Binding MotivoDeficiencia}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="4" Orientation="Horizontal" Margin="4">
+                    <Button Content="Cadastrar" Command="{Binding CadastrarDeficienciaCommand}"
+                            Width="80" Height="26" FontSize="11" FontWeight="Bold"
+                            Foreground="White" Background="#198754" Margin="4"
+                            IsEnabled="{Binding CamposHabilitados}"/>
+                    <Button Content="Inserir" Command="{Binding InserirDeficienciaCommand}"
+                            Width="80" Height="26" FontSize="11" FontWeight="Bold"
+                            Foreground="White" Background="#0D6EFD" Margin="4"
+                            IsEnabled="{Binding CamposHabilitados}"/>
+                  </StackPanel>
+                </Grid>
+
+                <Border Background="White" BorderBrush="#DEE2E6" BorderThickness="1" Margin="4">
+                  <DataGrid ItemsSource="{Binding DeficienciaInternoItems}"
+                            AutoGenerateColumns="False"
+                            IsReadOnly="True"
+                            GridLinesVisibility="Horizontal"
+                            BorderThickness="0" Background="White"
+                            RowHeight="28" FontSize="12"
+                            x:CompileBindings="False">
+                    <DataGrid.Columns>
+                      <DataGridTextColumn Header="Deficiência" Binding="{Binding Deficiencia}" Width="150"/>
+                      <DataGridTextColumn Header="Locomoção" Binding="{Binding Locomocao}" Width="100"/>
+                      <DataGridTextColumn Header="Membro" Binding="{Binding Membro}" Width="100"/>
+                      <DataGridTextColumn Header="Atrofia" Binding="{Binding Atrofia}" Width="100"/>
+                      <DataGridTextColumn Header="Motivo" Binding="{Binding Motivo}" Width="*"/>
+                    </DataGrid.Columns>
+                  </DataGrid>
+                </Border>
+              </DockPanel>
+            </TabItem>
+
+            <!-- Sub-tab Vacina -->
+            <TabItem Header="Vacina">
+              <DockPanel>
+                <Grid DockPanel.Dock="Top" Margin="8" ColumnDefinitions="Auto,*,Auto,*"
+                      RowDefinitions="Auto,Auto">
+                  <TextBlock Grid.Row="0" Grid.Column="0" Text="Data" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <DatePicker Grid.Row="0" Grid.Column="1" SelectedDate="{Binding DataVacina}" Margin="4" Height="24"
+                              IsEnabled="{Binding CamposHabilitados}"/>
+                  <TextBlock Grid.Row="0" Grid.Column="2" Text="Vacina" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <ComboBox Grid.Row="0" Grid.Column="3" ItemsSource="{Binding Vacinas}"
+                            SelectedItem="{Binding SelectedVacina}"
+                            DisplayMemberBinding="{Binding DisplayName}"
+                            Height="24" FontSize="12" Margin="4"
+                            IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="1" Grid.Column="0" Text="Dose" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding DoseVacina}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+                  <Button Grid.Row="1" Grid.Column="2" Content="Inserir" Command="{Binding InserirVacinaCommand}"
+                          Width="70" Height="26" FontSize="11" FontWeight="Bold"
+                          Foreground="White" Background="#0D6EFD" Margin="4"
+                          IsEnabled="{Binding CamposHabilitados}"/>
+                </Grid>
+
+                <Border Background="White" BorderBrush="#DEE2E6" BorderThickness="1" Margin="4">
+                  <DataGrid ItemsSource="{Binding VacinaInternoItems}"
+                            AutoGenerateColumns="False"
+                            IsReadOnly="True"
+                            GridLinesVisibility="Horizontal"
+                            BorderThickness="0" Background="White"
+                            RowHeight="28" FontSize="12"
+                            x:CompileBindings="False">
+                    <DataGrid.Columns>
+                      <DataGridTextColumn Header="Data" Binding="{Binding DataVacina}" Width="90"/>
+                      <DataGridTextColumn Header="Dose" Binding="{Binding Dose}" Width="120"/>
+                      <DataGridTextColumn Header="Vacina" Binding="{Binding Vacina}" Width="*"/>
+                    </DataGrid.Columns>
+                  </DataGrid>
+                </Border>
+              </DockPanel>
+            </TabItem>
+
+            <!-- Sub-tab Dados - 1 -->
+            <TabItem Header="Dados - 1">
+              <ScrollViewer>
+                <Grid Margin="8" ColumnDefinitions="Auto,*,Auto,*"
+                      RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+
+                  <TextBlock Grid.Row="0" Grid.Column="0" Text="Número Cartão SUS" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Sus}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+                  <TextBlock Grid.Row="0" Grid.Column="2" Text="Faz uso de drogas" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="0" Grid.Column="3" Text="{Binding UsoDrogas}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="1" Grid.Column="0" Text="Efeitos do uso de drogas" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Text="{Binding EfeitosDroga}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="2" Grid.Column="0" Text="Quando se tornou dependente?" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <ComboBox Grid.Row="2" Grid.Column="1" SelectedValue="{Binding DataDependencia}"
+                            IsEnabled="{Binding CamposHabilitados}" Height="24" Margin="4">
+                    <ComboBoxItem Content="INFÂNCIA"/>
+                    <ComboBoxItem Content="ADOLESCÊNCIA"/>
+                    <ComboBoxItem Content="VIDA ADULTA"/>
+                    <ComboBoxItem Content="DEPOIS DE SER PRESO"/>
+                  </ComboBox>
+                  <TextBlock Grid.Row="2" Grid.Column="2" Text="Tentativa abandonar drogas" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="2" Grid.Column="3" Text="{Binding AbandonoDrogas}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="3" Grid.Column="0" Text="Drogas com crime" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <ComboBox Grid.Row="3" Grid.Column="1" SelectedValue="{Binding DrogasComCrime}"
+                            IsEnabled="{Binding CamposHabilitados}" Height="24" Margin="4">
+                    <ComboBoxItem Content="NÃO"/>
+                    <ComboBoxItem Content="SIM, PARA USO DE DROGAS"/>
+                    <ComboBoxItem Content="SIM, PARA USO DE BEBIDAS ALCOÓLICAS"/>
+                  </ComboBox>
+                  <TextBlock Grid.Row="3" Grid.Column="2" Text="Doença grave" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="3" Grid.Column="3" Text="{Binding DoencaGrave}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="4" Grid.Column="0" Text="Doença mental na família" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding DoencaMental}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+                  <TextBlock Grid.Row="4" Grid.Column="2" Text="Problema de saúde atual" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="4" Grid.Column="3" Text="{Binding ProblemaSaude}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="5" Grid.Column="0" Text="Medicação controlada" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding MedicacaoControlada}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+                  <TextBlock Grid.Row="5" Grid.Column="2" Text="Doença infecto contagiosa" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="5" Grid.Column="3" Text="{Binding DoencaInfectoContagiosa}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="6" Grid.Column="0" Text="Tratamento infecto" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding TratamentoInfecto}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+                  <TextBlock Grid.Row="6" Grid.Column="2" Text="Resultado tratamento infecto" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="6" Grid.Column="3" Text="{Binding ResultadoInfecto}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+                </Grid>
+              </ScrollViewer>
+            </TabItem>
+
+            <!-- Sub-tab Dados - 2 -->
+            <TabItem Header="Dados - 2">
+              <ScrollViewer>
+                <Grid Margin="8" ColumnDefinitions="Auto,*"
+                      RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+
+                  <TextBlock Grid.Row="0" Grid.Column="0" Text="Doença laboral" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding DoencaLaboral}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"
+                           PlaceholderText="Doença que impeça atividade laborativa"/>
+
+                  <TextBlock Grid.Row="1" Grid.Column="0" Text="Tentativa de suicídio" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Suicidio}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="2" Grid.Column="0" Text="Diagnóstico psiquiátrico / CID" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Cid}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="3" Grid.Column="0" Text="Sintomas depressivos" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding SintomasDepressivos}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="4" Grid.Column="0" Text="Episódios de humor" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding EpisodiosHumor}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="5" Grid.Column="0" Text="Sintomas psicóticos" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding SintomasPsicoticos}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="6" Grid.Column="0" Text="Delírios" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding Delirios}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="7" Grid.Column="0" Text="Alucinações" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="7" Grid.Column="1" Text="{Binding Alucinacoes}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="8" Grid.Column="0" Text="Personalidade (Transtornos)" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="8" Grid.Column="1" Text="{Binding Personalidade}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+                </Grid>
+              </ScrollViewer>
+            </TabItem>
+          </TabControl>
+        </TabItem>
+
+        <!-- Aba Consulta -->
+        <TabItem Header="Consulta">
+          <DockPanel>
+            <Border DockPanel.Dock="Top" Background="#F8F9FA" Padding="8" BorderBrush="#DEE2E6" BorderThickness="0,0,0,1">
+              <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto">
+                <TextBlock Grid.Column="0" Text="Localizar:" VerticalAlignment="Center" Margin="0,0,8,0"
+                           Foreground="#2B3A4A" FontSize="13"/>
+                <TextBox Grid.Column="1" Text="{Binding SearchText}" PlaceholderText="Digite para filtrar..."
+                         FontSize="14" Height="30" Width="250" HorizontalAlignment="Left"/>
+                <TextBlock Grid.Column="2" Text="Filtro:" VerticalAlignment="Center" Margin="12,0,4,0"
+                           Foreground="#2B3A4A" FontSize="12"/>
+                <RadioButton Grid.Column="3" Content="Ativo" Margin="0,0,8,0" FontSize="12"
+                             IsChecked="{Binding FiltroAtivo}"/>
+                <RadioButton Grid.Column="4" Content="Inativo" FontSize="12"
+                             IsChecked="{Binding FiltroInativo}"/>
+              </Grid>
+            </Border>
+
+            <Border Background="White" BorderBrush="#DEE2E6" BorderThickness="1" Margin="0">
+              <DataGrid ItemsSource="{Binding GridItems}"
+                        SelectedItem="{Binding SelectedGridItem}"
+                        AutoGenerateColumns="False"
+                        IsReadOnly="True"
+                        GridLinesVisibility="Horizontal"
+                        BorderThickness="0" Background="White"
+                        RowHeight="28" FontSize="12"
+                        x:CompileBindings="False"
+                        DoubleTapped="DataGrid_DoubleTapped">
+                <DataGrid.Columns>
+                  <DataGridTextColumn Header="Nome do Interno" Binding="{Binding NomeInterno}" Width="*"/>
+                  <DataGridTextColumn Header="RGI" Binding="{Binding Rgi}" Width="80"/>
+                  <DataGridTextColumn Header="Vulgo" Binding="{Binding Vulgo}" Width="120"/>
+                  <DataGridTextColumn Header="Sigla" Binding="{Binding Sigla}" Width="60"/>
+                  <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="60"/>
+                </DataGrid.Columns>
+              </DataGrid>
+            </Border>
+          </DockPanel>
+        </TabItem>
+      </TabControl>
+
+      <!-- Status bar -->
+      <Border Grid.Row="2" Background="#212529" Padding="8,4" Height="26">
+        <TextBlock Text="{Binding StatusMessage}" Foreground="#20C997" FontSize="12"/>
+      </Border>
+    </Grid>
+  </DockPanel>
+</Window>

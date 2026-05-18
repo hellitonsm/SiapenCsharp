@@ -63,22 +63,38 @@ public partial class MainWindowViewModel : ViewModelBase
     private void ClinicaMedica() => NaoImplementado();
 
     [RelayCommand]
-    private void Disciplina() => NaoImplementado();
+    private void Disciplina()
+    {
+        var view = new CadastroInternoDisciplinaView();
+        view.Show();
+    }
 
     [RelayCommand]
-    private void Juridico() => NaoImplementado();
+    private void Juridico()
+    {
+        var view = new CadastroInternoJuridicoView();
+        view.Show();
+    }
 
     [RelayCommand]
     private void Psiquiatria() => NaoImplementado();
 
     [RelayCommand]
-    private void Saude() => NaoImplementado();
+    private void Saude()
+    {
+        var view = new CadastroInternoSaudeView();
+        view.Show();
+    }
 
     [RelayCommand]
     private void Odontologia() => NaoImplementado();
 
     [RelayCommand]
-    private void Educacao() => NaoImplementado();
+    private void Educacao()
+    {
+        var view = new CadastroInternoEducacaoView();
+        view.Show();
+    }
 
     [RelayCommand]
     private void Pedagogia() => NaoImplementado();
@@ -90,7 +106,11 @@ public partial class MainWindowViewModel : ViewModelBase
     private void Psicologia() => NaoImplementado();
 
     [RelayCommand]
-    private void Trabalho() => NaoImplementado();
+    private void Trabalho()
+    {
+        var view = new CadastroInternoTrabalhoView();
+        view.Show();
+    }
 
     [RelayCommand]
     private void ServicoSocial() => NaoImplementado();
@@ -99,7 +119,11 @@ public partial class MainWindowViewModel : ViewModelBase
     private void Farmacia() => NaoImplementado();
 
     [RelayCommand]
-    private void Psicossocial() => NaoImplementado();
+    private void Psicossocial()
+    {
+        var view = new CadastroInternoPsicossocialView();
+        view.Show();
+    }
 
     [RelayCommand]
     private void TerapiaOcupacional() => NaoImplementado();
@@ -117,7 +141,7 @@ public partial class MainWindowViewModel : ViewModelBase
     [RelayCommand]
     private void CadastroInternos()
     {
-        var view = new Views.MovimentoInternosView();
+        var view = new Views.CadastroInternosView();
         view.Show();
     }
 
@@ -166,7 +190,11 @@ public partial class MainWindowViewModel : ViewModelBase
     private void ConferirTransferenciaRecebida() => NaoImplementado();
 
     [RelayCommand]
-    private void MudancaCela() => NaoImplementado();
+    private void MudancaCela()
+    {
+        var view = new CadastroMovInternoView();
+        view.Show();
+    }
 
     [RelayCommand]
     private void CadastroPortariaSaidao() => NaoImplementado();
@@ -355,7 +383,11 @@ public partial class MainWindowViewModel : ViewModelBase
     private void CopiarArquivo() => NaoImplementado();
 
     [RelayCommand]
-    private void ConsultaProced() => NaoImplementado();
+    private void ConsultaProced()
+    {
+        var view = new ConsultaProcedView();
+        view.Show();
+    }
 
     // === MENU AGENDAMENTO ===
 

@@ -1,0 +1,861 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Siapen.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="950" d:DesignHeight="650"
+        x:Class="Siapen.Views.CadastroInternoPsicossocialView"
+        x:DataType="vm:CadastroInternoPsicossocialViewModel"
+        Title="SIAPEN - Cadastro do Psicossocial"
+        WindowStartupLocation="CenterScreen"
+        Width="950" Height="650"
+        Background="#F4F6F8">
+
+  <Design.DataContext>
+    <vm:CadastroInternoPsicossocialViewModel/>
+  </Design.DataContext>
+
+  <DockPanel>
+    <!-- Left sidebar buttons -->
+    <Border DockPanel.Dock="Left" Width="110" Background="#2B3A4A">
+      <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Spacing="2" Margin="2">
+          <Button Content="NOVO" Command="{Binding NovoCommand}"
+                  Height="34" FontSize="11" FontWeight="Bold"
+                  Foreground="White" Background="#198754"
+                  IsEnabled="{Binding Modo, Converter={x:Static vm:CadastroModoConverters.IsNavegando}}"/>
+          <Button Content="EDITAR" Command="{Binding EditarCommand}"
+                  Height="34" FontSize="11" FontWeight="Bold"
+                  Foreground="White" Background="#0D6EFD"
+                  IsEnabled="{Binding Modo, Converter={x:Static vm:CadastroModoConverters.IsNavegando}}"/>
+          <Button Content="CANCELAR" Command="{Binding CancelarCommand}"
+                  Height="34" FontSize="11" FontWeight="Bold"
+                  Foreground="White" Background="#6C757D"
+                  IsEnabled="{Binding CamposHabilitados}"/>
+          <Button Content="SALVAR" Command="{Binding SalvarCommand}"
+                  Height="34" FontSize="11" FontWeight="Bold"
+                  Foreground="White" Background="#0D6EFD"
+                  IsEnabled="{Binding CamposHabilitados}"/>
+          <Button Content="EXCLUIR" Command="{Binding ExcluirCommand}"
+                  Height="34" FontSize="11" FontWeight="Bold"
+                  Foreground="White" Background="#DC3545"
+                  IsEnabled="{Binding Modo, Converter={x:Static vm:CadastroModoConverters.IsNavegando}}"/>
+          <Button Content="FECHAR" Click="Fechar_Click"
+                  Height="34" FontSize="11" FontWeight="Bold"
+                  Foreground="White" Background="#DC3545"/>
+        </StackPanel>
+
+        <StackPanel DockPanel.Dock="Bottom" Spacing="1" Margin="2,0,2,4">
+          <Border Background="#1A2332" CornerRadius="4" Padding="4">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="4">
+              <Button Content="◀◀" Command="{Binding NavegarPrimeiroCommand}" Width="22" Height="22"
+                      FontSize="10" Padding="0"
+                      IsEnabled="{Binding Modo, Converter={x:Static vm:CadastroModoConverters.IsNavegando}}"/>
+              <Button Content="◀" Command="{Binding NavegarAnteriorCommand}" Width="22" Height="22"
+                      FontSize="10" Padding="0"
+                      IsEnabled="{Binding Modo, Converter={x:Static vm:CadastroModoConverters.IsNavegando}}"/>
+              <Button Content="▶" Command="{Binding NavegarProximoCommand}" Width="22" Height="22"
+                      FontSize="10" Padding="0"
+                      IsEnabled="{Binding Modo, Converter={x:Static vm:CadastroModoConverters.IsNavegando}}"/>
+              <Button Content="▶▶" Command="{Binding NavegarUltimoCommand}" Width="22" Height="22"
+                      FontSize="10" Padding="0"
+                      IsEnabled="{Binding Modo, Converter={x:Static vm:CadastroModoConverters.IsNavegando}}"/>
+            </StackPanel>
+          </Border>
+        </StackPanel>
+
+        <Border DockPanel.Dock="Bottom" Width="98" Height="90" Margin="4,0,4,8"
+                Background="#343A40" CornerRadius="4">
+          <TextBlock Text="[FOTO]" Foreground="#6C757D" FontSize="10"
+                     HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </Border>
+      </DockPanel>
+    </Border>
+
+    <!-- Main content -->
+    <Grid>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="*"/>
+        <RowDefinition Height="Auto"/>
+      </Grid.RowDefinitions>
+
+      <!-- Header -->
+      <Border Grid.Row="0" Background="#FFF8F0E0" Height="36" BorderBrush="#E9ECEF" BorderThickness="0,0,0,1">
+        <TextBlock Text="SIAPEN - Cadastro do Psicossocial"
+                   FontSize="15" FontWeight="Bold" Foreground="#2B3A4A"
+                   VerticalAlignment="Center" Margin="12,0"/>
+      </Border>
+
+      <!-- TabControl -->
+      <TabControl Grid.Row="1" SelectedIndex="{Binding TabIndex}" Margin="0"
+                  TabStripPlacement="Top">
+
+        <!-- Aba Identificação -->
+        <TabItem Header="Identificação">
+          <ScrollViewer>
+            <Grid Margin="8" ColumnDefinitions="Auto,*,Auto,*"
+                  RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto">
+
+              <TextBlock Grid.Row="0" Grid.Column="0" Text="ID" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding IdInterno}" IsReadOnly="True"
+                       Width="80" Height="24" FontSize="12" Margin="4"/>
+              <TextBlock Grid.Row="0" Grid.Column="2" Text="Nome" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <TextBox Grid.Row="0" Grid.Column="3" Text="{Binding NomeInterno}" IsReadOnly="True"
+                       Height="24" FontSize="12" Margin="4"/>
+
+              <TextBlock Grid.Row="1" Grid.Column="0" Text="RGI" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Rgi}" IsReadOnly="True"
+                       Width="120" Height="24" FontSize="12" Margin="4"/>
+              <TextBlock Grid.Row="1" Grid.Column="2" Text="Vulgo" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding Vulgo}" IsReadOnly="True"
+                       Width="150" Height="24" FontSize="12" Margin="4"/>
+
+              <TextBlock Grid.Row="2" Grid.Column="0" Text="Status" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Status}" IsReadOnly="True"
+                       Width="40" Height="24" FontSize="12" Margin="4"/>
+              <TextBlock Grid.Row="2" Grid.Column="2" Text="Sexo" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <TextBox Grid.Row="2" Grid.Column="3" Text="{Binding Sexo}" IsReadOnly="True"
+                       Width="40" Height="24" FontSize="12" Margin="4"/>
+
+              <TextBlock Grid.Row="3" Grid.Column="0" Text="UP" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <TextBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" Text="{Binding NomeUp}" IsReadOnly="True"
+                       Height="24" FontSize="12" Margin="4"/>
+
+              <TextBlock Grid.Row="4" Grid.Column="0" Text="Pavilhão" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Pavilhao}" IsReadOnly="True"
+                       Height="24" FontSize="12" Margin="4"/>
+              <TextBlock Grid.Row="4" Grid.Column="2" Text="Galeria" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <TextBox Grid.Row="4" Grid.Column="3" Text="{Binding Galeria}" IsReadOnly="True"
+                       Height="24" FontSize="12" Margin="4"/>
+
+              <TextBlock Grid.Row="5" Grid.Column="0" Text="Solário" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding Solario}" IsReadOnly="True"
+                       Height="24" FontSize="12" Margin="4"/>
+              <TextBlock Grid.Row="5" Grid.Column="2" Text="Cela" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <TextBox Grid.Row="5" Grid.Column="3" Text="{Binding Cela}" IsReadOnly="True"
+                       Height="24" FontSize="12" Margin="4"/>
+            </Grid>
+          </ScrollViewer>
+        </TabItem>
+
+        <!-- Aba Psicossocial -->
+        <TabItem Header="Psicossocial">
+          <TabControl SelectedIndex="{Binding PsicossocialTabIndex}" TabStripPlacement="Left">
+
+            <!-- Sub-tab Geral -->
+            <TabItem Header="Geral">
+              <ScrollViewer>
+                <Grid Margin="8" ColumnDefinitions="Auto,*,Auto,*"
+                      RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+
+                  <TextBlock Grid.Row="0" Grid.Column="0" Text="Tem familiar preso:" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" Text="{Binding FamiliarPreso}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="1" Grid.Column="0" Text="Qual é o parentesco:" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Text="{Binding ParentescoPreso}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="2" Grid.Column="0" Text="Unidade penal familiar preso:" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" Text="{Binding UpFamiliarPreso}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="3" Grid.Column="0" Text="Motivo do delito" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <ComboBox Grid.Row="3" Grid.Column="1" SelectedValue="{Binding MotivoDelito}"
+                            IsEnabled="{Binding CamposHabilitados}" Height="24" Margin="4">
+                    <ComboBoxItem Content="NÃO COMETEU"/>
+                    <ComboBoxItem Content="VINGANÇA"/>
+                    <ComboBoxItem Content="IMPULSIVIDADE/INCONSEQUENCIA"/>
+                    <ComboBoxItem Content="INFLUÊNCIA DE OUTROS"/>
+                    <ComboBoxItem Content="NECESSIDADES MATERIAIS"/>
+                    <ComboBoxItem Content="DESEJO DE SER RECONHECIDO, DE SER VALORIZADO"/>
+                    <ComboBoxItem Content="CIRCUNSTÂNCIAS DO MOMENTO EM QUE OCORREU O CRIME"/>
+                    <ComboBoxItem Content="ENVOLVIMENTO COM GRUPOS ORGANIZADOS"/>
+                    <ComboBoxItem Content="ENVOLVIMENTO COM DROGAS"/>
+                    <ComboBoxItem Content="OUTROS"/>
+                  </ComboBox>
+                  <TextBlock Grid.Row="3" Grid.Column="2" Text="Maior perda" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <ComboBox Grid.Row="3" Grid.Column="3" SelectedValue="{Binding MaiorPerda}"
+                            IsEnabled="{Binding CamposHabilitados}" Height="24" Margin="4">
+                    <ComboBoxItem Content="FICAR LONGE DA FAMÍLIA"/>
+                    <ComboBoxItem Content="FICAR LONGE DOS AMIGOS"/>
+                    <ComboBoxItem Content="ROMPIMENTO DE RELACIONAMENTO AMOROSO"/>
+                    <ComboBoxItem Content="PERDA DE EMPREGO"/>
+                    <ComboBoxItem Content="PERDA DO DIREITO DE IR E VIR"/>
+                    <ComboBoxItem Content="OUTROS"/>
+                  </ComboBox>
+
+                  <TextBlock Grid.Row="4" Grid.Column="0" Text="Advogado" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <Grid Grid.Row="4" Grid.Column="1" Margin="4" ColumnDefinitions="*,Auto">
+                    <ComboBox Grid.Column="0" ItemsSource="{Binding Advogados}"
+                              SelectedItem="{Binding SelectedAdvogado}"
+                              DisplayMemberBinding="{Binding DisplayName}"
+                              Height="24" FontSize="12"
+                              IsEnabled="{Binding CamposHabilitados}"/>
+                    <Button Grid.Column="1" Content="..." Width="24" Height="24" Padding="0" Margin="4,0,0,0"
+                            IsEnabled="{Binding CamposHabilitados}"/>
+                  </Grid>
+                  <TextBlock Grid.Row="4" Grid.Column="2" Text="Situação Civil" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <ComboBox Grid.Row="4" Grid.Column="3" SelectedValue="{Binding SituacaoCivil}"
+                            IsEnabled="{Binding CamposHabilitados}" Height="24" Margin="4">
+                    <ComboBoxItem Content="Amasiado"/>
+                    <ComboBoxItem Content="Casado"/>
+                    <ComboBoxItem Content="Divorciado"/>
+                    <ComboBoxItem Content="Separado Judicialmente"/>
+                    <ComboBoxItem Content="Solteiro"/>
+                    <ComboBoxItem Content="Viúvo"/>
+                    <ComboBoxItem Content="União Estável"/>
+                    <ComboBoxItem Content="Não Declarado"/>
+                  </ComboBox>
+
+                  <TextBlock Grid.Row="5" Grid.Column="0" Text="Visitantes" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="3" Text="{Binding Visitantes}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+                </Grid>
+              </ScrollViewer>
+            </TabItem>
+
+            <!-- Sub-tab Histórico Familiar -->
+            <TabItem Header="Histórico Familiar">
+              <ScrollViewer>
+                <Grid Margin="8" ColumnDefinitions="Auto,*,Auto,*"
+                      RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+
+                  <TextBlock Grid.Row="0" Grid.Column="0" Text="Pais naturais vivos?" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding PaisVivos}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+                  <TextBlock Grid.Row="0" Grid.Column="2" Text="Pais separados?" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="0" Grid.Column="3" Text="{Binding PaisSeparados}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="1" Grid.Column="0" Text="Idade separação dos pais?" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding IdadePaisSeparados}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+                  <TextBlock Grid.Row="1" Grid.Column="2" Text="Por quem foi criado?" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <ComboBox Grid.Row="1" Grid.Column="3" SelectedValue="{Binding QuemCriou}"
+                            IsEnabled="{Binding CamposHabilitados}" Height="24" Margin="4">
+                    <ComboBoxItem Content="AVÓS PATERNOS"/>
+                    <ComboBoxItem Content="AVÓS MATERNOS"/>
+                    <ComboBoxItem Content="PELOS PAIS"/>
+                    <ComboBoxItem Content="PELO PAI"/>
+                    <ComboBoxItem Content="PELA MÃE"/>
+                    <ComboBoxItem Content="POR INSTITUIÇÃO"/>
+                    <ComboBoxItem Content="POR IRMÃO(S) MAIS VELHO(S)"/>
+                    <ComboBoxItem Content="POR OUTRA FAMÍLIA"/>
+                    <ComboBoxItem Content="POR PARENTES"/>
+                    <ComboBoxItem Content="OUTROS"/>
+                  </ComboBox>
+
+                  <TextBlock Grid.Row="2" Grid.Column="0" Text="Profissão dos pais ou de quem o criou" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding ProfissaoPais}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+                  <TextBlock Grid.Row="2" Grid.Column="2" Text="Quem trabalha na família:" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="2" Grid.Column="3" Text="{Binding TrabalhoFamilia}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="3" Grid.Column="0" Text="Tem irmãos? Quantos?" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding QtdeIrmaos}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="4" Grid.Column="0" Text="Criado junto aos irmãos" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding CriadoIrmaos}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+                  <TextBlock Grid.Row="4" Grid.Column="2" Text="Condições de moradia" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <ComboBox Grid.Row="4" Grid.Column="3" SelectedValue="{Binding Moradia}"
+                            IsEnabled="{Binding CamposHabilitados}" Height="24" Margin="4">
+                    <ComboBoxItem Content="ALVENÁRIA"/>
+                    <ComboBoxItem Content="ALUGADA"/>
+                    <ComboBoxItem Content="CEDIDA"/>
+                    <ComboBoxItem Content="BARRO"/>
+                    <ComboBoxItem Content="MADEIRA"/>
+                    <ComboBoxItem Content="PRÓPRIA"/>
+                    <ComboBoxItem Content="SEM TETO"/>
+                  </ComboBox>
+
+                  <TextBlock Grid.Row="5" Grid.Column="0" Text="O que seus pais representaram na infância?" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <ComboBox Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="3" SelectedValue="{Binding RepresentacaoPais}"
+                            IsEnabled="{Binding CamposHabilitados}" Height="24" Margin="4">
+                    <ComboBoxItem Content="AUSENTES"/>
+                    <ComboBoxItem Content="FORAM PESSOAS FUNDAMENTAIS"/>
+                    <ComboBoxItem Content="FORAM PESSOAS IMPORTANTES"/>
+                    <ComboBoxItem Content="FORAM PESSOAS INDIFERENTES"/>
+                    <ComboBoxItem Content="FORAM PESSOAS NEGLIGENTES"/>
+                    <ComboBoxItem Content="FORAM PESSOAS PRESENTES"/>
+                    <ComboBoxItem Content="OUTROS"/>
+                  </ComboBox>
+
+                  <TextBlock Grid.Row="6" Grid.Column="0" Text="Educação recebida" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <ComboBox Grid.Row="6" Grid.Column="1" SelectedValue="{Binding EducacaoRecebida}"
+                            IsEnabled="{Binding CamposHabilitados}" Height="24" Margin="4">
+                    <ComboBoxItem Content="RÍGIDA"/>
+                    <ComboBoxItem Content="MUITO RÍGIDA"/>
+                    <ComboBoxItem Content="FLEXÍVEL"/>
+                    <ComboBoxItem Content="SEM LIMITES"/>
+                    <ComboBoxItem Content="OUTRAS"/>
+                  </ComboBox>
+                  <TextBlock Grid.Row="6" Grid.Column="2" Text="Quantas vezes mudou de família na infância?" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <ComboBox Grid.Row="6" Grid.Column="3" SelectedValue="{Binding MudancaFamilia}"
+                            IsEnabled="{Binding CamposHabilitados}" Height="24" Margin="4">
+                    <ComboBoxItem Content="NENHUMA VEZ"/>
+                    <ComboBoxItem Content="UMA VEZ"/>
+                    <ComboBoxItem Content="DUAS VEZES"/>
+                    <ComboBoxItem Content="MAIS DE DUAS VEZES"/>
+                  </ComboBox>
+
+                  <TextBlock Grid.Row="7" Grid.Column="0" Text="Fugiu de casa alguma vez? Por quê?" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="3" Text="{Binding FugaCasa}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="8" Grid.Column="0" Text="Em que condições materiais foi criado?" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <ComboBox Grid.Row="8" Grid.Column="1" Grid.ColumnSpan="3" SelectedValue="{Binding CondicoesCriacao}"
+                            IsEnabled="{Binding CamposHabilitados}" Height="24" Margin="4">
+                    <ComboBoxItem Content="ÓTIMAS CONDIÇÕES"/>
+                    <ComboBoxItem Content="BOAS CONDIÇÕES"/>
+                    <ComboBoxItem Content="TENDO SUAS NECESSIDADES BÁSICAS ATENDIDAS"/>
+                    <ComboBoxItem Content="COM POBREZA"/>
+                    <ComboBoxItem Content="EXTREMA POBREZA"/>
+                  </ComboBox>
+
+                  <TextBlock Grid.Row="9" Grid.Column="0" Text="Passou por instituição assistencial na menoridade?" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <ComboBox Grid.Row="9" Grid.Column="1" SelectedValue="{Binding InstituicaoAssistencial}"
+                            IsEnabled="{Binding CamposHabilitados}" Height="24" Margin="4">
+                    <ComboBoxItem Content="NÃO"/>
+                    <ComboBoxItem Content="SIM COMO CARENTE"/>
+                    <ComboBoxItem Content="SIM COMO INFRATOR"/>
+                  </ComboBox>
+                  <TextBlock Grid.Row="9" Grid.Column="2" Text="Foi vítima de violência doméstica?" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <ComboBox Grid.Row="9" Grid.Column="3" SelectedValue="{Binding ViolenciaDomestica}"
+                            IsEnabled="{Binding CamposHabilitados}" Height="24" Margin="4">
+                    <ComboBoxItem Content="NÃO"/>
+                    <ComboBoxItem Content="SIM, VIOLÊNCIA FÍSICA"/>
+                    <ComboBoxItem Content="SIM, VIOLÊNCIA PSICOLÓGICA"/>
+                    <ComboBoxItem Content="SIM, VIOLÊNCIA SEXUAL"/>
+                    <ComboBoxItem Content="SIM, NEGLIGÊNCIA"/>
+                  </ComboBox>
+                </Grid>
+              </ScrollViewer>
+            </TabItem>
+
+            <!-- Sub-tab Situação Pessoal -->
+            <TabItem Header="Situação Pessoal">
+              <ScrollViewer>
+                <Grid Margin="8" ColumnDefinitions="Auto,*,Auto,*"
+                      RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+
+                  <TextBlock Grid.Row="0" Grid.Column="0" Text="Religião" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <ComboBox Grid.Row="0" Grid.Column="1" SelectedValue="{Binding Religiao}"
+                            IsEnabled="{Binding CamposHabilitados}" Height="24" Margin="4">
+                    <ComboBoxItem Content="Adventista"/>
+                    <ComboBoxItem Content="Ateu"/>
+                    <ComboBoxItem Content="Budista"/>
+                    <ComboBoxItem Content="Católica"/>
+                    <ComboBoxItem Content="Evangélica"/>
+                    <ComboBoxItem Content="Espírita"/>
+                    <ComboBoxItem Content="Mulçumano"/>
+                    <ComboBoxItem Content="Não Informada"/>
+                    <ComboBoxItem Content="Sem Religião"/>
+                    <ComboBoxItem Content="Outras"/>
+                  </ComboBox>
+                  <TextBlock Grid.Row="0" Grid.Column="2" Text="Com quem morava antes de ser preso?" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <ComboBox Grid.Row="0" Grid.Column="3" SelectedValue="{Binding MoradiaAntesPreso}"
+                            IsEnabled="{Binding CamposHabilitados}" Height="24" Margin="4">
+                    <ComboBoxItem Content="AMIGOS"/>
+                    <ComboBoxItem Content="AVÓS"/>
+                    <ComboBoxItem Content="ESPOSA"/>
+                    <ComboBoxItem Content="FILHOS"/>
+                    <ComboBoxItem Content="IRMÃOS"/>
+                    <ComboBoxItem Content="NAMORADA"/>
+                    <ComboBoxItem Content="MÃE"/>
+                    <ComboBoxItem Content="PAI"/>
+                    <ComboBoxItem Content="TIOS"/>
+                    <ComboBoxItem Content="OUTROS"/>
+                  </ComboBox>
+
+                  <TextBlock Grid.Row="1" Grid.Column="0" Text="Residência familiar" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <ComboBox Grid.Row="1" Grid.Column="1" SelectedValue="{Binding ResidenciaFamiliar}"
+                            IsEnabled="{Binding CamposHabilitados}" Height="24" Margin="4">
+                    <ComboBoxItem Content="IMOVÉL PRÓPRIO"/>
+                    <ComboBoxItem Content="IMOVÉL ALUGADO"/>
+                    <ComboBoxItem Content="IMOVÉL CEDIDO"/>
+                    <ComboBoxItem Content="IMOVÉL OCUPADO"/>
+                    <ComboBoxItem Content="ALBERGUE"/>
+                    <ComboBoxItem Content="OUTROS"/>
+                  </ComboBox>
+                  <TextBlock Grid.Row="1" Grid.Column="2" Text="Quantos filhos você tem?" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding QtdeFilhos}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="2" Grid.Column="0" Text="Tem filhos menores de 16 anos?" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding FilhosMenores16}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+                  <TextBlock Grid.Row="2" Grid.Column="2" Text="Com quem seus filhos estão?" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <ComboBox Grid.Row="2" Grid.Column="3" SelectedValue="{Binding FilhosVivem}"
+                            IsEnabled="{Binding CamposHabilitados}" Height="24" Margin="4">
+                    <ComboBoxItem Content="MÃE"/>
+                    <ComboBoxItem Content="PAI"/>
+                    <ComboBoxItem Content="AVÓS MATERNOS"/>
+                    <ComboBoxItem Content="AVÓS PATERNOS"/>
+                    <ComboBoxItem Content="FEBEM"/>
+                    <ComboBoxItem Content="ORFANATO"/>
+                    <ComboBoxItem Content="ESTÃO PRESOS"/>
+                    <ComboBoxItem Content="SÃO INDEPENDENTES"/>
+                    <ComboBoxItem Content="TIOS"/>
+                    <ComboBoxItem Content="IRMAOS(S) MAIS VELHO(S)"/>
+                    <ComboBoxItem Content="NÃO SEI"/>
+                    <ComboBoxItem Content="OUTROS"/>
+                  </ComboBox>
+
+                  <TextBlock Grid.Row="3" Grid.Column="0" Text="Teve filho encaminhado para adoção?" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <ComboBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" SelectedValue="{Binding FilhoAdocao}"
+                            IsEnabled="{Binding CamposHabilitados}" Height="24" Margin="4">
+                    <ComboBoxItem Content="NÃO SEI"/>
+                    <ComboBoxItem Content="NÃO"/>
+                    <ComboBoxItem Content="SIM, PARA FAMÍLIA SUBSTITUTA"/>
+                    <ComboBoxItem Content="SEM SUA CONCORDÂNCIA"/>
+                    <ComboBoxItem Content="COM SUA CONCORDÂNCIA"/>
+                  </ComboBox>
+
+                  <TextBlock Grid.Row="4" Grid.Column="0" Text="Você é o única provedor da familia?" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding ProvedorFamilia}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="5" Grid.Column="0" Text="Qual o rendimento familiar?" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <ComboBox Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="3" SelectedValue="{Binding RendimentoFamiliar}"
+                            IsEnabled="{Binding CamposHabilitados}" Height="24" Margin="4">
+                    <ComboBoxItem Content="0 A 1/2 SALÁRIO MÍNIMO"/>
+                    <ComboBoxItem Content="ACIMA DE 1/2 ATÉ 2 SALÁRIOS MÍNIMOS"/>
+                    <ComboBoxItem Content="ACIMA DE 2 ATÉ 4 SALÁRIOS MÍNIMOS"/>
+                    <ComboBoxItem Content="ACIMA DE 4 ATÉ 9 SALÁRIOS MÍNIMOS"/>
+                    <ComboBoxItem Content="ACIMA DE 9 ATÉ 15 SALÁRIOS MÍNIMOS"/>
+                    <ComboBoxItem Content="MAIS DE 15 SALÁRIOS MÍNIMOS"/>
+                  </ComboBox>
+
+                  <TextBlock Grid.Row="6" Grid.Column="0" Text="Família inscrita em programa social? Qual(is)?" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="3" Text="{Binding ProgramaSocial}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="7" Grid.Column="0" Text="Recebe Auxílio Reclusão?" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="3" Text="{Binding AuxilioReclusao}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+                </Grid>
+              </ScrollViewer>
+            </TabItem>
+
+            <!-- Sub-tab Escolaridade -->
+            <TabItem Header="Escolaridade">
+              <ScrollViewer>
+                <Grid Margin="8" ColumnDefinitions="Auto,*,Auto,*"
+                      RowDefinitions="Auto,Auto">
+
+                  <TextBlock Grid.Row="0" Grid.Column="0" Text="Escolaridade" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <Grid Grid.Row="0" Grid.Column="1" Margin="4" ColumnDefinitions="*,Auto">
+                    <ComboBox Grid.Column="0" ItemsSource="{Binding Escolaridades}"
+                              SelectedItem="{Binding SelectedEscolaridade}"
+                              DisplayMemberBinding="{Binding DisplayName}"
+                              Height="24" FontSize="12"
+                              IsEnabled="{Binding CamposHabilitados}"/>
+                    <Button Grid.Column="1" Content="..." Width="24" Height="24" Padding="0" Margin="4,0,0,0"
+                            IsEnabled="{Binding CamposHabilitados}"/>
+                  </Grid>
+                  <TextBlock Grid.Row="0" Grid.Column="2" Text="Repetiu alguma série? Quantas vezes?" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="0" Grid.Column="3" Text="{Binding ReprovadoEscola}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+                </Grid>
+              </ScrollViewer>
+            </TabItem>
+
+            <!-- Sub-tab Situação Profissional/Documental -->
+            <TabItem Header="Situação Profissional/Documental">
+              <ScrollViewer>
+                <Grid Margin="8" ColumnDefinitions="Auto,*,Auto,*"
+                      RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto">
+
+                  <TextBlock Grid.Row="0" Grid.Column="0" Text="Com que idade começou a trabalhar?" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding IdadeTrabalho}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+                  <TextBlock Grid.Row="0" Grid.Column="2" Text="Possui curso profissionalizante? Qual(is)?" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="0" Grid.Column="3" Text="{Binding CursoProfissionalizante}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="1" Grid.Column="0" Text="Profissão" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <Grid Grid.Row="1" Grid.Column="1" Margin="4" ColumnDefinitions="*,Auto">
+                    <ComboBox Grid.Column="0" ItemsSource="{Binding Profissoes}"
+                              SelectedItem="{Binding SelectedProfissao}"
+                              DisplayMemberBinding="{Binding DisplayName}"
+                              Height="24" FontSize="12"
+                              IsEnabled="{Binding CamposHabilitados}"/>
+                    <Button Grid.Column="1" Content="..." Width="24" Height="24" Padding="0" Margin="4,0,0,0"
+                            IsEnabled="{Binding CamposHabilitados}"/>
+                  </Grid>
+                  <TextBlock Grid.Row="1" Grid.Column="2" Text="No momento da prisão exercia atividade laboral?" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding ExerciciaTrabalho}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="2" Grid.Column="0" Text="Com registro em carteira?" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding RegistroCarteira}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+                  <TextBlock Grid.Row="2" Grid.Column="2" Text="Em quais setores já trabalhou?" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="2" Grid.Column="3" Text="{Binding TrabalhoUpAnterior}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="3" Grid.Column="0" Text="Quais documentos possui?" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" Text="{Binding Documentos}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+                </Grid>
+              </ScrollViewer>
+            </TabItem>
+
+            <!-- Sub-tab Situação Intramuros/Perspectivas -->
+            <TabItem Header="Situação Intramuros/Perspectivas">
+              <ScrollViewer>
+                <Grid Margin="8" ColumnDefinitions="Auto,*"
+                      RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+
+                  <TextBlock Grid.Row="0" Grid.Column="0" Text="Recebe visitas de familiares ou outra pessoa? Quem?" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding VisitaOutraPessoa}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="1" Grid.Column="0" Text="Gostaria de estudar durante o cumprimento da pena?" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding EstudoCumpena}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="2" Grid.Column="0" Text="Gostaria de trabalhar durante o cumprimento da pena?" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding TrabalhoCumpena}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="3" Grid.Column="0" Text="Gostaria de aprender uma profissão? Qual?" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding ProfissaoCumpena}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="4" Grid.Column="0" Text="Observação" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding ObsPsicossocial}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="5" Grid.Column="0" Text="Data atendimento" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <DatePicker Grid.Row="5" Grid.Column="1" SelectedDate="{Binding DataPsicossocial}" Margin="4" Height="24"
+                              IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="6" Grid.Column="0" Text="Técnico(a) responsável pelo preenchimento" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <Grid Grid.Row="6" Grid.Column="1" Margin="4" ColumnDefinitions="*,Auto">
+                    <ComboBox Grid.Column="0" ItemsSource="{Binding Tecnicos}"
+                              SelectedItem="{Binding SelectedTecnico}"
+                              DisplayMemberBinding="{Binding DisplayName}"
+                              Height="24" FontSize="12"
+                              IsEnabled="{Binding CamposHabilitados}"/>
+                    <Button Grid.Column="1" Content="..." Width="24" Height="24" Padding="0" Margin="4,0,0,0"
+                            IsEnabled="{Binding CamposHabilitados}"/>
+                  </Grid>
+                </Grid>
+              </ScrollViewer>
+            </TabItem>
+
+            <!-- Sub-tab Saúde I -->
+            <TabItem Header="Saúde I">
+              <ScrollViewer>
+                <Grid Margin="8" ColumnDefinitions="Auto,*"
+                      RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+
+                  <TextBlock Grid.Row="0" Grid.Column="0" Text="Número Cartão SUS" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Sus}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="1" Grid.Column="0" Text="Faz uso de drogas:" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding UsoDrogas}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="2" Grid.Column="0" Text="Efeitos do uso de drogas:" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding EfeitosDroga}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="3" Grid.Column="0" Text="Quando se tornou dependente?" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <ComboBox Grid.Row="3" Grid.Column="1" SelectedValue="{Binding DataDependencia}"
+                            IsEnabled="{Binding CamposHabilitados}" Height="24" Margin="4">
+                    <ComboBoxItem Content="INFÂNCIA"/>
+                    <ComboBoxItem Content="ADOLESCÊNCIA"/>
+                    <ComboBoxItem Content="VIDA ADULTA"/>
+                    <ComboBoxItem Content="DEPOIS DE SER PRESO"/>
+                  </ComboBox>
+
+                  <TextBlock Grid.Row="4" Grid.Column="0" Text="Já fez tentativa para abandonar as drogas?" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding AbandonoDrogas}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="5" Grid.Column="0" Text="Uso de drogas tem relação com a prática do delito?" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <ComboBox Grid.Row="5" Grid.Column="1" SelectedValue="{Binding DrogasComCrime}"
+                            IsEnabled="{Binding CamposHabilitados}" Height="24" Margin="4">
+                    <ComboBoxItem Content="NÃO"/>
+                    <ComboBoxItem Content="SIM, PARA USO DE DROGAS"/>
+                    <ComboBoxItem Content="SIM, PARA USO DE BEBIDAS ALCOÓLICAS"/>
+                  </ComboBox>
+
+                  <TextBlock Grid.Row="6" Grid.Column="0" Text="Já sofreu de doença grave? Qual?" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding DoencaGrave}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="7" Grid.Column="0" Text="Tem caso de doença mental na família? Qual?" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="7" Grid.Column="1" Text="{Binding DoencaMental}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="8" Grid.Column="0" Text="Você tem algum problema de saúde atualmente?" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="8" Grid.Column="1" Text="{Binding ProblemaSaude}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="9" Grid.Column="0" Text="Faz uso de medicação controlada? Qual?" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="9" Grid.Column="1" Text="{Binding MedicacaoControlada}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="10" Grid.Column="0" Text="Doença infecto contagiosa?" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="10" Grid.Column="1" Text="{Binding DoencaInfectoContagiosa}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="11" Grid.Column="0" Text="Realizou tratamento infecto?" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="11" Grid.Column="1" Text="{Binding TratamentoInfecto}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="12" Grid.Column="0" Text="Resultado tratamento infecto?" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="12" Grid.Column="1" Text="{Binding ResultadoInfecto}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+                </Grid>
+              </ScrollViewer>
+            </TabItem>
+
+            <!-- Sub-tab Saúde II -->
+            <TabItem Header="Saúde II">
+              <ScrollViewer>
+                <StackPanel Margin="8" Spacing="4">
+
+                  <TextBlock Text="Possui alguma doença que impeça de desenvolver atividade laborativa? Qual(is)?" FontSize="12"/>
+                  <TextBox Text="{Binding DoencaLaboral}" Height="24" FontSize="12"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <Grid ColumnDefinitions="*,*">
+                    <StackPanel Grid.Column="0" Spacing="4" Margin="0,0,4,0">
+                      <TextBlock Text="Tentativa de suicídio" FontSize="12"/>
+                      <TextBox Text="{Binding Suicidio}" Height="24" FontSize="12"
+                               IsEnabled="{Binding CamposHabilitados}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Spacing="4" Margin="4,0,0,0">
+                      <TextBlock Text="Diagnóstico psiquiátrico? CID?" FontSize="12"/>
+                      <TextBox Text="{Binding Cid}" Height="24" FontSize="12"
+                               IsEnabled="{Binding CamposHabilitados}"/>
+                    </StackPanel>
+                  </Grid>
+
+                  <TextBlock Text="Sintomas depressivos" FontSize="12"/>
+                  <TextBox Text="{Binding SintomasDepressivos}" Height="24" FontSize="12"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Text="Episodios de humor" FontSize="12"/>
+                  <TextBox Text="{Binding EpisodiosHumor}" Height="24" FontSize="12"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Text="Sintomas psicóticos" FontSize="12"/>
+                  <TextBox Text="{Binding SintomasPsicoticos}" Height="24" FontSize="12"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Text="Delírios" FontSize="12"/>
+                  <TextBox Text="{Binding Delirios}" Height="24" FontSize="12"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Text="Alucinações" FontSize="12"/>
+                  <TextBox Text="{Binding Alucinacoes}" Height="24" FontSize="12"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Text="Aspectos de personalidade (Transtornos)" FontSize="12"/>
+                  <TextBox Text="{Binding Personalidade}" Height="24" FontSize="12"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <!-- Radio groups row 1 -->
+                  <Grid ColumnDefinitions="*,*,*,*">
+                    <StackPanel Grid.Column="0" Margin="0,0,2,0">
+                      <TextBlock Text="Tem tosse há mais de duas semanas?" FontSize="11" TextWrapping="Wrap"/>
+                      <RadioButton Content="Sim" IsChecked="{Binding TosseSemana}" Margin="0,2"
+                                   IsEnabled="{Binding CamposHabilitados}"/>
+                      <RadioButton Content="Não" IsChecked="{Binding NotTosseSemana}" Margin="0,2"
+                                   IsEnabled="{Binding CamposHabilitados}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Margin="2,0">
+                      <TextBlock Text="Tem mancha amortecida no corpo?" FontSize="11" TextWrapping="Wrap"/>
+                      <RadioButton Content="Sim" IsChecked="{Binding ManchaCorpo}" Margin="0,2"
+                                   IsEnabled="{Binding CamposHabilitados}"/>
+                      <RadioButton Content="Não" IsChecked="{Binding NotManchaCorpo}" Margin="0,2"
+                                   IsEnabled="{Binding CamposHabilitados}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="2" Margin="2,0">
+                      <TextBlock Text="Tem ou teve alguma doença venérea?" FontSize="11" TextWrapping="Wrap"/>
+                      <RadioButton Content="Sim" IsChecked="{Binding DoencaVenerea}" Margin="0,2"
+                                   IsEnabled="{Binding CamposHabilitados}"/>
+                      <RadioButton Content="Não" IsChecked="{Binding NotDoencaVenerea}" Margin="0,2"
+                                   IsEnabled="{Binding CamposHabilitados}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="3" Margin="2,0,0,0">
+                      <TextBlock Text="Tem HIV" FontSize="11"/>
+                      <RadioButton Content="Sim" IsChecked="{Binding Hiv}" Margin="0,2"
+                                   IsEnabled="{Binding CamposHabilitados}"/>
+                      <RadioButton Content="Não" IsChecked="{Binding NotHiv}" Margin="0,2"
+                                   IsEnabled="{Binding CamposHabilitados}"/>
+                    </StackPanel>
+                  </Grid>
+
+                  <!-- Radio groups row 2 -->
+                  <Grid ColumnDefinitions="*,*,*">
+                    <StackPanel Grid.Column="0" Margin="0,0,2,0">
+                      <TextBlock Text="Tem ou teve hepatite?" FontSize="11"/>
+                      <RadioButton Content="Sim" IsChecked="{Binding Hepatite}" Margin="0,2"
+                                   IsEnabled="{Binding CamposHabilitados}"/>
+                      <RadioButton Content="Não" IsChecked="{Binding NotHepatite}" Margin="0,2"
+                                   IsEnabled="{Binding CamposHabilitados}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Margin="2,0">
+                      <TextBlock Text="Tem pressão alta?" FontSize="11"/>
+                      <RadioButton Content="Sim" IsChecked="{Binding PressaoAlta}" Margin="0,2"
+                                   IsEnabled="{Binding CamposHabilitados}"/>
+                      <RadioButton Content="Não" IsChecked="{Binding NotPressaoAlta}" Margin="0,2"
+                                   IsEnabled="{Binding CamposHabilitados}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="2" Margin="2,0,0,0">
+                      <TextBlock Text="Tem diabete?" FontSize="11"/>
+                      <RadioButton Content="Sim" IsChecked="{Binding Diabete}" Margin="0,2"
+                                   IsEnabled="{Binding CamposHabilitados}"/>
+                      <RadioButton Content="Não" IsChecked="{Binding NotDiabete}" Margin="0,2"
+                                   IsEnabled="{Binding CamposHabilitados}"/>
+                    </StackPanel>
+                  </Grid>
+
+                </StackPanel>
+              </ScrollViewer>
+            </TabItem>
+
+            <!-- Sub-tab Atendimentos -->
+            <TabItem Header="Atendimentos">
+              <DockPanel Margin="8">
+                <Grid DockPanel.Dock="Top" ColumnDefinitions="Auto,*,Auto,*" RowDefinitions="Auto,Auto,Auto">
+                  <TextBlock Grid.Row="0" Grid.Column="0" Text="Data" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <DatePicker Grid.Row="0" Grid.Column="1" SelectedDate="{Binding AtendimentoData}" Margin="4" Height="24"
+                              IsEnabled="{Binding CamposHabilitados}"/>
+                  <TextBlock Grid.Row="0" Grid.Column="2" Text="Técnico(a) atendimento" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <ComboBox Grid.Row="0" Grid.Column="3" ItemsSource="{Binding Tecnicos}"
+                            SelectedItem="{Binding SelectedAtendimentoTecnico}"
+                            DisplayMemberBinding="{Binding DisplayName}"
+                            Height="24" FontSize="12" Margin="4"
+                            IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="1" Grid.Column="0" Text="Descrição atendimento" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Text="{Binding AtendimentoDescricao}"
+                           Height="60" FontSize="12" Margin="4" AcceptsReturn="True"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <Button Grid.Row="2" Grid.Column="3" Content="Incluir" Click="IncluirAtendimento_Click"
+                          Width="80" Height="28" FontSize="12" FontWeight="Bold"
+                          HorizontalAlignment="Right" Margin="4"
+                          IsEnabled="{Binding CamposHabilitados}"/>
+                </Grid>
+
+                <DataGrid ItemsSource="{Binding Atendimentos}"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          GridLinesVisibility="Horizontal"
+                          BorderThickness="1" Background="White"
+                          RowHeight="28" FontSize="12"
+                          Margin="0,8,0,0">
+                  <DataGrid.Columns>
+                    <DataGridTextColumn Header="Data" Binding="{Binding Data}" Width="100"/>
+                    <DataGridTextColumn Header="Descrição" Binding="{Binding Descricao}" Width="*"/>
+                    <DataGridTextColumn Header="Técnico(a)" Binding="{Binding Tecnico}" Width="200"/>
+                  </DataGrid.Columns>
+                </DataGrid>
+              </DockPanel>
+            </TabItem>
+
+          </TabControl>
+        </TabItem>
+
+        <!-- Aba Consulta -->
+        <TabItem Header="Consulta">
+          <DockPanel>
+            <Border DockPanel.Dock="Top" Background="#F8F9FA" Padding="8" BorderBrush="#DEE2E6" BorderThickness="0,0,0,1">
+              <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto">
+                <TextBlock Grid.Column="0" Text="Localizar:" VerticalAlignment="Center" Margin="0,0,8,0"
+                           Foreground="#2B3A4A" FontSize="13"/>
+                <TextBox Grid.Column="1" Text="{Binding SearchText}" Watermark="Digite para filtrar..."
+                         FontSize="14" Height="30" Width="250" HorizontalAlignment="Left"/>
+                <TextBlock Grid.Column="2" Text="Filtro:" VerticalAlignment="Center" Margin="12,0,4,0"
+                           Foreground="#2B3A4A" FontSize="12"/>
+                <RadioButton Grid.Column="3" Content="Ativo" Margin="0,0,8,0" FontSize="12"
+                             IsChecked="{Binding FiltroAtivo}"/>
+                <RadioButton Grid.Column="4" Content="Inativo" FontSize="12"
+                             IsChecked="{Binding FiltroInativo}"/>
+              </Grid>
+            </Border>
+
+            <Border Background="White" BorderBrush="#DEE2E6" BorderThickness="1" Margin="0">
+              <DataGrid ItemsSource="{Binding GridItems}"
+                        SelectedItem="{Binding SelectedGridItem}"
+                        AutoGenerateColumns="False"
+                        IsReadOnly="True"
+                        GridLinesVisibility="Horizontal"
+                        BorderThickness="0" Background="White"
+                        RowHeight="28" FontSize="12"
+                        x:CompileBindings="False"
+                        DoubleTapped="DataGrid_DoubleTapped">
+                <DataGrid.Columns>
+                  <DataGridTextColumn Header="Nome do Interno" Binding="{Binding NomeInterno}" Width="*"/>
+                  <DataGridTextColumn Header="RGI" Binding="{Binding Rgi}" Width="80"/>
+                  <DataGridTextColumn Header="Vulgo" Binding="{Binding Vulgo}" Width="120"/>
+                  <DataGridTextColumn Header="Sigla" Binding="{Binding Sigla}" Width="60"/>
+                  <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="60"/>
+                </DataGrid.Columns>
+              </DataGrid>
+            </Border>
+          </DockPanel>
+        </TabItem>
+      </TabControl>
+
+      <!-- Status bar -->
+      <Border Grid.Row="2" Background="#212529" Padding="8,4" Height="26">
+        <TextBlock Text="{Binding StatusMessage}" Foreground="#20C997" FontSize="12"/>
+      </Border>
+    </Grid>
+  </DockPanel>
+</Window>

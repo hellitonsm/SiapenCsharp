@@ -1,0 +1,512 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Siapen.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="950" d:DesignHeight="650"
+        x:Class="Siapen.Views.CadastroInternoJuridicoView"
+        x:DataType="vm:CadastroInternoJuridicoViewModel"
+        Title="SIAPEN - Cadastro Jurídico"
+        WindowStartupLocation="CenterScreen"
+        Width="950" Height="650"
+        Background="#F4F6F8">
+
+  <Design.DataContext>
+    <vm:CadastroInternoJuridicoViewModel/>
+  </Design.DataContext>
+
+  <DockPanel>
+    <!-- Left sidebar buttons -->
+    <Border DockPanel.Dock="Left" Width="110" Background="#2B3A4A">
+      <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Spacing="2" Margin="2">
+          <Button Content="NOVO" Command="{Binding NovoCommand}"
+                  Height="34" FontSize="11" FontWeight="Bold"
+                  Foreground="White" Background="#198754"
+                  IsEnabled="{Binding Modo, Converter={x:Static vm:CadastroModoConverters.IsNavegando}}"/>
+          <Button Content="EDITAR" Command="{Binding EditarCommand}"
+                  Height="34" FontSize="11" FontWeight="Bold"
+                  Foreground="White" Background="#0D6EFD"
+                  IsEnabled="{Binding Modo, Converter={x:Static vm:CadastroModoConverters.IsNavegando}}"/>
+          <Button Content="CANCELAR" Command="{Binding CancelarCommand}"
+                  Height="34" FontSize="11" FontWeight="Bold"
+                  Foreground="White" Background="#6C757D"
+                  IsEnabled="{Binding CamposHabilitados}"/>
+          <Button Content="SALVAR" Command="{Binding SalvarCommand}"
+                  Height="34" FontSize="11" FontWeight="Bold"
+                  Foreground="White" Background="#0D6EFD"
+                  IsEnabled="{Binding CamposHabilitados}"/>
+          <Button Content="EXCLUIR" Command="{Binding ExcluirCommand}"
+                  Height="34" FontSize="11" FontWeight="Bold"
+                  Foreground="White" Background="#DC3545"
+                  IsEnabled="{Binding Modo, Converter={x:Static vm:CadastroModoConverters.IsNavegando}}"/>
+          <Button Content="FECHAR" Click="Fechar_Click"
+                  Height="34" FontSize="11" FontWeight="Bold"
+                  Foreground="White" Background="#DC3545"/>
+        </StackPanel>
+
+        <StackPanel DockPanel.Dock="Bottom" Spacing="1" Margin="2,0,2,4">
+          <Border Background="#1A2332" CornerRadius="4" Padding="4">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="4">
+              <Button Content="◀◀" Command="{Binding NavegarPrimeiroCommand}" Width="22" Height="22"
+                      FontSize="10" Padding="0"
+                      IsEnabled="{Binding Modo, Converter={x:Static vm:CadastroModoConverters.IsNavegando}}"/>
+              <Button Content="◀" Command="{Binding NavegarAnteriorCommand}" Width="22" Height="22"
+                      FontSize="10" Padding="0"
+                      IsEnabled="{Binding Modo, Converter={x:Static vm:CadastroModoConverters.IsNavegando}}"/>
+              <Button Content="▶" Command="{Binding NavegarProximoCommand}" Width="22" Height="22"
+                      FontSize="10" Padding="0"
+                      IsEnabled="{Binding Modo, Converter={x:Static vm:CadastroModoConverters.IsNavegando}}"/>
+              <Button Content="▶▶" Command="{Binding NavegarUltimoCommand}" Width="22" Height="22"
+                      FontSize="10" Padding="0"
+                      IsEnabled="{Binding Modo, Converter={x:Static vm:CadastroModoConverters.IsNavegando}}"/>
+            </StackPanel>
+          </Border>
+        </StackPanel>
+
+        <Border DockPanel.Dock="Bottom" Width="98" Height="90" Margin="4,0,4,8"
+                Background="#343A40" CornerRadius="4">
+          <TextBlock Text="[FOTO]" Foreground="#6C757D" FontSize="10"
+                     HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </Border>
+      </DockPanel>
+    </Border>
+
+    <!-- Main content -->
+    <Grid>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="*"/>
+        <RowDefinition Height="Auto"/>
+      </Grid.RowDefinitions>
+
+      <!-- Header -->
+      <Border Grid.Row="0" Background="#FFF8F0E0" Height="36" BorderBrush="#E9ECEF" BorderThickness="0,0,0,1">
+        <TextBlock Text="SIAPEN - Cadastro Jurídico"
+                   FontSize="15" FontWeight="Bold" Foreground="#2B3A4A"
+                   VerticalAlignment="Center" Margin="12,0"/>
+      </Border>
+
+      <!-- TabControl -->
+      <TabControl Grid.Row="1" SelectedIndex="{Binding TabIndex}" Margin="0"
+                  TabStripPlacement="Top">
+
+        <!-- Aba Identificação -->
+        <TabItem Header="Identificação">
+          <ScrollViewer>
+            <Grid Margin="8" ColumnDefinitions="Auto,*,Auto,*"
+                  RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+
+              <TextBlock Grid.Row="0" Grid.Column="0" Text="ID" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding IdInterno}" IsReadOnly="True"
+                       Width="80" Height="24" FontSize="12" Margin="4"/>
+              <TextBlock Grid.Row="0" Grid.Column="2" Text="Nome" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <TextBox Grid.Row="0" Grid.Column="3" Text="{Binding NomeInterno}"
+                       Height="24" FontSize="12" Margin="4"
+                       IsEnabled="{Binding CamposHabilitados}"/>
+
+              <TextBlock Grid.Row="1" Grid.Column="0" Text="RGI" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Rgi}"
+                       Width="120" Height="24" FontSize="12" Margin="4"
+                       IsEnabled="{Binding CamposHabilitados}"/>
+              <TextBlock Grid.Row="1" Grid.Column="2" Text="Vulgo" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding Vulgo}"
+                       Width="150" Height="24" FontSize="12" Margin="4"
+                       IsEnabled="{Binding CamposHabilitados}"/>
+
+              <TextBlock Grid.Row="2" Grid.Column="0" Text="Status" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <ComboBox Grid.Row="2" Grid.Column="1" SelectedValue="{Binding Status}"
+                        IsEnabled="{Binding CamposHabilitados}" Width="80" Height="24" Margin="4">
+                <ComboBoxItem Content="A"/>
+                <ComboBoxItem Content="I"/>
+              </ComboBox>
+              <TextBlock Grid.Row="2" Grid.Column="2" Text="Sexo" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <StackPanel Grid.Row="2" Grid.Column="3" Orientation="Horizontal" Margin="4">
+                <RadioButton Content="Masculino" IsChecked="{Binding SexoMasculino}" Margin="0,0,8,0"
+                             IsEnabled="{Binding CamposHabilitados}"/>
+                <RadioButton Content="Feminino" IsChecked="{Binding SexoFeminino}"
+                             IsEnabled="{Binding CamposHabilitados}"/>
+              </StackPanel>
+
+              <TextBlock Grid.Row="3" Grid.Column="0" Text="Medida Segurança" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" Margin="4">
+                <RadioButton Content="Sim" IsChecked="{Binding MedidaSegurancaSim}" Margin="0,0,8,0"
+                             IsEnabled="{Binding CamposHabilitados}"/>
+                <RadioButton Content="Não" IsChecked="{Binding MedidaSegurancaNao}"
+                             IsEnabled="{Binding CamposHabilitados}"/>
+              </StackPanel>
+              <TextBlock Grid.Row="3" Grid.Column="2" Text="Tipo Processo" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <ComboBox Grid.Row="3" Grid.Column="3" SelectedValue="{Binding TipoProcesso}"
+                        IsEnabled="{Binding CamposHabilitados}" Width="150" Height="24" Margin="4">
+                <ComboBoxItem Content="CONDENADO"/>
+                <ComboBoxItem Content="PROVISORIO"/>
+              </ComboBox>
+
+              <TextBlock Grid.Row="4" Grid.Column="0" Text="Regime" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <ComboBox Grid.Row="4" Grid.Column="1" SelectedValue="{Binding RegimeAtual}"
+                        IsEnabled="{Binding CamposHabilitados}" Width="180" Height="24" Margin="4">
+                <ComboBoxItem Content="Aberto"/>
+                <ComboBoxItem Content="Fechado"/>
+                <ComboBoxItem Content="Semi-Aberto"/>
+                <ComboBoxItem Content="Medida de Segurança"/>
+                <ComboBoxItem Content="Provisorio"/>
+                <ComboBoxItem Content="Temporario"/>
+              </ComboBox>
+              <TextBlock Grid.Row="4" Grid.Column="2" Text="Unidade Penal" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <TextBox Grid.Row="4" Grid.Column="3" Text="{Binding NomeUp}" IsReadOnly="True"
+                       Height="24" FontSize="12" Margin="4"/>
+
+              <TextBlock Grid.Row="5" Grid.Column="0" Text="Tempo Consolidado" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <StackPanel Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="3" Orientation="Horizontal" Margin="4">
+                <TextBox Text="{Binding TempoConsolidadoAno}" Width="50" Height="24" FontSize="12" Margin="0,0,2,0"
+                         IsEnabled="{Binding CamposHabilitados}"/>
+                <TextBlock Text="Ano(s)" VerticalAlignment="Center" FontSize="11" Margin="0,0,6,0"/>
+                <TextBox Text="{Binding TempoConsolidadoMes}" Width="50" Height="24" FontSize="12" Margin="0,0,2,0"
+                         IsEnabled="{Binding CamposHabilitados}"/>
+                <TextBlock Text="Mês(es)" VerticalAlignment="Center" FontSize="11" Margin="0,0,6,0"/>
+                <TextBox Text="{Binding TempoConsolidadoDia}" Width="50" Height="24" FontSize="12" Margin="0,0,2,0"
+                         IsEnabled="{Binding CamposHabilitados}"/>
+                <TextBlock Text="Dia(s)" VerticalAlignment="Center" FontSize="11"/>
+              </StackPanel>
+
+              <TextBlock Grid.Row="6" Grid.Column="0" Text="Filtro Ativo" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <CheckBox Grid.Row="6" Grid.Column="1" IsChecked="{Binding FiltroAtivo}" Margin="4"
+                        Content="Ativos"/>
+              <TextBlock Grid.Row="6" Grid.Column="2" Text="Filtro Inativo" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <CheckBox Grid.Row="6" Grid.Column="3" IsChecked="{Binding FiltroInativo}" Margin="4"
+                        Content="Inativos"/>
+
+              <TextBlock Grid.Row="7" Grid.Column="0" Text="Sigla UP" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <TextBox Grid.Row="7" Grid.Column="1" Text="{Binding SiglaUp}" IsReadOnly="True"
+                       Height="24" FontSize="12" Margin="4"/>
+            </Grid>
+          </ScrollViewer>
+        </TabItem>
+
+        <!-- Aba Jurídico -->
+        <TabItem Header="Jurídico">
+          <TabControl Margin="0">
+
+            <!-- Sub-aba Controle Permanência -->
+            <TabItem Header="Controle Permanência">
+              <Grid Margin="8" RowDefinitions="Auto,Auto,Auto,*,Auto">
+                <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto,*" RowDefinitions="Auto,Auto,Auto,Auto">
+                  <TextBlock Grid.Row="0" Grid.Column="0" Text="Data Inicial" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <DatePicker Grid.Row="0" Grid.Column="1" SelectedDate="{Binding DataInicialPermanencia}" Margin="4" Height="24"
+                              IsEnabled="{Binding CamposHabilitados}"/>
+                  <TextBlock Grid.Row="0" Grid.Column="2" Text="Autorização" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="0" Grid.Column="3" Text="{Binding AutorizacaoPermanencia}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="1" Grid.Column="0" Text="Dias Autorizados" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding DiasAutorizadosPermanencia}"
+                           Width="80" Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+                  <TextBlock Grid.Row="1" Grid.Column="2" Text="Data Final" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <DatePicker Grid.Row="1" Grid.Column="3" SelectedDate="{Binding DataFinalPermanencia}" Margin="4" Height="24"
+                              IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="2" Grid.Column="0" Text="Nº Autos" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding NumAutosPermanencia}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+                  <TextBlock Grid.Row="2" Grid.Column="2" Text="Obs" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="2" Grid.Column="3" Text="{Binding ObsPermanencia}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+
+                  <TextBlock Grid.Row="3" Grid.Column="0" Text="Conflito Competência" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" Margin="4">
+                    <RadioButton Content="Sim" IsChecked="{Binding ConflitoCompetenciaSim}" Margin="0,0,8,0"
+                                 IsEnabled="{Binding CamposHabilitados}"/>
+                    <RadioButton Content="Não" IsChecked="{Binding ConflitoCompetenciaNao}"
+                                 IsEnabled="{Binding CamposHabilitados}"/>
+                  </StackPanel>
+                  <TextBlock Grid.Row="3" Grid.Column="2" Text="Nº Conflito" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="3" Grid.Column="3" Text="{Binding NumConflito}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+                </Grid>
+
+                <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto,Auto" Margin="0,4">
+                  <TextBlock Grid.Column="0" Text="Obs Conflito" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Column="1" Text="{Binding ObsConflito}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+                  <TextBlock Grid.Column="2" Text="Status Conflito" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <ComboBox Grid.Column="3" SelectedValue="{Binding StatusConflito}"
+                            IsEnabled="{Binding CamposHabilitados}" Width="60" Height="24" Margin="4">
+                    <ComboBoxItem Content="A"/>
+                    <ComboBoxItem Content="F"/>
+                  </ComboBox>
+                </Grid>
+
+                <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="4">
+                  <Button Content="Inserir" Width="70" Height="26" FontSize="11"
+                          IsEnabled="{Binding CamposHabilitados}"/>
+                  <Button Content="Excluir" Width="70" Height="26" FontSize="11" Margin="4,0,0,0"
+                          IsEnabled="{Binding CamposHabilitados}"/>
+                </StackPanel>
+
+                <DataGrid Grid.Row="3" ItemsSource="{Binding ControlePermanenciaItems}"
+                          AutoGenerateColumns="False" IsReadOnly="True"
+                          Height="120" Margin="4">
+                  <DataGrid.Columns>
+                    <DataGridTextColumn Header="Data Inicial" Binding="{Binding DataInicial}" Width="90"/>
+                    <DataGridTextColumn Header="Autorização" Binding="{Binding Autorizacao}" Width="100"/>
+                    <DataGridTextColumn Header="Dias" Binding="{Binding Dias}" Width="50"/>
+                    <DataGridTextColumn Header="Data Final" Binding="{Binding DataFinal}" Width="90"/>
+                    <DataGridTextColumn Header="Nº Autos" Binding="{Binding NumAutos}" Width="80"/>
+                    <DataGridTextColumn Header="Obs" Binding="{Binding Obs}" Width="*"/>
+                  </DataGrid.Columns>
+                </DataGrid>
+
+                <GroupBox Grid.Row="4" Header="Anexos" Margin="4" IsEnabled="{Binding CamposHabilitados}">
+                  <StackPanel Orientation="Horizontal" Margin="4">
+                    <Button Content="Adicionar" Width="80" Height="26" FontSize="11"/>
+                    <Button Content="Remover" Width="80" Height="26" FontSize="11" Margin="4,0,0,0"/>
+                    <Button Content="Visualizar" Width="80" Height="26" FontSize="11" Margin="4,0,0,0"/>
+                  </StackPanel>
+                </GroupBox>
+              </Grid>
+            </TabItem>
+
+            <!-- Sub-aba Passagem SPF -->
+            <TabItem Header="Passagem SPF">
+              <Grid Margin="8" RowDefinitions="Auto,*,Auto,*">
+                <TextBlock Grid.Row="0" Text="Passagem no Sistema Penitenciário Federal" FontSize="12" FontWeight="Bold" Margin="4"/>
+                <TextBox Grid.Row="1" Text="{Binding PassagemSpf}"
+                         AcceptsReturn="True" TextWrapping="Wrap"
+                         FontSize="12" Margin="4"
+                         IsEnabled="{Binding CamposHabilitados}"/>
+
+                <TextBlock Grid.Row="2" Text="Motivação da Inclusão" FontSize="12" FontWeight="Bold" Margin="4"/>
+                <TextBox Grid.Row="3" Text="{Binding MotivacaoInclusao}"
+                         AcceptsReturn="True" TextWrapping="Wrap"
+                         FontSize="12" Margin="4"
+                         IsEnabled="{Binding CamposHabilitados}"/>
+              </Grid>
+            </TabItem>
+
+            <!-- Sub-aba Histórico -->
+            <TabItem Header="Histórico">
+              <Grid Margin="8" RowDefinitions="Auto,Auto,*,Auto">
+                <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto,Auto">
+                  <TextBlock Grid.Column="0" Text="Data" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <DatePicker Grid.Column="1" SelectedDate="{Binding DataHistorico}" Margin="4" Height="24"
+                              IsEnabled="{Binding CamposHabilitados}"/>
+                  <TextBlock Grid.Column="2" Text="Descrição" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Column="3" Text="{Binding DescricaoHistorico}"
+                           Width="200" Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+                </Grid>
+
+                <TextBox Grid.Row="1" Text="{Binding ObsHistorico}"
+                         AcceptsReturn="True" TextWrapping="Wrap" Height="60"
+                         FontSize="12" Margin="4"
+                         IsEnabled="{Binding CamposHabilitados}"/>
+
+                <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="4">
+                  <Button Content="Inserir" Width="70" Height="26" FontSize="11"
+                          IsEnabled="{Binding CamposHabilitados}"/>
+                  <Button Content="Excluir" Width="70" Height="26" FontSize="11" Margin="4,0,0,0"
+                          IsEnabled="{Binding CamposHabilitados}"/>
+                </StackPanel>
+
+                <DataGrid Grid.Row="3" ItemsSource="{Binding HistoricoItems}"
+                          AutoGenerateColumns="False" IsReadOnly="True"
+                          Height="150" Margin="4">
+                  <DataGrid.Columns>
+                    <DataGridTextColumn Header="Data" Binding="{Binding Data}" Width="90"/>
+                    <DataGridTextColumn Header="Descrição" Binding="{Binding Descricao}" Width="*"/>
+                  </DataGrid.Columns>
+                </DataGrid>
+              </Grid>
+            </TabItem>
+
+            <!-- Sub-aba Cálculo Execução -->
+            <TabItem Header="Cálculo Execução">
+              <TabControl Margin="0">
+                <TabItem Header="Cálculo">
+                  <DataGrid ItemsSource="{Binding CalculoExecucaoItems}"
+                            AutoGenerateColumns="False" IsReadOnly="True"
+                            Margin="8" Height="200">
+                    <DataGrid.Columns>
+                      <DataGridTextColumn Header="Tipo" Binding="{Binding Tipo}" Width="100"/>
+                      <DataGridTextColumn Header="Descrição" Binding="{Binding Descricao}" Width="*"/>
+                      <DataGridTextColumn Header="Tempo" Binding="{Binding Tempo}" Width="100"/>
+                    </DataGrid.Columns>
+                  </DataGrid>
+                </TabItem>
+                <TabItem Header="Condenações">
+                  <DataGrid ItemsSource="{Binding CondenacoesItems}"
+                            AutoGenerateColumns="False" IsReadOnly="True"
+                            Margin="8" Height="200">
+                    <DataGrid.Columns>
+                      <DataGridTextColumn Header="Artigo" Binding="{Binding Artigo}" Width="80"/>
+                      <DataGridTextColumn Header="Descrição" Binding="{Binding Descricao}" Width="*"/>
+                      <DataGridTextColumn Header="Pena" Binding="{Binding Pena}" Width="100"/>
+                    </DataGrid.Columns>
+                  </DataGrid>
+                </TabItem>
+                <TabItem Header="Detração">
+                  <DataGrid ItemsSource="{Binding DetracaoItems}"
+                            AutoGenerateColumns="False" IsReadOnly="True"
+                            Margin="8" Height="200">
+                    <DataGrid.Columns>
+                      <DataGridTextColumn Header="Data Início" Binding="{Binding DataInicio}" Width="90"/>
+                      <DataGridTextColumn Header="Data Fim" Binding="{Binding DataFim}" Width="90"/>
+                      <DataGridTextColumn Header="Dias" Binding="{Binding Dias}" Width="60"/>
+                      <DataGridTextColumn Header="Obs" Binding="{Binding Obs}" Width="*"/>
+                    </DataGrid.Columns>
+                  </DataGrid>
+                </TabItem>
+                <TabItem Header="Interrupção">
+                  <DataGrid ItemsSource="{Binding InterrupcaoItems}"
+                            AutoGenerateColumns="False" IsReadOnly="True"
+                            Margin="8" Height="200">
+                    <DataGrid.Columns>
+                      <DataGridTextColumn Header="Data Início" Binding="{Binding DataInicio}" Width="90"/>
+                      <DataGridTextColumn Header="Data Fim" Binding="{Binding DataFim}" Width="90"/>
+                      <DataGridTextColumn Header="Dias" Binding="{Binding Dias}" Width="60"/>
+                      <DataGridTextColumn Header="Motivo" Binding="{Binding Motivo}" Width="*"/>
+                    </DataGrid.Columns>
+                  </DataGrid>
+                </TabItem>
+                <TabItem Header="Remição">
+                  <DataGrid ItemsSource="{Binding RemicaoItems}"
+                            AutoGenerateColumns="False" IsReadOnly="True"
+                            Margin="8" Height="200">
+                    <DataGrid.Columns>
+                      <DataGridTextColumn Header="Data" Binding="{Binding Data}" Width="90"/>
+                      <DataGridTextColumn Header="Tipo" Binding="{Binding Tipo}" Width="100"/>
+                      <DataGridTextColumn Header="Dias" Binding="{Binding Dias}" Width="60"/>
+                      <DataGridTextColumn Header="Obs" Binding="{Binding Obs}" Width="*"/>
+                    </DataGrid.Columns>
+                  </DataGrid>
+                </TabItem>
+                <TabItem Header="Mapa Carcerário">
+                  <DataGrid ItemsSource="{Binding MapaCarcerarioItems}"
+                            AutoGenerateColumns="False" IsReadOnly="True"
+                            Margin="8" Height="200">
+                    <DataGrid.Columns>
+                      <DataGridTextColumn Header="Data" Binding="{Binding Data}" Width="90"/>
+                      <DataGridTextColumn Header="Regime" Binding="{Binding Regime}" Width="100"/>
+                      <DataGridTextColumn Header="Local" Binding="{Binding Local}" Width="*"/>
+                    </DataGrid.Columns>
+                  </DataGrid>
+                </TabItem>
+                <TabItem Header="Comutação">
+                  <DataGrid ItemsSource="{Binding ComutacaoItems}"
+                            AutoGenerateColumns="False" IsReadOnly="True"
+                            Margin="8" Height="200">
+                    <DataGrid.Columns>
+                      <DataGridTextColumn Header="Data" Binding="{Binding Data}" Width="90"/>
+                      <DataGridTextColumn Header="Decreto" Binding="{Binding Decreto}" Width="120"/>
+                      <DataGridTextColumn Header="Dias Remidos" Binding="{Binding DiasRemidos}" Width="90"/>
+                      <DataGridTextColumn Header="Obs" Binding="{Binding Obs}" Width="*"/>
+                    </DataGrid.Columns>
+                  </DataGrid>
+                </TabItem>
+              </TabControl>
+            </TabItem>
+
+            <!-- Sub-aba Benefício -->
+            <TabItem Header="Benefício">
+              <Grid Margin="8" RowDefinitions="Auto,Auto,*,Auto">
+                <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto,*" RowDefinitions="Auto,Auto">
+                  <TextBlock Grid.Row="0" Grid.Column="0" Text="Data" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <DatePicker Grid.Row="0" Grid.Column="1" SelectedDate="{Binding DataBeneficio}" Margin="4" Height="24"
+                              IsEnabled="{Binding CamposHabilitados}"/>
+                  <TextBlock Grid.Row="0" Grid.Column="2" Text="Benefício" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <ComboBox Grid.Row="0" Grid.Column="3" SelectedValue="{Binding TipoBeneficio}"
+                            IsEnabled="{Binding CamposHabilitados}" Height="24" Margin="4">
+                    <ComboBoxItem Content="Livramento Condicional"/>
+                    <ComboBoxItem Content="Prisão Domiciliar"/>
+                    <ComboBoxItem Content="Progressão de Regime"/>
+                    <ComboBoxItem Content="Saídas Temporárias"/>
+                    <ComboBoxItem Content="Trabalho Externo"/>
+                  </ComboBox>
+
+                  <TextBlock Grid.Row="1" Grid.Column="0" Text="Concedido" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="4">
+                    <RadioButton Content="Sim" IsChecked="{Binding BeneficioConcedidoSim}" Margin="0,0,8,0"
+                                 IsEnabled="{Binding CamposHabilitados}"/>
+                    <RadioButton Content="Não" IsChecked="{Binding BeneficioConcedidoNao}"
+                                 IsEnabled="{Binding CamposHabilitados}"/>
+                  </StackPanel>
+                  <TextBlock Grid.Row="1" Grid.Column="2" Text="Obs" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+                  <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding ObsBeneficio}"
+                           Height="24" FontSize="12" Margin="4"
+                           IsEnabled="{Binding CamposHabilitados}"/>
+                </Grid>
+
+                <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="4">
+                  <Button Content="Inserir" Width="70" Height="26" FontSize="11"
+                          IsEnabled="{Binding CamposHabilitados}"/>
+                  <Button Content="Excluir" Width="70" Height="26" FontSize="11" Margin="4,0,0,0"
+                          IsEnabled="{Binding CamposHabilitados}"/>
+                </StackPanel>
+
+                <DataGrid Grid.Row="2" ItemsSource="{Binding BeneficioItems}"
+                          AutoGenerateColumns="False" IsReadOnly="True"
+                          Height="150" Margin="4">
+                  <DataGrid.Columns>
+                    <DataGridTextColumn Header="Data" Binding="{Binding Data}" Width="90"/>
+                    <DataGridTextColumn Header="Benefício" Binding="{Binding Tipo}" Width="150"/>
+                    <DataGridTextColumn Header="Concedido" Binding="{Binding Concedido}" Width="80"/>
+                    <DataGridTextColumn Header="Obs" Binding="{Binding Obs}" Width="*"/>
+                  </DataGrid.Columns>
+                </DataGrid>
+              </Grid>
+            </TabItem>
+
+          </TabControl>
+        </TabItem>
+
+        <!-- Aba Consulta -->
+        <TabItem Header="Consulta">
+          <Grid Margin="8" RowDefinitions="Auto,*,Auto">
+            <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto">
+              <TextBlock Grid.Column="0" Text="Pesquisar" FontSize="12" VerticalAlignment="Center" Margin="4"/>
+              <TextBox Grid.Column="1" Text="{Binding SearchText}"
+                       Height="24" FontSize="12" Margin="4"
+                       PlaceholderText="Digite o nome do interno..."/>
+              <Button Grid.Column="2" Content="Buscar" Width="70" Height="24" FontSize="11"
+                      Command="{Binding LoadCommand}"/>
+            </Grid>
+
+            <DataGrid Grid.Row="1" ItemsSource="{Binding GridItems}"
+                      AutoGenerateColumns="False" IsReadOnly="True"
+                      SelectedItem="{Binding SelectedGridItem}"
+                      x:CompileBindings="False"
+                      DoubleTapped="DataGrid_DoubleTapped"
+                      Margin="4">
+              <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Binding="{Binding IdInterno}" Width="60"/>
+                <DataGridTextColumn Header="Nome" Binding="{Binding NomeInterno}" Width="*"/>
+                <DataGridTextColumn Header="RGI" Binding="{Binding Rgi}" Width="100"/>
+                <DataGridTextColumn Header="Vulgo" Binding="{Binding Vulgo}" Width="120"/>
+                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="50"/>
+                <DataGridTextColumn Header="Sigla" Binding="{Binding Sigla}" Width="60"/>
+              </DataGrid.Columns>
+            </DataGrid>
+
+            <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="4">
+              <RadioButton Content="Ativos" IsChecked="{Binding FiltroAtivo}" Margin="0,0,12,0"/>
+              <RadioButton Content="Inativos" IsChecked="{Binding FiltroInativo}"/>
+            </StackPanel>
+          </Grid>
+        </TabItem>
+
+      </TabControl>
+
+      <!-- Status bar -->
+      <Border Grid.Row="2" Background="#E9ECEF" Height="24" BorderBrush="#DEE2E6" BorderThickness="0,1,0,0">
+        <TextBlock Text="{Binding StatusMessage}" FontSize="11" Foreground="#495057"
+                   VerticalAlignment="Center" Margin="8,0"/>
+      </Border>
+    </Grid>
+  </DockPanel>
+</Window>
